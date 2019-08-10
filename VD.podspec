@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '0.2.0'
+s.version          = '0.3.0'
 s.summary          = 'A short description of VD.'
 
 s.description      = <<-DESC
@@ -23,7 +23,7 @@ s.default_subspec = 'All'
 
 s.subspec 'All' do |ss|
     ss.dependency	'VDUIExtensions', '~> 0.3.0'
-    ss.dependency	'VDAsync', '~> 0.4.0'
+    ss.dependency	'VDAsync/RxSwift', '~> 0.4.0'
     ss.dependency	'RxOperators', '~> 0.4.0'
     ss.dependency	'UnwrapOperator', '~> 0.1.0'
     ss.dependency	'ConstraintsOperators', '~> 0.1.0'
