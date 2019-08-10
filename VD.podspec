@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '0.3.0'
+s.version          = '0.4.0'
 s.summary          = 'A short description of VD.'
 
 s.description      = <<-DESC
@@ -22,30 +22,30 @@ s.dependency 'UnwrapOperator', '~> 0.1.0'
 s.default_subspec = 'All'
 
 s.subspec 'All' do |ss|
-    ss.dependency	'VDUIExtensions', '~> 0.3.0'
-    ss.dependency	'VDAsync/RxSwift', '~> 0.4.0'
-    ss.dependency	'RxOperators', '~> 0.4.0'
-    ss.dependency	'UnwrapOperator', '~> 0.1.0'
-    ss.dependency	'ConstraintsOperators', '~> 0.1.0'
-    ss.dependency	'SwiftLocalize', '~> 1.7.0'
+    ss.dependency	'VDUIExtensions'
+    ss.dependency	'VDAsync/RxSwift'
+    ss.dependency	'RxOperators'
+    ss.dependency	'UnwrapOperator'
+    ss.dependency	'ConstraintsOperators'
+    ss.dependency	'SwiftLocalize'
 end
 s.subspec 'UIKit' do |ss|
-    ss.dependency	'VDUIExtensions', '~> 0.3.0'
+    ss.dependency	'VDUIExtensions'
 end
 s.subspec 'Async' do |ss|
-    ss.dependency	'VDAsync', '~> 0.4.0'
+    ss.dependency	'VDAsync'
 end
 s.subspec 'RxSwift' do |ss|
-    ss.dependency	'RxOperators', '~> 0.4.0'
+    ss.dependency	'RxOperators'
 end
 s.subspec 'Optional' do |ss|
-    ss.dependency	'UnwrapOperator', '~> 0.1.0'
+    ss.dependency	'UnwrapOperator'
 end
 s.subspec 'Constraints' do |ss|
-    ss.dependency	'ConstraintsOperators', '~> 0.1.0'
+    ss.dependency	'ConstraintsOperators'
 end
 s.subspec 'Localize' do |ss|
-    ss.dependency	'SwiftLocalize', '~> 1.7.0'
+    ss.dependency	'SwiftLocalize'
 end
 
 end
