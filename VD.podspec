@@ -21,12 +21,31 @@ s.dependency 'UnwrapOperator', '~> 0.1.0'
 
 s.default_subspec = 'All'
 
-s.subspec 'All' do |all|
+s.subspec 'All' do |ss|
+    ss.dependency	'VDUIExtensions', '~> 0.3.0'
+    ss.dependency	'VDAsync', '~> 0.4.0'
+    ss.dependency	'RxOperators', '~> 0.4.0'
+    ss.dependency	'UnwrapOperator', '~> 0.1.0'
+    ss.dependency	'ConstraintsOperators', '~> 0.1.0'
+    ss.dependency	'SwiftLocalize', '~> 1.3.0'
 end
-
-s.subspec 'RxSwift' do |rx|
-    rx.dependency	'RxSwift', '~> 5'
-    rx.source_files = 'Sources/**/*'
+s.subspec 'UIKit' do |ss|
+    ss.dependency	'VDUIExtensions', '~> 0.3.0'
+end
+s.subspec 'Async' do |ss|
+    ss.dependency	'VDAsync', '~> 0.4.0'
+end
+s.subspec 'RxSwift' do |ss|
+    ss.dependency	'RxOperators', '~> 0.4.0'
+end
+s.subspec 'Optional' do |ss|
+    ss.dependency	'UnwrapOperator', '~> 0.1.0'
+end
+s.subspec 'Constraints' do |ss|
+    ss.dependency	'ConstraintsOperators', '~> 0.1.0'
+end
+s.subspec 'Localize' do |ss|
+    ss.dependency	'SwiftLocalize', '~> 1.3.0'
 end
 
 end
