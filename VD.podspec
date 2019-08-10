@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '0.1.0'
+s.version          = '0.2.0'
 s.summary          = 'A short description of VD.'
 
 s.description      = <<-DESC
@@ -27,7 +27,7 @@ s.subspec 'All' do |ss|
     ss.dependency	'RxOperators', '~> 0.4.0'
     ss.dependency	'UnwrapOperator', '~> 0.1.0'
     ss.dependency	'ConstraintsOperators', '~> 0.1.0'
-    ss.dependency	'SwiftLocalize', '~> 1.3.0'
+    ss.dependency	'SwiftLocalize', '~> 1.7.0'
 end
 s.subspec 'UIKit' do |ss|
     ss.dependency	'VDUIExtensions', '~> 0.3.0'
@@ -45,7 +45,7 @@ s.subspec 'Constraints' do |ss|
     ss.dependency	'ConstraintsOperators', '~> 0.1.0'
 end
 s.subspec 'Localize' do |ss|
-    ss.dependency	'SwiftLocalize', '~> 1.3.0'
+    ss.dependency	'SwiftLocalize', '~> 1.7.0'
 end
 
 end
