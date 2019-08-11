@@ -6,3 +6,8 @@
 //
 
 import VDUIExtensions
+
+extension VD {
+    public enum UI {}
+    internal typealias Alert = UIViewController.AlertHandler
+}

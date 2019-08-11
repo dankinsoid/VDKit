@@ -6,3 +6,9 @@
 //
 
 import UnwrapOperator
+
+extension VD {
+    
+    public typealias UnwrapError = OptionalException
+    
+}

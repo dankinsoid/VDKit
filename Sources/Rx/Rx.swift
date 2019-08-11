@@ -6,3 +6,11 @@
 //
 
 import RxOperators
+
+extension VD {
+    
+    public enum Rx {
+        public typealias Value<T> = ValueSubject<T>
+    }
+    
+}

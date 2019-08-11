@@ -6,3 +6,9 @@
 //
 
 import SwiftLocalize
+
+extension VD {
+    
+    public typealias Localize = SwiftLocalize.Localize
+    
+}

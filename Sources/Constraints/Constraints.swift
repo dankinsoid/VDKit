@@ -6,3 +6,9 @@
 //
 
 import ConstraintsOperators
+
+extension VD {
+    
+    public typealias Layout<T: UILayoutable> = ConvienceLayout<T>
+    
+}
