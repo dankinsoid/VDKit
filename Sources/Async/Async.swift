@@ -8,5 +8,4 @@
 import VDAsync
 
 extension VD {
-    public typealias Promise<T> = VDAsync.Promise<T>
 }
