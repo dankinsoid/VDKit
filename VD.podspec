@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '0.7.0'
+s.version          = '0.8.0'
 s.summary          = 'A short description of VD.'
 
 s.description      = <<-DESC
