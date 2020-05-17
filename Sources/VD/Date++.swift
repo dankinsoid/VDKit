@@ -255,6 +255,13 @@ extension Date {
         calendar.range(of: smaller, in: larger, for: self)
     }
     
+    public func dates(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Range<Date>? {
+        let lower = start(of: larger, calendar: calendar)
+        let upper = end(of: larger, accuracy: smaller, calendar: calendar)
+        guard upper > lower else { return nil }
+        return lower..<upper
+    }
+    
     public func count(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Int {
         range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
     }
@@ -264,6 +271,15 @@ extension Date {
         formatter.locale = locale
         formatter.dateFormat = format
         formatter.timeZone = timeZone
+        return formatter.string(from: self)
+    }
+    
+    public func string(date: DateFormatter.Style = .short, time: DateFormatter.Style = .none, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.timeZone = timeZone
+        formatter.dateStyle = date
+        formatter.timeStyle = time
         return formatter.string(from: self)
     }
     
@@ -634,7 +650,7 @@ extension DateFormatter {
 }
 
 extension ClosedRange where Bound == Date {
-
+    
     public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) -> DatesCollection {
         let count = upperBound.interval(of: component, from: lowerBound) + 1
         return DatesCollection(from: lowerBound, count: count, component: component, step: step, calendar: calendar)
@@ -658,7 +674,7 @@ extension DateInterval {
     }
     
     public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) -> DatesCollection {
-        return (start..<end).each(component, step, calendar: calendar)
+        return (start..<end).each(component, step: step, calendar: calendar)
     }
     
 }
