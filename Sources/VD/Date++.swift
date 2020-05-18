@@ -51,6 +51,7 @@ extension DateComponents: RawRepresentable, ExpressibleByDictionaryLiteral {
     public static func quarter(_ value: Int) -> DateComponents { .current(quarter: value) }
     public static func weekOfMonth(_ value: Int) -> DateComponents { .current(weekOfMonth: value) }
     public static func weekOfYear(_ value: Int, year: Int) -> DateComponents { .current(weekOfYear: value, yearForWeekOfYear: year) }
+    public static func week(_ value: Int) -> DateComponents { .current(weekOfYear: value) }
     public static func nanoseconds(_ value: Int) -> DateComponents { .current(nanosecond: value) }
     
     public subscript(_ component: Calendar.Component) -> Int? {
@@ -163,6 +164,12 @@ extension DateComponents: RawRepresentable, ExpressibleByDictionaryLiteral {
             if component(key) != value { return false }
         }
         return true
+    }
+    
+    fileprivate func minComponent() -> Int {
+        let all = Set(rawValue.map { $0.key })
+        let sorted = Calendar.Component.sorted
+        return all.compactMap(sorted.firstIndex).first ?? 0
     }
     
 }
@@ -281,6 +288,17 @@ extension Date {
         formatter.dateStyle = date
         formatter.timeStyle = time
         return formatter.string(from: self)
+    }
+    
+    public func string(_ format: String, relative: [DateComponents: String], to date: Date = Date(), locale: Locale = .default, timeZone: TimeZone = .default, calendar: Calendar = .default) -> String {
+        guard !relative.isEmpty else { return string(format, locale: locale, timeZone: timeZone) }
+        let difference = from(date, calendar: calendar).components
+        for (comp, format) in relative.sorted(by: { $0.key.minComponent() < $1.key.minComponent() }) {
+            if difference.contains(comp) {
+                return string(format, locale: locale, timeZone: timeZone)
+            }
+        }
+        return string(format, locale: locale, timeZone: timeZone)
     }
     
     public func name(of component: Calendar.Component, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
@@ -408,8 +426,10 @@ extension Calendar.Component: CaseIterable {
     
     public static var week: Calendar.Component { .weekOfYear }
     
+    fileprivate static var sorted: [Calendar.Component] { [.nanosecond, .second, .minute, .hour, .day, .weekday, .weekdayOrdinal, .weekOfMonth, .weekOfYear, .month, .quarter, .year, .yearForWeekOfYear, .timeZone, .era, .calendar] }
+    
     public static var allCases: Set<Calendar.Component> {
-        [.year, .month, .day, .hour, .minute, .second, .weekday, .weekdayOrdinal, .quarter, .weekOfMonth, .weekOfYear, .yearForWeekOfYear, .nanosecond, .calendar, .timeZone]
+        [.year, .month, .day, .hour, .minute, .second, .weekday, .weekdayOrdinal, .quarter, .weekOfMonth, .weekOfYear, .yearForWeekOfYear, .nanosecond, .calendar, .timeZone, .era]
     }
     
     public var first: Int {
