@@ -188,14 +188,6 @@ extension Date {
         string("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", locale: Locale(identifier: "en_US_POSIX"), timeZone: TimeZone(secondsFromGMT: 0) ?? .default)
     }
     
-    public func components(calendar: Calendar = .default) -> DateComponents {
-        calendar.dateComponents(Calendar.Component.allCases, from: self)
-    }
-    
-    public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
-        calendar.component(component, from: self)
-    }
-    
     public init(era: Int = 1, year: Int, month: Int = 1, day: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, nanosecond: Int = 0, calendar: Calendar = .default, timeZone: TimeZone = .default) {
         self = DateComponents(calendar: calendar, timeZone: timeZone, era: era, year: year, month: month, day: day, hour: hour, minute: minute, second: second, nanosecond: nanosecond).date ?? Date()
     }
@@ -215,6 +207,14 @@ extension Date {
         formatter.timeZone = timezone
         guard let date = formatter.date(from: string) else { return nil }
         self = date
+    }
+    
+    public func components(calendar: Calendar = .default) -> DateComponents {
+        calendar.dateComponents(Calendar.Component.allCases, from: self)
+    }
+    
+    public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
+        calendar.component(component, from: self)
     }
     
     public func start(of component: Calendar.Component, calendar: Calendar = .default) -> Date {
@@ -270,7 +270,12 @@ extension Date {
     }
     
     public func count(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Int {
-        range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
+        if smaller.larger == larger || larger.smaller == smaller {
+            return range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
+        } else {
+            let from = start(of: larger, calendar: calendar)
+            return from.adding(larger, value: 1, calendar: calendar).interval(of: smaller, from: from, calendar: calendar)
+        }
     }
     
     public func string(_ format: String, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
@@ -350,16 +355,35 @@ extension Date {
         lhs.from(rhs)
     }
     
-    public func adding(_ difference: DateDifference, calendar: Calendar = .default) -> Date {
-        calendar.date(byAdding: difference.components, to: self) ?? addingTimeInterval(TimeInterval(difference.seconds))
+    public func adding(_ difference: DateDifference, wrapping: Bool = false, calendar: Calendar = .default) -> Date {
+        calendar.date(byAdding: difference.components, to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(difference.seconds))
     }
     
-    public mutating func add(_ difference: DateDifference, calendar: Calendar = .default) {
-        self = adding(difference, calendar: calendar)
+    public mutating func add(_ difference: DateDifference, wrapping: Bool = false, calendar: Calendar = .default) {
+        self = adding(difference, wrapping: wrapping, calendar: calendar)
     }
     
-    public func adding(components: DateComponents, calendar: Calendar = .default) -> Date? {
-        calendar.date(byAdding: components, to: self)
+    public func adding(components: DateComponents, wrapping: Bool = false, calendar: Calendar = .default) -> Date? {
+        calendar.date(byAdding: components, to: self, wrappingComponents: wrapping)
+    }
+    
+    public mutating func add(_ component: Calendar.Component, value: Int, wrapping: Bool = false, calendar: Calendar = .default) {
+        self = adding(component, value: value, wrapping: wrapping, calendar: calendar)
+    }
+    
+    public func adding(_ component: Calendar.Component, value: Int, wrapping: Bool = false, calendar: Calendar = .default) -> Date {
+        calendar.date(byAdding: component, value: value, to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(value * count(of: .second, in: component)))
+    }
+    
+    @discardableResult
+    public mutating func set(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Bool {
+        let result = calendar.date(bySetting: component, value: value, of: self)
+        self = result ?? self
+        return result != nil
+    }
+    
+    public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
+        calendar.date(bySetting: component, value: value, of: self)
     }
     
     public func compare(with date: Date, accuracy component: Calendar.Component, calendar: Calendar = .default) -> ComparisonResult {
