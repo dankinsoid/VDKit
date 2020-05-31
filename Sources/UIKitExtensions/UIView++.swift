@@ -11,6 +11,10 @@ fileprivate var viewTargetKey = "viewRecognizerTargetKey"
 
 extension UIView {
     
+    public var vc: UIViewController? {
+        (next as? UIViewController) ?? (next as? UIView)?.vc
+    }
+    
     public var onTap: () -> () {
         get { tapViewTarget.action }
         set {

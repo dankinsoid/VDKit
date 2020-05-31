@@ -33,3 +33,68 @@ extension Collection {
     }
     
 }
+
+extension Array where Element: Hashable {
+    public func removeEqual() -> [Element] {
+        var result: [Element] = []
+        result.reserveCapacity(count)
+        forEach {
+            if !result.contains($0) {
+                result.append($0)
+            }
+        }
+        return result
+    }
+}
+
+extension Array {
+    public func removeEqual<H: Equatable>(by keyPath: KeyPath<Element, H>) -> [Element] {
+        var result: [Element] = []
+        result.reserveCapacity(count)
+        forEach { e in
+            if !result.contains(where: { $0[keyPath: keyPath] == e[keyPath: keyPath] }) {
+                result.append(e)
+            }
+        }
+        return result
+    }
+}
+
+extension ClosedRange where Bound: FloatingPoint {
+    
+    public func split(count: Int) -> [Bound] {
+        guard count > 0 else { return [] }
+        guard count > 1 else { return [lowerBound] }
+        guard count > 2 else { return [lowerBound, upperBound] }
+        let delta = (upperBound - lowerBound) / Bound(count)
+        var result = Array<Element>()
+        result.append(lowerBound)
+        for _ in 1..<(count - 1) {
+            result.append(result.last! + delta)
+        }
+        result.append(upperBound)
+        return result
+    }
+    
+}
+
+extension Array {
+    public subscript(safe index: Index) -> Element? {
+        get {
+            guard index >= startIndex, index < endIndex else { return nil }
+            return self[index]
+        }
+        set {
+            guard index >= startIndex, index <= endIndex else { return }
+            if let value = newValue {
+                if index < endIndex  {
+                    self[index] = value
+                } else {
+                    append(value)
+                }
+            } else if index < endIndex  {
+                remove(at: index)
+            }
+        }
+    }
+}
