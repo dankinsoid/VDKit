@@ -262,6 +262,16 @@ extension Date {
         calendar.range(of: smaller, in: larger, for: self)
     }
     
+    public func range(byAdding difference: DateDifference, calendar: Calendar = .default) -> Range<Date> {
+        let new = self.adding(difference)
+        if new < self {
+            return new..<self
+        } else if self == new {
+            return self..<(self + .second)
+        }
+        return self..<new
+    }
+    
     public func dates(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Range<Date>? {
         let lower = start(of: larger, calendar: calendar)
         let upper = end(of: larger, accuracy: smaller, calendar: calendar)
