@@ -1,9 +1,15 @@
 import Foundation
 
 postfix operator ~!
+infix operator !!
 
 public postfix func ~!<T>(_ lhs: T?) throws -> T {
     guard let value = lhs else { throw OptionalException.noValue }
+    return value
+}
+
+public func !!<T>(_ lhs: T?, _ rhs: Error) throws -> T {
+    guard let value = lhs else { throw rhs }
     return value
 }
 
