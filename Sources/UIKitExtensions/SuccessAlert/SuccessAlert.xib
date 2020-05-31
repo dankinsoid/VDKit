@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SuccessAlert" customModule="TestProject" customModuleProvider="target">
+            <connections>
+                <outlet property="checkMarkView" destination="Jv9-pj-0hg" id="0UO-lc-OP1"/>
+                <outlet property="contentView" destination="iN0-l3-epB" id="9NP-2q-Me3"/>
+                <outlet property="detailLabel" destination="MCh-N8-oS1" id="qv1-mW-htM"/>
+                <outlet property="drawView" destination="Obx-oD-WMh" id="vIA-rW-OAb"/>
+                <outlet property="stackView" destination="2TR-Yf-Jsf" id="LXf-Xo-3Rp"/>
+                <outlet property="textLabel" destination="nAU-mM-QbO" id="S2v-2I-1FW"/>
+                <outlet property="visualEffectView" destination="INC-7T-dcf" id="6gy-g8-MkD"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="325" height="584"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jv9-pj-0hg">
+                    <rect key="frame" x="37.5" y="168.5" width="250" height="267.5"/>
+                    <subviews>
+                        <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="INC-7T-dcf" customClass="BlurEffectView" customModule="TestProject" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="250" height="267.5"/>
+                            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="4rW-Tq-bsJ">
+                                <rect key="frame" x="0.0" y="0.0" width="250" height="267.5"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </view>
+                            <blurEffect style="extraLight"/>
+                        </visualEffectView>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="2TR-Yf-Jsf">
+                            <rect key="frame" x="75" y="90.5" width="100" height="66"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Obx-oD-WMh" customClass="CheckMarkView" customModule="TestProject" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="100" height="66"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    <color key="tintColor" red="0.34897816180000002" green="0.34904351830000002" blue="0.34897404910000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" secondItem="Obx-oD-WMh" secondAttribute="height" multiplier="204:135" id="hKM-cO-V0i"/>
+                                    </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="lineWidth">
+                                            <real key="value" value="9"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
+                            </subviews>
+                        </stackView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Успешно" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="6" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-N8-oS1">
+                            <rect key="frame" x="20" y="230.5" width="210" height="17"/>
+                            <constraints>
+                                <constraint firstAttribute="height" relation="lessThanOrEqual" constant="72" id="nsQ-7g-Xai"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="0.34897816180000002" green="0.34904351830000002" blue="0.34897404910000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Выполнено" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="nAU-mM-QbO">
+                            <rect key="frame" x="20" y="201.5" width="210" height="24"/>
+                            <constraints>
+                                <constraint firstAttribute="height" relation="lessThanOrEqual" constant="72" id="rSy-C7-qjb"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                            <color key="textColor" red="0.34897816180000002" green="0.34904351830000002" blue="0.34897404910000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <color key="tintColor" red="0.34897816180000002" green="0.34904351830000002" blue="0.34897404910000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="MCh-N8-oS1" secondAttribute="bottom" constant="20" id="00R-e6-zDC"/>
+                        <constraint firstItem="INC-7T-dcf" firstAttribute="height" secondItem="Jv9-pj-0hg" secondAttribute="height" id="9OJ-5m-Fdx"/>
+                        <constraint firstItem="INC-7T-dcf" firstAttribute="centerY" secondItem="Jv9-pj-0hg" secondAttribute="centerY" id="A8f-si-vBp"/>
+                        <constraint firstItem="MCh-N8-oS1" firstAttribute="top" secondItem="nAU-mM-QbO" secondAttribute="bottom" constant="5" id="BM8-hx-sbY"/>
+                        <constraint firstItem="nAU-mM-QbO" firstAttribute="width" secondItem="Jv9-pj-0hg" secondAttribute="width" constant="-40" id="O9L-dN-4Ii"/>
+                        <constraint firstItem="INC-7T-dcf" firstAttribute="width" secondItem="Jv9-pj-0hg" secondAttribute="width" id="bv5-tw-b6v"/>
+                        <constraint firstItem="MCh-N8-oS1" firstAttribute="centerX" secondItem="Jv9-pj-0hg" secondAttribute="centerX" id="dPT-SE-w9R"/>
+                        <constraint firstItem="2TR-Yf-Jsf" firstAttribute="width" secondItem="Jv9-pj-0hg" secondAttribute="width" multiplier="2/5" id="ffx-aa-KmW"/>
+                        <constraint firstItem="2TR-Yf-Jsf" firstAttribute="centerY" secondItem="Jv9-pj-0hg" secondAttribute="centerY" constant="-10" id="fxD-Qv-Eqz"/>
+                        <constraint firstItem="INC-7T-dcf" firstAttribute="centerX" secondItem="Jv9-pj-0hg" secondAttribute="centerX" id="gTv-ID-1lm"/>
+                        <constraint firstItem="2TR-Yf-Jsf" firstAttribute="centerX" secondItem="Jv9-pj-0hg" secondAttribute="centerX" id="gtx-Ox-gzL"/>
+                        <constraint firstAttribute="width" constant="250" id="j8a-0Q-bKN"/>
+                        <constraint firstItem="nAU-mM-QbO" firstAttribute="centerX" secondItem="Jv9-pj-0hg" secondAttribute="centerX" id="koh-9V-sEy"/>
+                        <constraint firstAttribute="width" secondItem="Jv9-pj-0hg" secondAttribute="height" multiplier="100:107" id="mMk-Ks-JbS"/>
+                        <constraint firstAttribute="width" constant="250" id="o2F-Qy-QSz"/>
+                        <constraint firstItem="MCh-N8-oS1" firstAttribute="width" secondItem="Jv9-pj-0hg" secondAttribute="width" constant="-40" id="tCD-Zh-xDS"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Jv9-pj-0hg" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="WV4-ke-U1h"/>
+                <constraint firstItem="Jv9-pj-0hg" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="hbE-Zh-Gfr"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="8.5" y="13"/>
+        </view>
+    </objects>
+</document>
