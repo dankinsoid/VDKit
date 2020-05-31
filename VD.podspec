@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '1.0.3'
+s.version          = '1.0.4'
 s.summary          = 'A short description of VD.'
 
 s.description      = <<-DESC
@@ -17,7 +17,7 @@ s.ios.deployment_target = '11.0'
 s.swift_versions = '5.1'
 s.source_files = 'Sources/**/*'
 
-spec.subspec 'Foundation' do |evernote|
+spec.subspec 'Base' do |evernote|
     evernote.source_files = 'Sources/VD/*'
 end
 
