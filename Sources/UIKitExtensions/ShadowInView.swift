@@ -116,7 +116,6 @@ open class InnerShadow: UIView {
         layer.shadowOffset = .zero
         super.backgroundColor = .clear
         addSubview(view)
-        view.backgroundColor = MI.Colors.background
         view.layer.mask = maskLayer
         setShadow()
     }
