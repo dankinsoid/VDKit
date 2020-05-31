@@ -51,6 +51,7 @@ extension DateComponents: RawRepresentable, ExpressibleByDictionaryLiteral {
     public static func quarter(_ value: Int) -> DateComponents { .current(quarter: value) }
     public static func weekOfMonth(_ value: Int) -> DateComponents { .current(weekOfMonth: value) }
     public static func weekOfYear(_ value: Int, year: Int) -> DateComponents { .current(weekOfYear: value, yearForWeekOfYear: year) }
+    public static func week(_ value: Int) -> DateComponents { .current(weekOfYear: value) }
     public static func nanoseconds(_ value: Int) -> DateComponents { .current(nanosecond: value) }
     
     public subscript(_ component: Calendar.Component) -> Int? {
@@ -165,6 +166,12 @@ extension DateComponents: RawRepresentable, ExpressibleByDictionaryLiteral {
         return true
     }
     
+    fileprivate func minComponent() -> Int {
+        let all = Set(rawValue.map { $0.key })
+        let sorted = Calendar.Component.sorted
+        return all.compactMap(sorted.firstIndex).first ?? 0
+    }
+    
 }
 
 extension Date {
@@ -179,14 +186,6 @@ extension Date {
     public var isCurrentWeek: Bool { start(of: .week) == Date.today.start(of: .week) }
     public var iso860: String {
         string("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", locale: Locale(identifier: "en_US_POSIX"), timeZone: TimeZone(secondsFromGMT: 0) ?? .default)
-    }
-    
-    public func components(calendar: Calendar = .default) -> DateComponents {
-        calendar.dateComponents(Calendar.Component.allCases, from: self)
-    }
-    
-    public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
-        calendar.component(component, from: self)
     }
     
     public init(era: Int = 1, year: Int, month: Int = 1, day: Int = 1, hour: Int = 0, minute: Int = 0, second: Int = 0, nanosecond: Int = 0, calendar: Calendar = .default, timeZone: TimeZone = .default) {
@@ -208,6 +207,14 @@ extension Date {
         formatter.timeZone = timezone
         guard let date = formatter.date(from: string) else { return nil }
         self = date
+    }
+    
+    public func components(calendar: Calendar = .default) -> DateComponents {
+        calendar.dateComponents(Calendar.Component.allCases, from: self)
+    }
+    
+    public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
+        calendar.component(component, from: self)
     }
     
     public func start(of component: Calendar.Component, calendar: Calendar = .default) -> Date {
@@ -255,6 +262,16 @@ extension Date {
         calendar.range(of: smaller, in: larger, for: self)
     }
     
+    public func range(byAdding difference: DateDifference, calendar: Calendar = .default) -> Range<Date> {
+        let new = self.adding(difference)
+        if new < self {
+            return new..<self
+        } else if self == new {
+            return self..<(self + .second)
+        }
+        return self..<new
+    }
+    
     public func dates(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Range<Date>? {
         let lower = start(of: larger, calendar: calendar)
         let upper = end(of: larger, accuracy: smaller, calendar: calendar)
@@ -263,7 +280,12 @@ extension Date {
     }
     
     public func count(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Int {
-        range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
+        if smaller.larger == larger || larger.smaller == smaller {
+            return range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
+        } else {
+            let from = start(of: larger, calendar: calendar)
+            return from.adding(larger, value: 1, calendar: calendar).interval(of: smaller, from: from, calendar: calendar)
+        }
     }
     
     public func string(_ format: String, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
@@ -272,6 +294,26 @@ extension Date {
         formatter.dateFormat = format
         formatter.timeZone = timeZone
         return formatter.string(from: self)
+    }
+    
+    public func string(date: DateFormatter.Style = .short, time: DateFormatter.Style = .none, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.timeZone = timeZone
+        formatter.dateStyle = date
+        formatter.timeStyle = time
+        return formatter.string(from: self)
+    }
+    
+    public func string(_ format: String, relative: [DateComponents: String], to date: Date = Date(), locale: Locale = .default, timeZone: TimeZone = .default, calendar: Calendar = .default) -> String {
+        guard !relative.isEmpty else { return string(format, locale: locale, timeZone: timeZone) }
+        let difference = from(date, calendar: calendar).components
+        for (comp, format) in relative.sorted(by: { $0.key.minComponent() < $1.key.minComponent() }) {
+            if difference.contains(comp) {
+                return string(format, locale: locale, timeZone: timeZone)
+            }
+        }
+        return string(format, locale: locale, timeZone: timeZone)
     }
     
     public func name(of component: Calendar.Component, locale: Locale = .default, timeZone: TimeZone = .default) -> String {
@@ -323,16 +365,35 @@ extension Date {
         lhs.from(rhs)
     }
     
-    public func adding(_ difference: DateDifference, calendar: Calendar = .default) -> Date {
-        calendar.date(byAdding: difference.components, to: self) ?? addingTimeInterval(TimeInterval(difference.seconds))
+    public func adding(_ difference: DateDifference, wrapping: Bool = false, calendar: Calendar = .default) -> Date {
+        calendar.date(byAdding: difference.components, to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(difference.seconds))
     }
     
-    public mutating func add(_ difference: DateDifference, calendar: Calendar = .default) {
-        self = adding(difference, calendar: calendar)
+    public mutating func add(_ difference: DateDifference, wrapping: Bool = false, calendar: Calendar = .default) {
+        self = adding(difference, wrapping: wrapping, calendar: calendar)
     }
     
-    public func adding(components: DateComponents, calendar: Calendar = .default) -> Date? {
-        calendar.date(byAdding: components, to: self)
+    public func adding(components: DateComponents, wrapping: Bool = false, calendar: Calendar = .default) -> Date? {
+        calendar.date(byAdding: components, to: self, wrappingComponents: wrapping)
+    }
+    
+    public mutating func add(_ component: Calendar.Component, value: Int, wrapping: Bool = false, calendar: Calendar = .default) {
+        self = adding(component, value: value, wrapping: wrapping, calendar: calendar)
+    }
+    
+    public func adding(_ component: Calendar.Component, value: Int, wrapping: Bool = false, calendar: Calendar = .default) -> Date {
+        calendar.date(byAdding: component, value: value, to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(value * count(of: .second, in: component)))
+    }
+    
+    @discardableResult
+    public mutating func set(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Bool {
+        let result = calendar.date(bySetting: component, value: value, of: self)
+        self = result ?? self
+        return result != nil
+    }
+    
+    public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
+        calendar.date(bySetting: component, value: value, of: self)
     }
     
     public func compare(with date: Date, accuracy component: Calendar.Component, calendar: Calendar = .default) -> ComparisonResult {
@@ -399,8 +460,10 @@ extension Calendar.Component: CaseIterable {
     
     public static var week: Calendar.Component { .weekOfYear }
     
+    fileprivate static var sorted: [Calendar.Component] { [.nanosecond, .second, .minute, .hour, .day, .weekday, .weekdayOrdinal, .weekOfMonth, .weekOfYear, .month, .quarter, .year, .yearForWeekOfYear, .timeZone, .era, .calendar] }
+    
     public static var allCases: Set<Calendar.Component> {
-        [.year, .month, .day, .hour, .minute, .second, .weekday, .weekdayOrdinal, .quarter, .weekOfMonth, .weekOfYear, .yearForWeekOfYear, .nanosecond, .calendar, .timeZone]
+        [.year, .month, .day, .hour, .minute, .second, .weekday, .weekdayOrdinal, .quarter, .weekOfMonth, .weekOfYear, .yearForWeekOfYear, .nanosecond, .calendar, .timeZone, .era]
     }
     
     public var first: Int {
