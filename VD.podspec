@@ -17,7 +17,7 @@ s.ios.deployment_target = '11.0'
 s.swift_versions = '5.1'
 s.source_files = 'Sources/**/*'
 
-spec.subspec 'Base' do |evernote|
+s.subspec 'Base' do |evernote|
     evernote.source_files = 'Sources/VD/*'
 end
 
