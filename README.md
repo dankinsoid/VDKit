@@ -27,15 +27,18 @@ let weeksBetweenDates = difference.weeks
 let hours = Date().component(.hour)
 //or Date().hour()
 let someDate = Date(year: 1994, month: 10, day: 4) 
-
+```
+```swift
 let startOfMonth = Date().start(of: .month)
 let lastMonth = Date().end(of: .year)
 let lastDay = Date().end(of: .year, accuracy: .day)
 let nextYear = Date().next(.year)
-
+```
+```swift
 let monthLenght = Date().count(of: .day, in: .month)
 for month in (date1...date2).each(.month) {...}
-
+```
+```swift
 let weekdayName = Date().name(of: .weekday)
 if let date = Date(from: dateString, format: "dd.MM.yyyy") {...}
 let dateString = Date().string("dd.MM.yyyy")
