@@ -76,7 +76,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VD.git", from: "0.1.3")
+    .package(url: "https://github.com/dankinsoid/VD.git", from: "1.0.4")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VD"])
