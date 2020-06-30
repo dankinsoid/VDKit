@@ -46,7 +46,8 @@ let relativeDateString = Date().string("dd.MM.yyyy",
                             ]
                         )
 ```
-Any function contains additional parameters with default values such as ```swift
+Any function contains additional parameters with default values such as 
+```swift
 calendar: Calendar = .default
 locale: Locale = .default
 timezone: TimeZone = .default
