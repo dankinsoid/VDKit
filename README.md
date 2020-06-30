@@ -42,7 +42,7 @@ let iso860String = Date().iso860
 let defaultDateString = Date().string(date: .long, time: .short)
 let relativeDateString = Date().string("dd.MM.yyyy",
                             relative: [
-                                .day(0): "Today",
+                                .day(0): "Today HH:mm",
                                 .day(-1): "Yesterday",
                                 .week(0): "EEEE",       
                                 .year(0): "dd.MM"
