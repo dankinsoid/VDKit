@@ -60,6 +60,7 @@ locale: Locale = .default
 timezone: TimeZone = .default
 ```
 where `Calendar.default`, `Locale.default` and `TimeZone.default` - static variables that you can change
+So you can use custom `Calendar` in each function, or you can set your own `default` value for all functions
 
 ## Installation
 1.  [CocoaPods](https://cocoapods.org)
