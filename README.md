@@ -33,7 +33,7 @@ let startOfMonth = Date().start(of: .month)
 let lastMonth = Date().end(of: .year)
 let lastDay = Date().end(of: .year, accuracy: .day)
 let nextYear = Date().next(.year)
-let nextLeapYear = Date().nearest([.month: 2, .day: 29], in: .future).start(of: year)
+let nextLeapYear = Date().nearest([.month: 2, .day: 29], in: .future)?.start(of: year)
 ```
 ```swift
 let monthLenght = Date().count(of: .day, in: .month)
