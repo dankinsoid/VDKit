@@ -22,7 +22,8 @@ let difference = date2 - date1
 let daysBetweenDates = difference.days
 //or date2.interval(of: .day, from: date1)
 let weeksBetweenDates = difference.weeks
-
+```
+```swift
 let hours = Date().component(.hour)
 //or Date().hour()
 let someDate = Date(year: 1994, month: 10, day: 4) 
