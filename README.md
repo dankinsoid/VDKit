@@ -22,17 +22,20 @@ let difference = date2 - date1
 let daysBetweenDates = difference.days
 //or date2.interval(of: .day, from: date1)
 let weeksBetweenDates = difference.weeks
+
 let hours = Date().component(.hour)
 //or Date().hour()
 let someDate = Date(year: 1994, month: 10, day: 4) 
+
 let startOfMonth = Date().start(of: .month)
 let lastMonth = Date().end(of: .year)
 let lastDay = Date().end(of: .year, accuracy: .day)
-let weekdayName = Date().name(of: .weekday)
 let nextYear = Date().next(.year)
+
 let monthLenght = Date().count(of: .day, in: .month)
 for month in (date1...date2).each(.month) {...}
-...
+
+let weekdayName = Date().name(of: .weekday)
 if let date = Date(from: dateString, format: "dd.MM.yyyy") {...}
 let dateString = Date().string("dd.MM.yyyy")
 let iso860String = Date().iso860
