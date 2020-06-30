@@ -60,8 +60,14 @@ locale: Locale = .default
 timezone: TimeZone = .default
 ```
 where `Calendar.default`, `Locale.default` and `TimeZone.default` - static variables that you can change.
-So you can use custom `Calendar` in each function, or you can set your own `default` value for all functions
-
+So you can use custom `Calendar` in each function
+```swift
+let dayOfMonth = Date().position(of: .day, in: .month, calendar: customCalendar)
+```
+Or you can set your own `default` value for all functions
+```swift
+Calendar.default = customCalendar
+```
 ## Installation
 1.  [CocoaPods](https://cocoapods.org)
 
