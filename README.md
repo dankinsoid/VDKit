@@ -46,13 +46,13 @@ let relativeDateString = Date().string("dd.MM.yyyy",
                             ]
                         )
 ```
-Any function contains additional parameters with default values such as 
+Any function contains additional parameters with default values such as: 
 ```swift
 calendar: Calendar = .default
 locale: Locale = .default
 timezone: TimeZone = .default
 ```
-where Calendar.default, Locale.default and TimeZone.default - static variables that you can change
+where `Calendar.default`, `Locale.default` and `TimeZone.default` - static variables that you can change
 
 ## Installation
 1.  [CocoaPods](https://cocoapods.org)
