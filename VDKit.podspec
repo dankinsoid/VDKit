@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
-s.name             = 'VDKit'
-s.version          = '1.0.6'
+s.name             = 'VD'
+s.version          = '1.0.7'
 s.summary          = 'This repository contains useful extensions on Foundation and UIKit'
 
 s.description      = <<-DESC
@@ -16,6 +16,7 @@ s.source           = { :git => 'https://github.com/dankinsoid/VDKit.git', :tag =
 s.ios.deployment_target = '11.0'
 s.swift_versions = '5.1'
 s.source_files = 'Sources/**/*'
+s.framework = 'VDKit'
 
 s.subspec 'Foundation' do |evernote|
     evernote.source_files = 'Sources/VDKit/*'

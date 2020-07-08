@@ -74,7 +74,7 @@ Calendar.default = customCalendar
 
 Add the following line to your Podfile:
 ```ruby
-pod 'VDKit'
+pod 'VD'
 ```
 and run `pod update` from the podfile directory first.
 
