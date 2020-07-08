@@ -1,4 +1,4 @@
-# VD
+# VDKit
 
 [![CI Status](https://img.shields.io/travis/dankinsoid/VD.svg?style=flat)](https://travis-ci.org/dankinsoid/VD)
 [![Version](https://img.shields.io/cocoapods/v/VD.svg?style=flat)](https://cocoapods.org/pods/VD)
