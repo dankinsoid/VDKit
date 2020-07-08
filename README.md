@@ -33,7 +33,7 @@ let startOfMonth = Date().start(of: .month)
 let lastMonth = Date().end(of: .year)
 let lastDay = Date().end(of: .year, accuracy: .day)
 let nextYear = Date().next(.year)
-let nextLeapYear = Date().nearest([.month: 2, .day: 29], in: .future)?.start(of: year)
+let nextLeapYear = Date().nearest([.month: 2, .day: 29], in: .future)?.start(of: .year)
 ```
 ```swift
 let monthLenght = Date().count(of: .day, in: .month)
@@ -88,7 +88,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.0.4")
+    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.0.5")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VDKit"])
