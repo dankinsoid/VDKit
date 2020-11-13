@@ -530,7 +530,7 @@ extension Calendar.Component: CaseIterable {
     
 }
 
-public struct DateDifference: Hashable, Equatable, ExpressibleByDictionaryLiteral {
+public struct DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictionaryLiteral {
     public var eras: Int = 0
     public var years: Int = 0
     public var quarters: Int = 0
@@ -545,6 +545,21 @@ public struct DateDifference: Hashable, Equatable, ExpressibleByDictionaryLitera
     public var components: DateComponents {
         DateComponents(era: eras, year: years, month: months, day: days, hour: hours, minute: minutes, second: seconds, nanosecond: nanoseconds, quarter: quarters, weekOfYear: weeks)
     }
+	
+	private var inSeconds: Double {
+		Double(
+			eras * 3000 * 12 * 30 * 24 * 60 * 60 +
+			years * 12 * 30 * 24 * 60 * 60 +
+			quarters * 4 * 30 * 24 * 60 * 60 +
+			months * 30 * 24 * 60 * 60 +
+			weeks * 7 * 24 * 60 * 60 +
+			days * 24 * 60 * 60 +
+			hours * 60 * 60 +
+			minutes * 60 +
+			seconds
+		) +
+		Double(nanoseconds) / 1_000_000_000
+	}
     
     public init(dictionaryLiteral elements: (Calendar.Component, Int)...) {
         let dict = Dictionary(elements, uniquingKeysWith: {_, s in s})
@@ -626,6 +641,10 @@ public struct DateDifference: Hashable, Equatable, ExpressibleByDictionaryLitera
         lhs = lhs * rhs
     }
     
+		public static func <(lhs: DateDifference, rhs: DateDifference) -> Bool {
+				lhs.inSeconds < rhs.inSeconds
+		}
+	
     fileprivate static func operation(_ lhs: DateDifference, _ rhs: DateDifference, _ block: (Int, Int) -> Int) -> DateDifference {
         DateDifference(
             eras: operation(block, lhs, rhs, at: \.eras),
@@ -664,6 +683,19 @@ public struct DateDifference: Hashable, Equatable, ExpressibleByDictionaryLitera
         operation(lhs[keyPath: keyPath], rhs[keyPath: keyPath])
     }
     
+}
+
+extension BinaryInteger {
+	public var eras: DateDifference { DateDifference(eras: Int(self)) }
+	public var years: DateDifference { DateDifference(years: Int(self)) }
+	public var quarters: DateDifference { DateDifference(quarters: Int(self)) }
+	public var months: DateDifference { DateDifference(months: Int(self)) }
+	public var weeks: DateDifference { DateDifference(weeks: Int(self)) }
+	public var days: DateDifference { DateDifference(days: Int(self)) }
+	public var hours: DateDifference { DateDifference(hours: Int(self)) }
+	public var minutes: DateDifference { DateDifference(minutes: Int(self)) }
+	public var seconds: DateDifference { DateDifference(seconds: Int(self)) }
+	public var nanoseconds: DateDifference { DateDifference(nanoseconds: Int(self)) }
 }
 
 public prefix func -(_ rhs: DateDifference) -> DateDifference {
