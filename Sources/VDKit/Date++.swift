@@ -307,7 +307,7 @@ extension Date {
 	
 	public func string(_ format: String, relative: [DateComponents: String], to date: Date = Date(), locale: Locale = .default, timeZone: TimeZone = .default, calendar: Calendar = .default) -> String {
 		guard !relative.isEmpty else { return string(format, locale: locale, timeZone: timeZone) }
-		let difference = from(date, calendar: calendar).dateComponents
+		let difference = from(date).dateComponents(calendar: calendar)
 		for (comp, format) in relative.sorted(by: { $0.key.minComponent() < $1.key.minComponent() }) {
 			if difference.contains(comp) {
 				return string(format, locale: locale, timeZone: timeZone)
@@ -342,12 +342,12 @@ extension Date {
 		interval(of: smaller, from: start(of: larger, calendar: calendar), calendar: calendar) + (startFromZero ? 0 : smaller.first)
 	}
 	
-	public func from(_ other: Date, calendar: Calendar = .default) -> DateDifference {
-		.dates(from: other, to: self, calendar)
+	public func from(_ other: Date) -> DateDifference {
+		.dates(from: other, to: self)
 	}
 	
-	public func to(_ other: Date, calendar: Calendar = .default) -> DateDifference {
-		other.from(self, calendar: calendar)
+	public func to(_ other: Date) -> DateDifference {
+		other.from(self)
 	}
 	
 	public static func -(_ lhs: Date, _ rhs: Date) -> DateDifference {
@@ -358,7 +358,7 @@ extension Date {
 		switch difference {
 		case .interval(let interval):
 			return addingTimeInterval(interval)
-		case .dates(let from, let to, _):
+		case .dates(let from, let to):
 			return addingTimeInterval(to.timeIntervalSince(from))
 		case .components(let components):
 			return calendar.date(byAdding: DateComponents(rawValue: components), to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(difference.seconds))
@@ -556,7 +556,7 @@ extension Calendar.Component: CaseIterable {
 }
 
 public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictionaryLiteral {
-	case interval(TimeInterval), dates(from: Date, to: Date, Calendar), components([Calendar.Component: Int])
+	case interval(TimeInterval), dates(from: Date, to: Date), components([Calendar.Component: Int])
 	
 	public var eras: Int { component(.era) }
 	public var years: Int { component(.year) }
@@ -569,9 +569,13 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 	public var seconds: Int { component(.second) }
 	public var nanoseconds: Int { component(.nanosecond) }
 	
+	public subscript(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
+		self.component(component, calendar: calendar)
+	}
+	
 	public var interval: TimeInterval {
 		switch self {
-		case .dates(let from, let to, _):
+		case .dates(let from, let to):
 			return to.timeIntervalSince(from)
 		case .interval(let interval):
 			return interval
@@ -580,30 +584,22 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 		}
 	}
 	
-	public var calendar: Calendar {
-		switch self {
-		case .interval:	 										return .default
-		case .dates(_, _, let calendar):		return calendar
-		case .components: 									return .default
-		}
-	}
-	
-	public var dateComponents: DateComponents {
+	public func dateComponents(calendar: Calendar = .default) -> DateComponents {
 		DateComponents(
 			rawValue: Dictionary(
 				Calendar.Component.allCases.map {
-					($0, component($0))
+					($0, component($0, calendar: calendar))
 				},
 				uniquingKeysWith: { _, p in p }
 			)
 		)
 	}
 	
-	public func component(_ component: Calendar.Component) -> Int {
+	public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
 		switch self {
 		case .interval(let seconds):
 			return Int(Calendar.Component.second.as(component) * seconds)
-		case .dates(let from, let to, let calendar):
+		case .dates(let from, let to):
 			return to.interval(of: component, from: from, calendar: calendar)
 		case .components(let dict):
 			return Int(dict.reduce(0, { $0 + Double($1.value) * $1.key.as(component) }))
@@ -678,11 +674,24 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 	}
 	
 	public static func <(lhs: DateDifference, rhs: DateDifference) -> Bool {
-		lhs.interval < rhs.interval
+		compare(lhs: lhs, rhs: rhs, operation: <)
 	}
 	
 	public static func ==(lhs: DateDifference, rhs: DateDifference) -> Bool {
-		lhs.interval == rhs.interval
+		compare(lhs: lhs, rhs: rhs, operation: ==)
+	}
+	
+	private static func compare(lhs: DateDifference, rhs: DateDifference, operation: (TimeInterval, TimeInterval) -> Bool) -> Bool {
+		switch (lhs, rhs) {
+		case (.dates, .dates):
+			return operation(lhs.interval, rhs.interval)
+		case (.dates(let from, let to), _):
+			return operation(to.timeIntervalSince(from), from.adding(rhs).timeIntervalSince(from))
+		case (_, .dates(let from, let to)):
+			return operation(from.adding(lhs).timeIntervalSince(from), to.timeIntervalSince(from))
+		default:
+			return operation(lhs.interval, rhs.interval)
+		}
 	}
 	
 	fileprivate static func operation(_ lhs: DateDifference, _ rhs: DateDifference, _ block1: (TimeInterval, TimeInterval) -> TimeInterval, _ block2: (Int, Int) -> Int) -> DateDifference {
@@ -695,10 +704,10 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 			return .components(result)
 		case (.interval(let left), .interval(let right)):
 			return .interval(block1(left, right))
-		case (.dates(let from, let to, let calendar), .interval(let interval)):
-			return .dates(from: from, to: from.addingTimeInterval(block1(to.timeIntervalSince(from), interval)), calendar)
-		case (.interval(let interval), .dates(let from, let to, let calendar)):
-			return .dates(from: from, to: from.addingTimeInterval(block1(interval, to.timeIntervalSince(from))), calendar)
+		case (.dates(let from, let to), .interval(let interval)):
+			return .dates(from: from, to: from.addingTimeInterval(block1(to.timeIntervalSince(from), interval)))
+		case (.interval(let interval), .dates(let from, let to)):
+			return .dates(from: from, to: from.addingTimeInterval(block1(interval, to.timeIntervalSince(from))))
 		default:
 			return operation(.interval(lhs.interval), .interval(rhs.interval), block1, block2)
 		}
@@ -708,8 +717,8 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 		switch lhs {
 		case .interval(let interval):
 			return .interval(block1(interval, TimeInterval(rhs)))
-		case .dates(let from, let to, let calendar):
-			return .dates(from: from, to: from.addingTimeInterval(block1(to.timeIntervalSince(from), TimeInterval(rhs))), calendar)
+		case .dates(let from, let to):
+			return .dates(from: from, to: from.addingTimeInterval(block1(to.timeIntervalSince(from), TimeInterval(rhs))))
 		case .components(let lhs):
 			return .components(lhs.mapValues { block2($0, rhs) })
 		}
