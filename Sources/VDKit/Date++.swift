@@ -757,13 +757,13 @@ extension Range where Bound == Date {
 @available(iOS 10.0, *)
 extension DateInterval {
     
-    public var difference: DateDifference {
-        end - start
-    }
+	public var difference: DateDifference {
+		end - start
+	}
     
-    public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) -> DatesCollection {
-        return (start..<end).each(component, step: step, calendar: calendar)
-    }
+	public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) -> DatesCollection {
+		return (start..<end).each(component, step: step, calendar: calendar)
+	}
     
 }
 
