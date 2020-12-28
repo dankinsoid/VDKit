@@ -15,7 +15,7 @@ To simplify operations with dates, this library provides a simple and intuitive 
 
 ##### Some examples
 ```swift
-let afterTomorrow: Date = .today + 2 * .day 
+let afterTomorrow: Date = .today + 2.days
 //or .today + .days(2)
 //or Date.today.adding(2 * .day)
 let difference = date2 - date1
@@ -88,7 +88,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.0.13")
+    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.0.15")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VDKit"])
