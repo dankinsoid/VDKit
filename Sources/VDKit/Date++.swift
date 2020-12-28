@@ -18,7 +18,7 @@ extension Locale {
 }
 
 extension TimeZone {
-	public static var `default` = TimeZone.autoupdatingCurrent
+		public static var `default` = TimeZone.autoupdatingCurrent
 }
 
 public enum Weekdays: Int, CustomStringConvertible {
