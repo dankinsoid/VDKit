@@ -4,7 +4,7 @@ postfix operator ~!
 infix operator !!
 
 public postfix func ~!<T>(_ lhs: T?) throws -> T {
-    guard let value = lhs else { throw OptionalException.noValue }
+    guard let value = lhs else { throw OptionalException.nil }
     return value
 }
 
@@ -26,10 +26,14 @@ extension Optional: OptionalProtocol {
         self = optional
     }
     
-    public func unwrap(throw error: Error = OptionalException.noValue) throws -> Wrapped {
+	public func unwrap(throw error: Error) throws -> Wrapped {
         guard let value = self else { throw error }
         return value
     }
+	
+	public func unwrap(file: String = #file, line: Int = #line, column: Int = #column) throws -> Wrapped {
+		try unwrap(throw: OptionalException.nilAt(file: file, line: line, column: column))
+	}
     
     public func asOptional() -> Wrapped? {
         return self
@@ -37,6 +41,15 @@ extension Optional: OptionalProtocol {
     
 }
 
-public enum OptionalException: String, LocalizedError {
-    case noValue
+public enum OptionalException: LocalizedError {
+	case nilAt(file: String, line: Int, column: Int), `nil`
+	
+	public var errorDescription: String? {
+		switch self {
+		case .nil:
+			return "unexpectedly found nil while unwrapping"
+		case .nilAt(let file, let line, let column):
+			return "unexpectedly found nil while unwrapping at file: \"\(file)\" line: \(line) column: \(column)"
+		}
+	}
 }
