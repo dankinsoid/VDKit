@@ -80,3 +80,97 @@ extension Array {
         }
     }
 }
+
+extension ClosedRange where Bound: FloatingPoint {
+		
+		public func split(count: Int) -> [Bound] {
+				guard count > 0 else { return [] }
+				guard count > 1 else { return [lowerBound] }
+				guard count > 2 else { return [lowerBound, upperBound] }
+				let delta = (upperBound - lowerBound) / Bound(count)
+				var result: [Bound] = []
+				result.append(lowerBound)
+				for _ in 1..<(count - 1) {
+						result.append(result.last! + delta)
+				}
+				result.append(upperBound)
+				return result
+		}
+		
+}
+
+extension Array {
+	
+	func join(with other: [Element], every step: Int, offset: Int) -> [Element] {
+		guard !other.isEmpty else { return self }
+		var result = self
+		var index = offset
+		for element in other {
+			index = Swift.max(0, Swift.min(index + step, count))
+			result.insert(element, at: index)
+			guard index < count - 1 else { return result }
+		}
+		return result
+	}
+	
+}
+
+extension Collection where Element: Collection {
+	public func joinedArray() -> [Element.Element] {
+		Array(joined())
+	}
+}
+
+extension Collection {
+	
+	public var nilIfEmpty: Self? {
+		isEmpty ? nil : self
+	}
+	
+	public func prefix(_ maxLength: Int, where condition: (Element) -> Bool) -> [Element] {
+		var result: [Element] = []
+		result.reserveCapacity(maxLength)
+		for element in self {
+			if condition(element) {
+				result.append(element)
+			}
+			if result.count == maxLength {
+				return result
+			}
+		}
+		return result
+	}
+	
+	public func mapDictionary<Key: Hashable, Value>(_ transform: (Element) -> (Key, Value), uniquingKeysWith: (Value, Value) throws -> Value) rethrows -> [Key: Value] {
+		try Dictionary(map(transform), uniquingKeysWith: uniquingKeysWith)
+	}
+	
+	public func mapDictionary<Key: Hashable, Value>(_ transform: (Element) -> (Key, Value)) -> [Key: Value] {
+		mapDictionary(transform, uniquingKeysWith: { _, second in second })
+	}
+	
+	public func mapDictionary<Key: Hashable>(by key: KeyPath<Element, Key>) -> [Key: Element] {
+		mapDictionary { ($0[keyPath: key], $0) }
+	}
+	
+}
+
+extension Dictionary {
+	
+	public func union(with other: [Key: Value], uniquingKeysWith: (Value, Value) throws -> Value) rethrows -> [Key: Value] {
+		var result = self
+		for (key, value) in other {
+			if let existed = result[key] {
+				result[key] = try uniquingKeysWith(existed, value)
+			} else {
+				result[key] = value
+			}
+		}
+		return result
+	}
+	
+	public func union(with other: [Key: Value]) -> [Key: Value] {
+		union(with: other, uniquingKeysWith: { _, second in second })
+	}
+	
+}

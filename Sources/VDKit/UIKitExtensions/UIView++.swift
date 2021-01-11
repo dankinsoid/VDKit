@@ -90,3 +90,9 @@ fileprivate final class ViewTarget {
     }
     
 }
+
+extension UIViewController {
+	public var vcForPresent: UIViewController {
+		presentedViewController?.vcForPresent ?? presentedViewController ?? self
+	}
+}
