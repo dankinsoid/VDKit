@@ -153,6 +153,14 @@ extension Collection {
 		mapDictionary { ($0[keyPath: key], $0) }
 	}
 	
+	public func compactMapDictionary<Key: Hashable, Value>(_ transform: (Element) -> (Key, Value)?, uniquingKeysWith: (Value, Value) throws -> Value) rethrows -> [Key: Value] {
+		try Dictionary(compactMap(transform), uniquingKeysWith: uniquingKeysWith)
+	}
+	
+	public func compactMapDictionary<Key: Hashable, Value>(_ transform: (Element) -> (Key, Value)?) -> [Key: Value] {
+		compactMapDictionary(transform, uniquingKeysWith: { _, second in second })
+	}
+	
 }
 
 extension Dictionary {
