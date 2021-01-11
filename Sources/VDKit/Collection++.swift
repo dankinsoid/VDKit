@@ -101,7 +101,7 @@ extension ClosedRange where Bound: FloatingPoint {
 
 extension Array {
 	
-	func join(with other: [Element], every step: Int, offset: Int) -> [Element] {
+	public func join(with other: [Element], every step: Int, offset: Int) -> [Element] {
 		guard !other.isEmpty else { return self }
 		var result = self
 		var index = offset
