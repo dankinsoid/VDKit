@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '1.0.30'
+s.version          = '1.0.31'
 s.summary          = 'This repository contains useful extensions on Foundation and UIKit'
 
 s.description      = <<-DESC
