@@ -34,6 +34,29 @@ extension Collection {
     
 }
 
+extension RangeReplaceableCollection  {
+	
+	public subscript(safe index: Index) -> Element? {
+		 get {
+				 guard index >= startIndex, index < endIndex else { return nil }
+				 return self[index]
+		 }
+		 set {
+				 guard index >= startIndex, index <= endIndex else { return }
+				 if let value = newValue {
+						 if index < endIndex  {
+							replaceSubrange(index...index, with: [value])
+						 } else {
+							append(value)
+						 }
+				 } else if index < endIndex  {
+						remove(at: index)
+				 }
+		 }
+ }
+	
+}
+
 extension Array where Element: Hashable {
     public func removeEqual() -> [Element] {
         var result: [Element] = []
@@ -57,27 +80,6 @@ extension Array {
             }
         }
         return result
-    }
-}
-
-extension Array {
-    public subscript(safe index: Index) -> Element? {
-        get {
-            guard index >= startIndex, index < endIndex else { return nil }
-            return self[index]
-        }
-        set {
-            guard index >= startIndex, index <= endIndex else { return }
-            if let value = newValue {
-                if index < endIndex  {
-                    self[index] = value
-                } else {
-                    append(value)
-                }
-            } else if index < endIndex  {
-                remove(at: index)
-            }
-        }
     }
 }
 
