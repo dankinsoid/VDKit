@@ -59,7 +59,7 @@ public final class ChainingProperty<W, C: Chaining<W>, P> {
 	private let chaining: C
 	private let keyPath: ReferenceWritableKeyPath<W, P>
 	
-	fileprivate init(_ value: C, keyPath: ReferenceWritableKeyPath<W, P>) {
+	public init(_ value: C, keyPath: ReferenceWritableKeyPath<W, P>) {
 		chaining = value
 		self.keyPath = keyPath
 	}
