@@ -9,12 +9,12 @@ import Foundation
 
 extension String {
     
-    public func firstUppercased() -> String {
-        return (first?.uppercased() ?? "") + dropFirst()
-    }
-    
-    public var asAttributed: NSMutableAttributedString {
-        return NSMutableAttributedString(string: self)
-    }
+	public func firstUppercased() -> String {
+		return (first?.uppercased() ?? "") + dropFirst()
+	}
+	
+	public var asAttributed: NSMutableAttributedString {
+		return NSMutableAttributedString(string: self)
+	}
     
 }

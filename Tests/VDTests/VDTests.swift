@@ -3,20 +3,25 @@ import XCTest
 
 final class VDTests: XCTestCase {
 	
-    func collectionTests() {
-			var array = [1, 2, 3]
-			XCTAssert(array[safe: 0] == 1)
-			XCTAssert(array[safe: 3] == nil)
-			array[safe: 0] = 0
-			XCTAssert(array == [0, 2, 3])
-			array[safe: 1] = nil
-			XCTAssert(array == [0, 3])
-			array[safe: 2] = 1
-			XCTAssert(array == [0, 3, 1])
-    }
-
-    static var allTests = [
-        ("collectionTests", collectionTests),
-    ]
+	func collectionTests() {
+		var array = [1, 2, 3]
+		XCTAssert(array[safe: 0] == 1)
+		XCTAssert(array[safe: 3] == nil)
+		array[safe: 0] = 0
+		XCTAssert(array == [0, 2, 3])
+		array[safe: 1] = nil
+		XCTAssert(array == [0, 3])
+		array[safe: 2] = 1
+		XCTAssert(array == [0, 3, 1])
+	}
+	
+	func dateTests() {
+		
+	}
+	
+	static var allTests = [
+		("collectionTests", collectionTests),
+		("dateTests", dateTests),
+	]
 	
 }
