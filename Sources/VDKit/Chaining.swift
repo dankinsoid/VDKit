@@ -9,7 +9,7 @@
 import Foundation
 
 open class Chaining<W> {
-	fileprivate var action: (W) -> ()
+	public fileprivate(set) var action: (W) -> ()
 	
 	fileprivate init(action: @escaping (W) -> () = { _ in }) {
 		self.action = action
