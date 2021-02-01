@@ -8,21 +8,23 @@
 
 import Foundation
 
-public class Chaining<W> {
-	fileprivate var action: (W) -> () = { _ in }
+open class Chaining<W> {
+	fileprivate var action: (W) -> ()
 	
-	fileprivate init() {}
+	fileprivate init(action: @escaping (W) -> () = { _ in }) {
+		self.action = action
+	}
 }
 
 @dynamicMemberLookup
 public final class TypeChaining<W>: Chaining<W> {
 	
-	public override init() {
+	public init() {
 		super.init()
 	}
 	
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<W, W, TypeChaining, A> {
-		return ChainingProperty<W, W, TypeChaining, A>(self, keyPath: keyPath, map: { $0 })
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<W, TypeChaining, A> {
+		return ChainingProperty<W, TypeChaining, A>(self, keyPath: keyPath)
 	}
 	
 	public func apply(for values: W...) {
@@ -32,20 +34,19 @@ public final class TypeChaining<W>: Chaining<W> {
 	public func apply(for values: [W]) {
 		values.forEach(action)
 	}
+	
 }
 
 @dynamicMemberLookup
-public final class ValueChaining<W, T>: Chaining<W> {
+public final class ValueChaining<W>: Chaining<W> {
 	fileprivate let wrappedValue: W
-	fileprivate let map: (W) -> T
 	
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<W, T, ValueChaining, A> {
-		ChainingProperty<W, T, ValueChaining, A>(self, keyPath: keyPath, map: map)
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<W, ValueChaining, A> {
+		ChainingProperty<W, ValueChaining, A>(self, keyPath: keyPath)
 	}
 	
-	public init(_ value: W, map: @escaping (W) -> T) {
+	public init(_ value: W) {
 		wrappedValue = value
-		self.map = map
 	}
 	
 	public func apply() {
@@ -54,19 +55,17 @@ public final class ValueChaining<W, T>: Chaining<W> {
 }
 
 @dynamicMemberLookup
-public final class ChainingProperty<W, T, C: Chaining<W>, P> {
+public final class ChainingProperty<W, C: Chaining<W>, P> {
 	private let chaining: C
 	private let keyPath: ReferenceWritableKeyPath<W, P>
-	private let map: (W) -> T
 	
-	fileprivate init(_ value: C, keyPath: ReferenceWritableKeyPath<W, P>, map: @escaping (W) -> T) {
+	fileprivate init(_ value: C, keyPath: ReferenceWritableKeyPath<W, P>) {
 		chaining = value
-		self.map = map
 		self.keyPath = keyPath
 	}
 	
-	public subscript<A>(dynamicMember keyPath: WritableKeyPath<P, A>) -> ChainingProperty<W, T, C, A> {
-		return ChainingProperty<W, T, C, A>(chaining, keyPath: self.keyPath.appending(path: keyPath), map: map)
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<P, A>) -> ChainingProperty<W, C, A> {
+		return ChainingProperty<W, C, A>(chaining, keyPath: self.keyPath.appending(path: keyPath))
 	}
 	
 	public subscript(_ value: P) -> C {
@@ -81,18 +80,18 @@ public final class ChainingProperty<W, T, C: Chaining<W>, P> {
 	
 }
 
-extension ChainingProperty where C == ValueChaining<W, T> {
+extension ChainingProperty where C == ValueChaining<W> {
 	
-	public subscript(_ value: P) -> T {
+	public subscript(_ value: P) -> W {
 		self[value].apply()
-		return map(chaining.wrappedValue)
+		return chaining.wrappedValue
 	}
 	
 }
 
 extension NSObjectProtocol {
 	public static var chain: TypeChaining<Self> { TypeChaining() }
-	public var chain: ValueChaining<Self, Self> { ValueChaining(self, map: { $0 }) }
+	public var chain: ValueChaining<Self> { ValueChaining(self) }
 	
 	public func apply(_ chain: TypeChaining<Self>) -> Self {
 		chain.apply(for: self)
