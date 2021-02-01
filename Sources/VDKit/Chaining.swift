@@ -41,6 +41,10 @@ public struct TypeChaining<W>: Chaining {
 		self.action = {_ in }
 	}
 	
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
+		ChainingProperty<Self, A>(self, keyPath: keyPath)
+	}
+	
 	public func apply(for values: W...) {
 		apply(for: values)
 	}
@@ -64,6 +68,10 @@ public struct ValueChaining<W>: ValueChainingProtocol {
 	
 	public init(_ value: W) {
 		wrappedValue = value
+	}
+	
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
+		ChainingProperty<Self, A>(self, keyPath: keyPath)
 	}
 	
 	public func copy(with action: @escaping (W) -> Void) -> ValueChaining<W> {
