@@ -11,7 +11,7 @@ import Foundation
 open class Chaining<W> {
 	public fileprivate(set) var action: (W) -> ()
 	
-	fileprivate init(action: @escaping (W) -> () = { _ in }) {
+	public init(action: @escaping (W) -> () = { _ in }) {
 		self.action = action
 	}
 }
