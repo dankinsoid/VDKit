@@ -17,6 +17,10 @@ public class Chaining<W> {
 @dynamicMemberLookup
 public final class TypeChaining<W>: Chaining<W> {
 	
+	public override init() {
+		super.init()
+	}
+	
 	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<W, W, TypeChaining, A> {
 		return ChainingProperty<W, W, TypeChaining, A>(self, keyPath: keyPath, map: { $0 })
 	}
@@ -39,7 +43,7 @@ public final class ValueChaining<W, T>: Chaining<W> {
 		ChainingProperty<W, T, ValueChaining, A>(self, keyPath: keyPath, map: map)
 	}
 	
-	fileprivate init(_ value: W, map: @escaping (W) -> T) {
+	public init(_ value: W, map: @escaping (W) -> T) {
 		wrappedValue = value
 		self.map = map
 	}
