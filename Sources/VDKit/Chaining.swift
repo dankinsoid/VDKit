@@ -10,13 +10,13 @@ import Foundation
 
 public protocol Chaining {
 	associatedtype W
-	var action: (W) -> Void { get }
-	func copy(with action: @escaping (W) -> Void) -> Self
+	var action: (W) -> W { get }
+	func copy(with action: @escaping (W) -> W) -> Self
 }
 
 extension Chaining {
 	
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
 		ChainingProperty<Self, A>(self, keyPath: keyPath)
 	}
 	
@@ -24,24 +24,25 @@ extension Chaining {
 
 public protocol ValueChainingProtocol: Chaining {
 	var wrappedValue: W { get }
-	func apply()
+	func apply() -> W
 }
 
 extension ValueChainingProtocol {
-	public func apply() {
+	@discardableResult
+	public func apply() -> W {
 		action(wrappedValue)
 	}
 }
 
 @dynamicMemberLookup
 public struct TypeChaining<W>: Chaining {
-	public private(set) var action: (W) -> Void
+	public private(set) var action: (W) -> W
 	
 	public init() {
-		self.action = {_ in }
+		self.action = { $0 }
 	}
 	
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
 		ChainingProperty<Self, A>(self, keyPath: keyPath)
 	}
 	
@@ -50,10 +51,10 @@ public struct TypeChaining<W>: Chaining {
 	}
 	
 	public func apply(for values: [W]) {
-		values.forEach(action)
+		values.forEach { _ = action($0) }
 	}
 	
-	public func copy(with action: @escaping (W) -> Void) -> TypeChaining<W> {
+	public func copy(with action: @escaping (W) -> W) -> TypeChaining<W> {
 		var result = TypeChaining()
 		result.action = action
 		return result
@@ -64,17 +65,17 @@ public struct TypeChaining<W>: Chaining {
 @dynamicMemberLookup
 public struct ValueChaining<W>: ValueChainingProtocol {
 	public let wrappedValue: W
-	public private(set) var action: (W) -> Void = { _ in }
+	public private(set) var action: (W) -> W = { $0 }
 	
 	public init(_ value: W) {
 		wrappedValue = value
 	}
 	
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
 		ChainingProperty<Self, A>(self, keyPath: keyPath)
 	}
 	
-	public func copy(with action: @escaping (W) -> Void) -> ValueChaining<W> {
+	public func copy(with action: @escaping (W) -> W) -> ValueChaining<W> {
 		var result = ValueChaining(wrappedValue)
 		result.action = action
 		return result
@@ -85,9 +86,9 @@ public struct ValueChaining<W>: ValueChainingProtocol {
 @dynamicMemberLookup
 public struct ChainingProperty<C: Chaining, P> {
 	private var chaining: C
-	private let keyPath: ReferenceWritableKeyPath<C.W, P>
+	private let keyPath: WritableKeyPath<C.W, P>
 	
-	public init(_ value: C, keyPath: ReferenceWritableKeyPath<C.W, P>) {
+	public init(_ value: C, keyPath: WritableKeyPath<C.W, P>) {
 		chaining = value
 		self.keyPath = keyPath
 	}
@@ -100,8 +101,9 @@ public struct ChainingProperty<C: Chaining, P> {
 		let prev = chaining.action
 		let kp = keyPath
 		return chaining.copy {
-			prev($0)
-			$0[keyPath: kp] = value
+			var result = prev($0)
+			result[keyPath: kp] = value
+			return result
 		}
 	}
 	
@@ -111,7 +113,6 @@ extension ChainingProperty where C: ValueChainingProtocol {
 	
 	public subscript(_ value: P) -> C.W {
 		self[value].apply()
-		return chaining.wrappedValue
 	}
 	
 }
