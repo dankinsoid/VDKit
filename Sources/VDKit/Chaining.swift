@@ -14,10 +14,13 @@ public protocol Chaining {
 	func copy(with action: @escaping (W) -> W) -> Self
 }
 
-extension Chaining {
+extension Chaining where W: AnyObject {
 	
-	public subscript<A>(dynamicMember keyPath: WritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
-		ChainingProperty<Self, A>(self, keyPath: keyPath)
+	public func with(_ action: @escaping (W) -> Void) -> Self {
+		copy {
+			action($0)
+			return $0
+		}
 	}
 	
 }

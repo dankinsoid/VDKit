@@ -28,7 +28,6 @@ extension UIView {
 		set { frame.size.height = newValue }
 	}
 	
-	
 	public var vc: UIViewController? {
 		(next as? UIViewController) ?? (next as? UIView)?.vc
 	}
