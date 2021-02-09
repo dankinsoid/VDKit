@@ -89,8 +89,8 @@ public struct ValueChaining<W>: ValueChainingProtocol {
 @dynamicMemberLookup
 public struct ChainingProperty<C: Chaining, P> {
 	public let chaining: C
-	private let setter: (C.W, P) -> C.W
-	private let getter: (C.W) -> P
+	public let setter: (C.W, P) -> C.W
+	public let getter: (C.W) -> P
 	
 	public init(_ value: C, setter: @escaping (C.W, P) -> C.W,  getter: @escaping (C.W) -> P) {
 		chaining = value
