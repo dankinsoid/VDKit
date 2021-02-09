@@ -88,25 +88,42 @@ public struct ValueChaining<W>: ValueChainingProtocol {
 
 @dynamicMemberLookup
 public struct ChainingProperty<C: Chaining, P> {
-	private var chaining: C
-	private let keyPath: WritableKeyPath<C.W, P>
+	public let chaining: C
+	private let setter: (C.W, P) -> C.W
+	private let getter: (C.W) -> P
+	
+	public init(_ value: C, setter: @escaping (C.W, P) -> C.W,  getter: @escaping (C.W) -> P) {
+		chaining = value
+		self.setter = setter
+		self.getter = getter
+	}
 	
 	public init(_ value: C, keyPath: WritableKeyPath<C.W, P>) {
 		chaining = value
-		self.keyPath = keyPath
+		self.setter = {
+			var result = $0
+			result[keyPath: keyPath] = $1
+			return result
+		}
+		self.getter = {
+			$0[keyPath: keyPath]
+		}
 	}
 	
 	public subscript<A>(dynamicMember keyPath: WritableKeyPath<P, A>) -> ChainingProperty<C, A> {
-		return ChainingProperty<C, A>(chaining, keyPath: self.keyPath.appending(path: keyPath))
+		ChainingProperty<C, A>(chaining, setter: {
+			var value = getter($0)
+			value[keyPath: keyPath] = $1
+			return setter($0, value)
+		}, getter: {
+			getter($0)[keyPath: keyPath]
+		}
+		)
 	}
 	
 	public subscript(_ value: P) -> C {
-		let prev = chaining.action
-		let kp = keyPath
-		return chaining.copy {
-			var result = prev($0)
-			result[keyPath: kp] = value
-			return result
+		chaining.copy {
+			setter(chaining.action($0), value)
 		}
 	}
 	
