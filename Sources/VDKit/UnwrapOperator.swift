@@ -15,6 +15,7 @@ public func !!<T>(_ lhs: T?, _ rhs: Error) throws -> T {
 
 public protocol OptionalProtocol {
 	associatedtype Wrapped
+	static var none: Self { get }
 	init(_ optional: Wrapped?)
 	func asOptional() -> Wrapped?
 	func unwrap(throw error: Error) throws -> Wrapped

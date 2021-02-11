@@ -161,11 +161,39 @@ extension ChainingProperty where G: KeyPath<C.W, B> {
 	
 }
 
-
 extension ChainingProperty where G: WritableKeyPath<C.W, B> {
 	
 	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B, A>) -> ChainingProperty<C, A, WritableKeyPath<C.W, A>> {
 		ChainingProperty<C, A, WritableKeyPath<C.W, A>>(chaining, getter: getter.append(keyPath))
+	}
+	
+}
+
+
+extension ChainingProperty where G: KeyPath<C.W, B>, G.B: OptionalProtocol {
+	
+	public subscript<A>(dynamicMember keyPath: KeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining, getter: getter.appending(path: \.okp[keyPath]))
+	}
+	
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[ref: keyPath]))
+	}
+	
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[refo: keyPath]))
+	}
+	
+}
+
+extension ChainingProperty where G: WritableKeyPath<C.W, B>, G.B: OptionalProtocol {
+	
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wr: keyPath]))
+	}
+	
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wro: keyPath]))
 	}
 	
 }
@@ -207,6 +235,62 @@ extension NSObjectProtocol {
 	public func apply(_ chain: TypeChaining<Self>) -> Self {
 		chain.apply(for: self)
 		return self
+	}
+	
+}
+
+extension OptionalProtocol {
+	fileprivate var okp: OKP<Wrapped> {
+		get { OKP(optional: asOptional()) }
+		set { self = .init(newValue.optional) }
+	}
+}
+
+private struct OKP<A> {
+	var optional: A?
+	
+	subscript<B>(_ keyPath: KeyPath<A, B>) -> B? {
+		optional?[keyPath: keyPath]
+	}
+	
+	subscript<B>(wr keyPath: WritableKeyPath<A, B>) -> B? {
+		get { optional?[keyPath: keyPath] }
+		set {
+			if let value = newValue {
+				optional?[keyPath: keyPath] = value
+			}
+		}
+	}
+	
+	subscript<B>(wro keyPath: WritableKeyPath<A, B?>) -> B? {
+		get { optional?[keyPath: keyPath] }
+		set {
+			if let value = newValue {
+				optional?[keyPath: keyPath] = value
+			} else {
+				optional?[keyPath: keyPath] = .none
+			}
+		}
+	}
+	
+	subscript<B>(ref keyPath: ReferenceWritableKeyPath<A, B>) -> B? {
+		get { optional?[keyPath: keyPath] }
+		nonmutating set {
+			if let value = newValue {
+				optional?[keyPath: keyPath] = value
+			}
+		}
+	}
+	
+	subscript<B>(refo keyPath: ReferenceWritableKeyPath<A, B?>) -> B? {
+		get { optional?[keyPath: keyPath] }
+		nonmutating set {
+			if let value = newValue {
+				optional?[keyPath: keyPath] = value
+			} else {
+				optional?[keyPath: keyPath] = .none
+			}
+		}
 	}
 	
 }
