@@ -25,8 +25,12 @@ extension Chaining where W: AnyObject {
 	
 }
 
+public protocol TypeChainingProtocol: Chaining {
+	func apply(for values: [W])
+}
+
 public protocol ValueChainingProtocol: Chaining {
-	var wrappedValue: W { get }
+	var wrappedValue: W { get set }
 	func apply() -> W
 }
 
@@ -38,7 +42,7 @@ extension ValueChainingProtocol {
 }
 
 @dynamicMemberLookup
-public struct TypeChaining<W>: Chaining {
+public struct TypeChaining<W>: TypeChainingProtocol {
 	public private(set) var action: (W) -> W
 	
 	public init() {
@@ -75,7 +79,7 @@ public struct TypeChaining<W>: Chaining {
 
 @dynamicMemberLookup
 public struct ValueChaining<W>: ValueChainingProtocol {
-	public let wrappedValue: W
+	public var wrappedValue: W
 	public private(set) var action: (W) -> W = { $0 }
 	
 	public init(_ value: W) {
@@ -210,20 +214,31 @@ extension WritableKeyPath {
 	}
 }
 
-extension ChainingProperty where G: SetterProtocol {
+extension ChainingProperty where C: TypeChainingProtocol, G: SetterProtocol {
 	
-	public subscript(_ value: G.B) -> C {
-		chaining.copy {
+	public subscript(_ value: G.B) -> ChainingProperty {
+		ChainingProperty(chaining.copy {
 			getter.set(chaining.action($0), value)
-		}
+		}, getter: getter)
 	}
 	
 }
 
 extension ChainingProperty where C: ValueChainingProtocol, G: SetterProtocol {
 	
-	public subscript(apply value: G.B) -> C.W {
-		self[value].apply()
+	public subscript(_ value: G.B) -> ChainingProperty {
+		let new = chaining.apply()
+		var chain = chaining.copy(with: { $0 })
+		chain.wrappedValue = getter.set(new, value)
+		return ChainingProperty(chain, getter: getter)
+	}
+	
+	public subscript(final value: G.B) -> C.W {
+		self[value].chaining.apply()
+	}
+	
+	public func apply() -> C.W {
+		chaining.apply()
 	}
 	
 }
