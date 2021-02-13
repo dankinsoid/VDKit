@@ -222,7 +222,7 @@ extension ChainingProperty where G: SetterProtocol {
 
 extension ChainingProperty where C: ValueChainingProtocol, G: SetterProtocol {
 	
-	public subscript(_ value: G.B) -> C.W {
+	public subscript(apply value: G.B) -> C.W {
 		self[value].apply()
 	}
 	
