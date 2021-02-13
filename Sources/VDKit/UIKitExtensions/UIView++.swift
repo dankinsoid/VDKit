@@ -19,11 +19,11 @@ extension UIView {
 		get { frame.origin.y }
 		set { frame.origin.y = newValue }
 	}
-	public var width: CGFloat {
+	public var w: CGFloat {
 		get { frame.size.width }
 		set { frame.size.width = newValue }
 	}
-	public var height: CGFloat {
+	public var h: CGFloat {
 		get { frame.size.height }
 		set { frame.size.height = newValue }
 	}
