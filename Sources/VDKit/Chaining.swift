@@ -173,33 +173,33 @@ extension ChainingProperty where G: WritableKeyPath<C.W, B> {
 	
 }
 
-//extension ChainingProperty where G: KeyPath<C.W, B>, G.B: OptionalProtocol {
-//
-//	public subscript<A>(dynamicMember keyPath: KeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining, getter: getter.appending(path: \.okp[keyPath]))
-//	}
-//
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[ref: keyPath]))
-//	}
-//
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[refo: keyPath]))
-//	}
-//
-//}
-//
-//extension ChainingProperty where G: WritableKeyPath<C.W, B>, G.B: OptionalProtocol {
-//
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wr: keyPath]))
-//	}
-//
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wro: keyPath]))
-//	}
-//
-//}
+extension ChainingProperty where G: KeyPath<C.W, B>, G.B: OptionalProtocol {
+
+	public subscript<A>(dynamicMember keyPath: KeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining, getter: getter.appending(path: \.okp[keyPath]))
+	}
+
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[ref: keyPath]))
+	}
+
+	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[refo: keyPath]))
+	}
+
+}
+
+extension ChainingProperty where G: WritableKeyPath<C.W, B>, G.B: OptionalProtocol {
+
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wr: keyPath]))
+	}
+
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wro: keyPath]))
+	}
+
+}
 
 extension KeyPath {
 	func append<A>(reference: ReferenceWritableKeyPath<Value, A>) -> ReferenceWritableKeyPath<Root, A> {
@@ -309,41 +309,41 @@ private struct OKP<A> {
 	
 }
 
-postfix operator ~?
-
-public postfix func ~?<C: Chaining, B: GetterProtocol, T>(_ lhs: ChainingProperty<C, T?, B>) -> OptionalChaining<C, B, T> where B.B == T? {
-	OptionalChaining(chaining: lhs)
-}
-
-@dynamicMemberLookup
-public struct OptionalChaining<C: Chaining, G: GetterProtocol, T> where G.B == T?, C.W == G.A {
-	public let chaining: ChainingProperty<C, T?, G>
-}
-
-extension OptionalChaining where G: KeyPath<C.W, T?> {
-
-	public subscript<A>(dynamicMember keyPath: KeyPath<T, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
-		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.appending(path: \.okp[keyPath]))
-	}
-
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<T, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[ref: keyPath]))
-	}
-
-	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[refo: keyPath]))
-	}
-
-}
-
-extension OptionalChaining where G: WritableKeyPath<C.W, T?> {
-
-	public subscript<A>(dynamicMember keyPath: WritableKeyPath<T, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wr: keyPath]))
-	}
-
-	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wro: keyPath]))
-	}
-
-}
+//postfix operator ~?
+//
+//public postfix func ~?<C: Chaining, B: GetterProtocol, T>(_ lhs: ChainingProperty<C, T?, B>) -> OptionalChaining<C, B, T> where B.B == T? {
+//	OptionalChaining(chaining: lhs)
+//}
+//
+//@dynamicMemberLookup
+//public struct OptionalChaining<C: Chaining, G: GetterProtocol, T> where G.B == T?, C.W == G.A {
+//	public let chaining: ChainingProperty<C, T?, G>
+//}
+//
+//extension OptionalChaining where G: KeyPath<C.W, T?> {
+//
+//	public subscript<A>(dynamicMember keyPath: KeyPath<T, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
+//		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.appending(path: \.okp[keyPath]))
+//	}
+//
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<T, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[ref: keyPath]))
+//	}
+//
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
+//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[refo: keyPath]))
+//	}
+//
+//}
+//
+//extension OptionalChaining where G: WritableKeyPath<C.W, T?> {
+//
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<T, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wr: keyPath]))
+//	}
+//
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
+//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wro: keyPath]))
+//	}
+//
+//}
