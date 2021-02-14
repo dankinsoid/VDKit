@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 @testable import VDKit
 
 final class VDTests: XCTestCase {
@@ -19,9 +20,24 @@ final class VDTests: XCTestCase {
 		
 	}
 	
+	func chainTests() {
+		let button = UIButton().chain
+			.layer.cornerRadius[43]
+			.titleLabel.font[.systemFont(ofSize: 43)]
+			.backgroundColor[.red]
+			.tintColor[.black]
+			.clipsToBounds[true]
+			.isHidden[false]
+			.isUserInteractionEnabled[true]
+			.titleEdgeInsets[.zero]
+			.alpha[4]
+			.frame.size[.zero]
+	}
+	
 	static var allTests = [
 		("collectionTests", collectionTests),
 		("dateTests", dateTests),
+		("chainTests", chainTests),
 	]
 	
 }
