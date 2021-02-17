@@ -54,11 +54,11 @@ fileprivate final class ButtonTarget {
 
 public extension UIButton {
     
-    func setBackground(color: UIColor, for state: UIControl.State) {
-        setBackgroundImage(UIImage(color: color), for: state)
-    }
+	func setBackground(color: UIColor, for state: UIControl.State) {
+		setBackgroundImage(UIImage(color: color), for: state)
+	}
 	
-	public var font: UIFont? {
+	var font: UIFont? {
 		get { titleLabel?.font }
 		set { titleLabel?.font = newValue }
 	}

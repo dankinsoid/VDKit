@@ -454,6 +454,7 @@ extension Date {
 }
 
 extension Calendar.Component: CaseIterable {
+	public typealias AllCases = Set<Calendar.Component>
 	
 	public static var week: Calendar.Component { .weekOfYear }
 	
