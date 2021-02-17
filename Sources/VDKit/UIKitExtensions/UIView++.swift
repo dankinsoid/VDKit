@@ -140,8 +140,8 @@ extension UIView {
 	@discardableResult
 	public func observeFrameInWindow(_ action: @escaping (CGRect) -> Void) -> () -> Void {
 		let list = ([self] + superviews).map {
-			$0.observeFrame {
-				guard let window = $0.window else { return }
+			$0.observeFrame {[weak self] in
+				guard let `self` = self, let window = self.window else { return }
 				action($0.convert($0.bounds, to: window))
 			}
 		}
