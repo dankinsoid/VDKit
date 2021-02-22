@@ -11,11 +11,6 @@ import Foundation
 public struct ArrayBuilder<T> {
 	
 	@inlinable
-	public static func buildBlock<T>(_ values: T...) -> [T] {
-		values
-	}
-	
-	@inlinable
 	public static func buildBlock(_ components: [T]...) -> [T] {
 		components.joinedArray()
 	}

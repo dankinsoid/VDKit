@@ -19,6 +19,10 @@ final class VDTests: XCTestCase {
 	@ArrayBuilder<Int>
 	func builderTests() -> [Int] {
 		3
+		if true {
+			4
+			5
+		}
 	}
 	
 	func chainTests() {
