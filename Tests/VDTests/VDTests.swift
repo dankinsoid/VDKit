@@ -16,8 +16,9 @@ final class VDTests: XCTestCase {
 		XCTAssert(array == [0, 3, 1])
 	}
 	
-	func dateTests() {
-		
+	@ArrayBuilder<Int>
+	func builderTests() -> [Int] {
+		3
 	}
 	
 	func chainTests() {
@@ -48,7 +49,6 @@ final class VDTests: XCTestCase {
 	
 	static var allTests = [
 		("collectionTests", collectionTests),
-		("dateTests", dateTests),
 		("chainTests", chainTests),
 	]
 	
