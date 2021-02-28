@@ -550,7 +550,7 @@ extension Calendar.Component: CaseIterable {
 	public func `as`(_ component: Calendar.Component) -> Double {
 		guard component != .second else { return inSeconds }
 		let other = component.inSeconds
-		guard other != .infinity else { return 0 }
+		guard other != .infinity, other != 0 else { return 0 }
 		return inSeconds / other
 	}
 	
