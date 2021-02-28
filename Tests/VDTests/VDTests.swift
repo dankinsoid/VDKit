@@ -19,9 +19,9 @@ final class VDTests: XCTestCase {
 	@ArrayBuilder<Int>
 	func builderTests() -> [Int] {
 		3
-		if true {
-			4
-			5
+		switch 4 == 5 {
+		case true: 5
+		case false: 5
 		}
 	}
 	

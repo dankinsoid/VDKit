@@ -12,7 +12,7 @@ public protocol ArrayInitable {
 	static func create(from: [Item]) -> Item
 }
 
-@_functionBuilder
+@resultBuilder
 public struct ComposeBuilder<C: ArrayInitable> {
 	
 	@inlinable
