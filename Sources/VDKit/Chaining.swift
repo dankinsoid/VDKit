@@ -41,6 +41,14 @@ extension ValueChainingProtocol {
 	}
 }
 
+extension ValueChainingProtocol {
+	public func `do`(_ action: @escaping (W) -> Void) -> Self {
+		let new = apply()
+		action(new)
+		return self
+	}
+}
+
 @dynamicMemberLookup
 public struct TypeChaining<W>: TypeChainingProtocol {
 	public private(set) var action: (W) -> W
@@ -226,7 +234,7 @@ extension ChainingProperty where C: ValueChainingProtocol {
 		}
 		return chain
 	}
-
+	
 //	public subscript(final value: G.B) -> C.W {
 //		self[value].apply()
 //	}
