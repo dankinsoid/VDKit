@@ -16,7 +16,7 @@ public protocol Chaining {
 
 extension Chaining where W: AnyObject {
 	
-	public func with(_ action: @escaping (W) -> Void) -> Self {
+	public func `do`(_ action: @escaping (W) -> Void) -> Self {
 		copy {
 			action($0)
 			return $0
