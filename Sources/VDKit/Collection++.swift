@@ -31,7 +31,18 @@ extension Collection {
         }
         return nil
     }
-    
+}
+
+extension Sequence {
+	
+	public func scan<Result>(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> [Result] {
+		var result = initialResult
+		return try map {
+			result = try nextPartialResult(result, $0)
+			return result
+		}
+	}
+	
 }
 
 extension RangeReplaceableCollection  {
