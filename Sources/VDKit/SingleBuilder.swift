@@ -7,7 +7,7 @@
 
 import Foundation
 
-@resultBuilder
+@_functionBuilder
 public struct SingleBuilder<T> {
 	
 	public static func buildBlock(_ components: T) -> T {
@@ -46,12 +46,4 @@ extension SingleBuilder where T: RangeReplaceableCollection {
 		component ?? T.init()
 	}
 	
-}
-
-@SingleBuilder<[Int]>
-func f() -> [Int] {
-	switch 2 == 5 {
-	case true:	5
-	case false:	[0]
-	}
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-@resultBuilder
+@_functionBuilder
 public struct ArrayBuilder<T> {
 	
 	@inlinable
