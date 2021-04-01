@@ -116,7 +116,7 @@ public func -<L: PareProtocol, R: PareProtocol>(_ lhs: L, _ rhs: R) -> L where L
 
 extension PareProtocol where Left: Numeric, Left == Right {
     
-    public static prefix func -(_ rhs: inout Self) -> Self {
+    public static prefix func -(_ rhs: Self) -> Self {
         let r = rhs.pare
         return Self(pare: (-1 * r.0, -1 * r.1))
     }
