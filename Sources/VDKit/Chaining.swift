@@ -226,13 +226,12 @@ extension ChainingProperty where C: TypeChainingProtocol {
 extension ChainingProperty where C: ValueChainingProtocol {
 
 	public subscript(_ value: B) -> C {
-		var new = chaining.apply()
-		var chain = chaining.copy(with: { $0 })
-		if let kp = getter as? WritableKeyPath<C.W, B> {
-			new[keyPath: kp] = value
-			chain.wrappedValue = new
+		guard let kp = getter as? WritableKeyPath<C.W, B> else { return chaining }
+		return chaining.copy {
+			var result = $0
+			result[keyPath: kp] = value
+			return result
 		}
-		return chain
 	}
 	
 //	public subscript(final value: G.B) -> C.W {
