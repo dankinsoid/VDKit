@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	
 	public func bindSize(to binder: Binding<CGSize>) -> some View {
@@ -53,6 +54,7 @@ extension View {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct GeometryBindingModifier: ViewModifier {
 	public let id = UUID()
 	public let binder: (GeometryProxy) -> Void
@@ -75,6 +77,7 @@ public struct GeometryBindingModifier: ViewModifier {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct SizePreferenceKey: PreferenceKey {
 	static var defaultValue: [UUID: GeometryProxyData] { [:] }
 	
@@ -83,6 +86,7 @@ private struct SizePreferenceKey: PreferenceKey {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct GeometryProxyData: Equatable {
 	let proxy: GeometryProxy
 	
@@ -91,11 +95,13 @@ private struct GeometryProxyData: Equatable {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension GeometryProxy {
 	public var width: CGFloat { size.width }
 	public var height: CGFloat { size.height }
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public enum Geometry {
 	
 	public static func hStack<Content: View>(alignment: VerticalAlignment = .center, spacing: CGFloat? = nil, @ViewBuilder content: @escaping (GeometryProxy) -> Content) -> some View {
