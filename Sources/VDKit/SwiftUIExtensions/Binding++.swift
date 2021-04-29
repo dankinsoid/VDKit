@@ -85,6 +85,13 @@ extension Binding {
 			set: { _ in }
 		)
 	}
+	
+	public static func `var`<Base>(_ base: Base, _ keyPath: ReferenceWritableKeyPath<Base, Value>) -> Binding {
+		Binding(
+			get: { base[keyPath: keyPath] },
+			set: { base[keyPath: keyPath] = $0 }
+		)
+	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)

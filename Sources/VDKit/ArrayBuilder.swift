@@ -48,5 +48,4 @@ public struct ArrayBuilder<T> {
 	//	static func buildFinalResult(_ component: [T]) -> <#Result#> {
 	//		<#code#>
 	//	}
-	
 }
