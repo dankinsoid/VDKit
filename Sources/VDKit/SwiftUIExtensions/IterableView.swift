@@ -9,14 +9,17 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public protocol IterableView: View {
+public protocol IterableViewType {
 	var count: Int { get }
 	func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int
 	func iterate<V: IterableViewVisitor>(with visitor: V)
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension IterableView {
+public typealias IterableView = IterableViewType & View
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension IterableViewType {
 	public func iterate<V: IterableViewVisitor>(with visitor: V) {
 		iterate(with: visitor, in: 0..<count)
 	}

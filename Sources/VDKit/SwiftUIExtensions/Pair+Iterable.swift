@@ -19,10 +19,10 @@ extension Pair: View where F: View, S: View {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension Pair: IterableView where F: IterableView, S: IterableView {
+extension Pair: IterableViewType where F: View, S: View {
 	
 	public var count: Int {
-		_0.count + _1.count
+		_0._count + _1._count
 	}
 	
 	public func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int {

@@ -20,7 +20,7 @@ public struct OptionalView<Wrapped: View>: View {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension OptionalView: IterableView where Wrapped: IterableView {
+extension OptionalView: IterableViewType where Wrapped: IterableViewType {
 	
 	public var count: Int {
 		wrapped?.count ?? 0

@@ -10,7 +10,7 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension ForEach: IterableView where Content: IterableView {
-	public var count: Int { data.reduce(0) { $0 + content($1).count } }
+	public var count: Int { data.reduce(0) { $0 + content($1)._count } }
 	
 	public static func iterable(_ data: Data, id: KeyPath<Data.Element, ID>, @IterableViewBuilder _ content: @escaping (Data.Element) -> Content) -> ForEach {
 		ForEach(data, id: id, content: content)
@@ -31,4 +31,8 @@ extension ForEach where Content: IterableView, ID: Identifiable, Data.Element ==
 	public static func iterable(_ data: Data, @IterableViewBuilder _ content: @escaping (Data.Element) -> Content) -> ForEach {
 		ForEach(data, content: content)
 	}
+}
+
+extension View {
+	var _count: Int { (self as? IterableViewType)?.count ?? 1 }
 }

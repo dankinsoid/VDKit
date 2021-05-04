@@ -28,3 +28,19 @@ public struct IterableGroup<Body: IterableView>: IterableView {
 		body.iterate(with: visitor)
 	}
 }
+
+extension Group: IterableView {
+	
+	public func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int {
+		let mirror = Mirror(reflecting: self)
+		mirror.children.forEach {
+			if let iterable = $0.value as? IterableViewType {
+				iterable.iterate(with: visitor, in: range)
+			} else {
+				AnyView(_fromValue: $0.value).map {
+					visitor.visit($0)
+				}
+			}
+		}
+	}
+}
