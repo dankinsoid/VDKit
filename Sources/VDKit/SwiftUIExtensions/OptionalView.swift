@@ -26,10 +26,6 @@ extension OptionalView: IterableViewType where Wrapped: IterableViewType {
 		wrapped?.count ?? 0
 	}
 	
-	public func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int {
-		wrapped?.iterate(with: visitor, in: range)
-	}
-	
 	public func iterate<V: IterableViewVisitor>(with visitor: V) {
 		wrapped?.iterate(with: visitor)
 	}

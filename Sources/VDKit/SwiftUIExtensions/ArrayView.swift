@@ -30,15 +30,11 @@ public struct ArrayView<Content: View>: View, ExpressibleByArrayLiteral {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension ArrayView: IterableView where Content: IterableView {
+extension ArrayView: IterableViewType {
 	
-	public var count: Int { content.count }
-	
-	public func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int {
-		content[range.relative(to: content)].forEach { $0.iterate(with: visitor) }
-	}
+	public var count: Int { content.reduce(0) { $0 + $1.contentCount } }
 	
 	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		content.forEach { $0.iterate(with: visitor) }
+		content.forEach { $0.iterateContent(with: visitor) }
 	}
 }

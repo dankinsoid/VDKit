@@ -11,7 +11,6 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol IterableViewType {
 	var count: Int { get }
-	func iterate<V: IterableViewVisitor, R: RangeExpression>(with visitor: V, in range: R) where R.Bound == Int
 	func iterate<V: IterableViewVisitor>(with visitor: V)
 }
 
@@ -19,8 +18,20 @@ public protocol IterableViewType {
 public typealias IterableView = IterableViewType & View
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension IterableViewType {
-	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		iterate(with: visitor, in: 0..<count)
+extension View {
+	public var contentCount: Int { ((self as? IterableViewType) ?? (content as? IterableViewType))?.count ?? 1 }
+	
+	public func iterateContent<V: IterableViewVisitor>(with visitor: V) {
+		if let iterable = (self as? IterableViewType) ?? (content as? IterableViewType) {
+			iterable.iterate(with: visitor)
+		} else {
+			visitor.visit(self)
+		}
+	}
+	
+	public var contentArray: [AnyView] {
+		let iterator = AnyViewVisitor()
+		iterateContent(with: iterator)
+		return iterator.anyViews
 	}
 }
