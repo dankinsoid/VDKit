@@ -11,15 +11,32 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	public var viewTag: AnyHashable? {
-		Mirror(reflecting: self).descendant("modifier", "value", "tagged") as? AnyHashable
+		Mirror(reflecting: self).recursive(path: ["modifier", "value", "tagged"]) as? AnyHashable
 	}
 	
 	var content: Any? { Mirror(reflecting: self).last("content") }
 }
 
 extension Mirror {
-	func last(_ first: MirrorPath) -> Any? {
-		let current = descendant(first)
+	
+	func last(_ first: String) -> Any? {
+		let current = recursive(path: [first])
 		return current.flatMap { Mirror(reflecting: $0).last(first) } ?? current
+	}
+	
+	func recursive<C: Collection>(path: C) -> Any? where C.Element == String {
+		guard !path.isEmpty else { return nil }
+		if let value = children.first(where: { $0.label == path.first })?.value {
+			if path.count == 1 { return value }
+			if let result = Mirror(reflecting: value).recursive(path: path.dropFirst()) {
+				return result
+			}
+		}
+		for (_, value) in children {
+			if let result = Mirror(reflecting: value).recursive(path: path) {
+				return result
+			}
+		}
+		return nil
 	}
 }
