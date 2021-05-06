@@ -143,11 +143,6 @@ public struct IterableViewBuilder {
 	}
 	
 	@inline(__always)
-	public static func buildExpression<F: UIViewController>(_ expression: F) -> SingleView<F> {
-		SingleView(expression)
-	}
-	
-	@inline(__always)
 	public static func buildLimitedAvailability<F: IterableView>(_ component: F) -> F {
 		component
 	}

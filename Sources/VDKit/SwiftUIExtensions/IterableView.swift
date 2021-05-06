@@ -18,20 +18,11 @@ public protocol IterableViewType {
 public typealias IterableView = IterableViewType & View
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension View {
-	public var contentCount: Int { ((self as? IterableViewType) ?? (content as? IterableViewType))?.count ?? 1 }
-	
-	public func iterateContent<V: IterableViewVisitor>(with visitor: V) {
-		if let iterable = (self as? IterableViewType) ?? (content as? IterableViewType) {
-			iterable.iterate(with: visitor)
-		} else {
-			visitor.visit(self)
-		}
-	}
+extension IterableViewType {
 	
 	public var contentArray: [AnyView] {
 		let iterator = AnyViewVisitor()
-		iterateContent(with: iterator)
+		iterate(with: iterator)
 		return iterator.anyViews
 	}
 }

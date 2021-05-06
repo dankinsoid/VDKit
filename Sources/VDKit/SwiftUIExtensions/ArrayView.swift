@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct ArrayView<Content: View>: View, ExpressibleByArrayLiteral {
+public struct ArrayView<Content: IterableView>: IterableView, ExpressibleByArrayLiteral {
 	public var content: [Content]
 	
 	public var body: some View {
@@ -27,14 +27,10 @@ public struct ArrayView<Content: View>: View, ExpressibleByArrayLiteral {
 	public init(@ArrayBuilder<Content> _ content: () -> [Content]) {
 		self.content = content()
 	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension ArrayView: IterableViewType {
 	
-	public var count: Int { content.reduce(0) { $0 + $1.contentCount } }
+	public var count: Int { content.reduce(0) { $0 + $1.count } }
 	
 	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		content.forEach { $0.iterateContent(with: visitor) }
+		content.forEach { $0.iterate(with: visitor) }
 	}
 }

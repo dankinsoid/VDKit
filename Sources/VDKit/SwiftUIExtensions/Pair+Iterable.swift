@@ -19,15 +19,15 @@ extension Pair: View where F: View, S: View {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension Pair: IterableViewType where F: View, S: View {
+extension Pair: IterableViewType where F: IterableViewType, S: IterableViewType {
 	
 	public var count: Int {
-		_0.contentCount + _1.contentCount
+		_0.count + _1.count
 	}
 	
 	public func iterate<V: IterableViewVisitor>(with visitor: V) {
 		guard count > 0 else { return }
-		_0.iterateContent(with: visitor)
-		_1.iterateContent(with: visitor)
+		_0.iterate(with: visitor)
+		_1.iterate(with: visitor)
 	}
 }

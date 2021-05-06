@@ -13,8 +13,6 @@ extension View {
 	public var viewTag: AnyHashable? {
 		Mirror(reflecting: self).recursive(path: ["modifier", "value", "tagged"]) as? AnyHashable
 	}
-	
-	var content: Any? { Mirror(reflecting: self).last("content") }
 }
 
 extension Mirror {
