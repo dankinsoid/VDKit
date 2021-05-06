@@ -25,9 +25,8 @@ extension Pair: IterableViewType where F: IterableViewType, S: IterableViewType 
 		_0.count + _1.count
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		guard count > 0 else { return }
-		_0.iterate(with: visitor)
-		_1.iterate(with: visitor)
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		guard count > 0 else { return true }
+		return _0.iterate(with: visitor) && _1.iterate(with: visitor)
 	}
 }

@@ -11,7 +11,7 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol IterableViewType {
 	var count: Int { get }
-	func iterate<V: IterableViewVisitor>(with visitor: V)
+	func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -22,7 +22,7 @@ extension IterableViewType {
 	
 	public var contentArray: [AnyView] {
 		let iterator = AnyViewVisitor()
-		iterate(with: iterator)
+		_ = iterate(with: iterator)
 		return iterator.anyViews
 	}
 }

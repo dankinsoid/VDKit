@@ -30,7 +30,7 @@ public struct ArrayView<Content: IterableView>: IterableView, ExpressibleByArray
 	
 	public var count: Int { content.reduce(0) { $0 + $1.count } }
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		content.forEach { $0.iterate(with: visitor) }
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		!content.contains(where: { !$0.iterate(with: visitor) })
 	}
 }

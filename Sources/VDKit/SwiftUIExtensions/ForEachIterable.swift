@@ -16,8 +16,8 @@ extension ForEach: IterableViewType where Content: IterableView {
 		ForEach(data, id: id, content: content)
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		data.map(content).forEach { $0.iterate(with: visitor) }
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		!data.map(content).contains(where: { !$0.iterate(with: visitor) })
 	}
 }
 

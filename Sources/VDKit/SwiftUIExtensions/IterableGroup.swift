@@ -20,7 +20,7 @@ extension Group: IterableViewType where Content: IterableViewType {
 		children.reduce(0) { $0 + $1.count }
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) {
-		children.forEach { $0.iterate(with: visitor) }
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		!children.contains(where: { !$0.iterate(with: visitor) })
 	}
 }
