@@ -1,0 +1,35 @@
+//
+//  File.swift
+//  
+//
+//  Created by Данил Войдилов on 08.05.2021.
+//
+
+import Foundation
+import SwiftUI
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+public enum IfViewIterable<First: IterableView, Second: IterableView>: IterableView {
+	case first(First), second(Second)
+	
+	public var body: some View {
+		switch self {
+		case .first(let first): 	first.body
+		case .second(let second): second.body
+		}
+	}
+	
+	public var count: Int {
+		switch self {
+		case .first(let first): return first.count
+		case .second(let second): return second.count
+		}
+	}
+	
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		switch self {
+		case .first(let first): return first.iterate(with: visitor)
+		case .second(let second): return second.iterate(with: visitor)
+		}
+	}
+}

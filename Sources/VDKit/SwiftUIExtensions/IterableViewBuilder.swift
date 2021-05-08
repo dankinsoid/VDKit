@@ -118,13 +118,13 @@ public struct IterableViewBuilder {
 	}
 	
 	@inline(__always)
-	public static func buildEither<F: IterableView>(first: F) -> F {
-		first
+	public static func buildEither<F: IterableView, S: IterableView>(first: F) -> IfViewIterable<F, S> {
+		.first(first)
 	}
 	
 	@inline(__always)
-	public static func buildEither<F: IterableView>(second: F) -> F {
-		second
+	public static func buildEither<F: IterableView, S: IterableView>(second: S) -> IfViewIterable<F, S> {
+		.second(second)
 	}
 	
 	@inline(__always)
