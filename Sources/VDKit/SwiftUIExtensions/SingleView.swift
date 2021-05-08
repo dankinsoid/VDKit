@@ -9,12 +9,16 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct SingleView<Body: View>: IterableView {
-	public var body: Body
+public struct SingleView<Content: View>: IterableView {
+	public var content: Content
 	public var count: Int { 1 }
 	
-	public init(_ body: Body) {
-		self.body = body
+	public var body: Content.Body {
+		content.body
+	}
+	
+	public init(_ content: Content) {
+		self.content = content
 	}
 	
 	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
