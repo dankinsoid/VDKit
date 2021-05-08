@@ -26,15 +26,8 @@ public struct SingleView<Content: View>: IterableView {
 	}
 	
 	@IterableViewBuilder
-	public func suffix(_ maxCount: Int) -> some IterableView {
-		if maxCount > 0 {
-			self
-		}
-	}
-	
-	@IterableViewBuilder
-	public func prefix(_ maxCount: Int) -> some IterableView {
-		if maxCount > 0 {
+	public func subrange(at range: Range<Int>) -> some IterableView {
+		if range.contains(0) {
 			self
 		}
 	}

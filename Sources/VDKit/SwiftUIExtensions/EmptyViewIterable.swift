@@ -11,6 +11,5 @@ import SwiftUI
 extension EmptyView: IterableView {
 	public var count: Int { 0 }
 	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool { true }
-	public func suffix(_ maxCount: Int) -> some IterableView { self }
-	public func prefix(_ maxCount: Int) -> some IterableView { self }
+	public func subrange(at range: Range<Int>) -> some IterableView { EmptyView() }
 }

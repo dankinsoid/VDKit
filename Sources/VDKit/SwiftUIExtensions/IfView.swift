@@ -34,18 +34,10 @@ public enum IfViewIterable<First: IterableView, Second: IterableView>: IterableV
 	}
 	
 	@IterableViewBuilder
-	public func prefix(_ maxCount: Int) -> some IterableView {
+	public func subrange(at range: Range<Int>) -> some IterableView {
 		switch self {
-		case .first(let first): 	first.prefix(maxCount)
-		case .second(let second): second.prefix(maxCount)
-		}
-	}
-	
-	@IterableViewBuilder
-	public func suffix(_ maxCount: Int) -> some IterableView {
-		switch self {
-		case .first(let first): 	first.suffix(maxCount)
-		case .second(let second): second.suffix(maxCount)
+		case .first(let first): 	first.subrange(at: range)
+		case .second(let second): second.subrange(at: range)
 		}
 	}
 }

@@ -34,11 +34,7 @@ public struct ArrayView<Content: IterableView>: IterableView, ExpressibleByArray
 		!content.contains(where: { !$0.iterate(with: visitor) })
 	}
 	
-	public func prefix(_ maxCount: Int) -> some IterableView {
-		ArrayView(content.prefix(maxCount))
-	}
-	
-	public func suffix(_ maxCount: Int) -> some IterableView {
-		ArrayView(content.suffix(maxCount))
+	public func subrange(at range: Range<Int>) -> some IterableView {
+		ArrayView(content[range.clamped(to: 0..<content.count)])
 	}
 }

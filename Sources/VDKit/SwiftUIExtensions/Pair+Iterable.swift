@@ -35,20 +35,22 @@ extension Pair: IterableViewType where F: IterableViewType, S: IterableViewType 
 extension Pair: IterableView where F: IterableView, S: IterableView {
 	
 	@IterableViewBuilder
-	public func prefix(_ maxCount: Int) -> some IterableView {
-		if maxCount > _0.count {
-			Pair<F, S.Prefix>(_0, _1.prefix(maxCount - _0.count))
+	public func subrange(at range: Range<Int>) -> some IterableView {
+		if range.upperBound < _0.count {
+			_0.subrange(at: range)
+		} else if range.lowerBound >= _0.count {
+			_1.subrange(at: range.plus(-_0.count))
 		} else {
-			_0.prefix(maxCount)
+			Pair<F.Subview, S.Subview>(
+				_0.subrange(at: range.clamped(to: 0..<_0.count)),
+				_1.subrange(at: range.plus(-_0.count).clamped(to: 0..<_1.count))
+			)
 		}
 	}
-	
-	@IterableViewBuilder
-	public func suffix(_ maxCount: Int) -> some IterableView {
-		if maxCount > _1.count {
-			Pair<F.Suffix, S>(_0.suffix(maxCount - _1.count), _1)
-		} else {
-			_1.suffix(maxCount)
-		}
+}
+
+extension Range where Bound == Int {
+	func plus(_ count: Int) -> Range {
+		(lowerBound + count)..<(upperBound + count)
 	}
 }

@@ -16,10 +16,20 @@ public protocol IterableViewType {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol IterableView: IterableViewType, View {
-	associatedtype Prefix: IterableView
-	associatedtype Suffix: IterableView
-	func prefix(_ maxCount: Int) -> Prefix
-	func suffix(_ maxCount: Int) -> Suffix
+	associatedtype Subview: IterableView
+	func subrange(at range: Range<Int>) -> Subview
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension IterableView {
+	public func suffix(_ maxCount: Int) -> Subview {
+		let cnt = count
+		return subrange(at: max(0, cnt - maxCount)..<cnt)
+	}
+	
+	public func perfix(_ maxCount: Int) -> Subview {
+		return subrange(at: 0..<(min(maxCount, count)))
+	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
