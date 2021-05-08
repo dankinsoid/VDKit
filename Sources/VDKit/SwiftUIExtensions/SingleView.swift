@@ -24,4 +24,18 @@ public struct SingleView<Content: View>: IterableView {
 	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
 		visitor.visit(body)
 	}
+	
+	@IterableViewBuilder
+	public func suffix(_ maxCount: Int) -> some IterableView {
+		if maxCount > 0 {
+			self
+		}
+	}
+	
+	@IterableViewBuilder
+	public func prefix(_ maxCount: Int) -> some IterableView {
+		if maxCount > 0 {
+			self
+		}
+	}
 }

@@ -32,4 +32,20 @@ public enum IfViewIterable<First: IterableView, Second: IterableView>: IterableV
 		case .second(let second): return second.iterate(with: visitor)
 		}
 	}
+	
+	@IterableViewBuilder
+	public func prefix(_ maxCount: Int) -> some IterableView {
+		switch self {
+		case .first(let first): 	first.prefix(maxCount)
+		case .second(let second): second.prefix(maxCount)
+		}
+	}
+	
+	@IterableViewBuilder
+	public func suffix(_ maxCount: Int) -> some IterableView {
+		switch self {
+		case .first(let first): 	first.suffix(maxCount)
+		case .second(let second): second.suffix(maxCount)
+		}
+	}
 }

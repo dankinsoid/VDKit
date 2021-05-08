@@ -30,3 +30,25 @@ extension Pair: IterableViewType where F: IterableViewType, S: IterableViewType 
 		return _0.iterate(with: visitor) && _1.iterate(with: visitor)
 	}
 }
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Pair: IterableView where F: IterableView, S: IterableView {
+	
+	@IterableViewBuilder
+	public func prefix(_ maxCount: Int) -> some IterableView {
+		if maxCount > _0.count {
+			Pair<F, S.Prefix>(_0, _1.prefix(maxCount - _0.count))
+		} else {
+			_0.prefix(maxCount)
+		}
+	}
+	
+	@IterableViewBuilder
+	public func suffix(_ maxCount: Int) -> some IterableView {
+		if maxCount > _1.count {
+			Pair<F.Suffix, S>(_0.suffix(maxCount - _1.count), _1)
+		} else {
+			_1.suffix(maxCount)
+		}
+	}
+}

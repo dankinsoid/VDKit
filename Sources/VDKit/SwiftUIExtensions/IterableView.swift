@@ -15,7 +15,12 @@ public protocol IterableViewType {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public typealias IterableView = IterableViewType & View
+public protocol IterableView: IterableViewType, View {
+	associatedtype Prefix: IterableView
+	associatedtype Suffix: IterableView
+	func prefix(_ maxCount: Int) -> Prefix
+	func suffix(_ maxCount: Int) -> Suffix
+}
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension IterableViewType {
