@@ -14,8 +14,8 @@ public enum IfViewIterable<First: IterableView, Second: IterableView>: IterableV
 	
 	public var body: some View {
 		switch self {
-		case .first(let first): 	first.body
-		case .second(let second): second.body
+		case .first(let first): 	first
+		case .second(let second): second
 		}
 	}
 	

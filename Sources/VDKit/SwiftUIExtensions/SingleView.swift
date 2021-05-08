@@ -13,8 +13,8 @@ public struct SingleView<Content: View>: IterableView {
 	public var content: Content
 	public var count: Int { 1 }
 	
-	public var body: Content.Body {
-		content.body
+	public var body: Content {
+		content
 	}
 	
 	public init(_ content: Content) {
