@@ -27,7 +27,7 @@ extension IterableView {
 		return subrange(at: max(0, cnt - maxCount)..<cnt)
 	}
 	
-	public func perfix(_ maxCount: Int) -> Subview {
+	public func prefix(_ maxCount: Int) -> Subview {
 		return subrange(at: 0..<(min(maxCount, count)))
 	}
 }
