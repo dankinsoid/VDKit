@@ -11,7 +11,22 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol IterableViewType {
 	var count: Int { get }
-	func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool
+	func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension IterableViewType {
+	
+	@discardableResult
+	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+		iterate(with: visitor, reversed: false)
+	}
+	
+	public var contentArray: [AnyView] {
+		let iterator = AnyViewVisitor()
+		_ = iterate(with: iterator)
+		return iterator.anyViews
+	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -22,22 +37,17 @@ public protocol IterableView: IterableViewType, View {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension IterableView {
+	
+	public subscript(_ index: Int) -> Subview {
+		subrange(at: index..<(index + 1))
+	}
+	
 	public func suffix(_ maxCount: Int) -> Subview {
 		let cnt = count
 		return subrange(at: max(0, cnt - maxCount)..<cnt)
 	}
 	
 	public func prefix(_ maxCount: Int) -> Subview {
-		return subrange(at: 0..<(min(maxCount, count)))
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension IterableViewType {
-	
-	public var contentArray: [AnyView] {
-		let iterator = AnyViewVisitor()
-		_ = iterate(with: iterator)
-		return iterator.anyViews
+		subrange(at: 0..<(min(maxCount, count)))
 	}
 }

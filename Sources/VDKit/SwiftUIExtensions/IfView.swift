@@ -26,10 +26,10 @@ public enum IfViewIterable<First: IterableView, Second: IterableView>: IterableV
 		}
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+	public func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool {
 		switch self {
-		case .first(let first): return first.iterate(with: visitor)
-		case .second(let second): return second.iterate(with: visitor)
+		case .first(let first): return first.iterate(with: visitor, reversed: reversed)
+		case .second(let second): return second.iterate(with: visitor, reversed: reversed)
 		}
 	}
 	

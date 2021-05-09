@@ -21,7 +21,7 @@ public struct SingleView<Content: View>: IterableView {
 		self.content = content
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
+	public func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool {
 		visitor.visit(body)
 	}
 	

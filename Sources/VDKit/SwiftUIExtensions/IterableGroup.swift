@@ -22,8 +22,8 @@ public struct IterableGroup<Content: IterableView>: IterableView {
 		content.count
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
-		content.iterate(with: visitor)
+	public func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool {
+		content.iterate(with: visitor, reversed: reversed)
 	}
 	
 	public func subrange(at range: Range<Int>) -> some IterableView {

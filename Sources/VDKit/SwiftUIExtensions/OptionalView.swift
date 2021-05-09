@@ -26,8 +26,8 @@ extension OptionalView: IterableViewType where Wrapped: IterableViewType {
 		wrapped?.count ?? 0
 	}
 	
-	public func iterate<V: IterableViewVisitor>(with visitor: V) -> Bool {
-		wrapped?.iterate(with: visitor) ?? true
+	public func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool {
+		wrapped?.iterate(with: visitor, reversed: reversed) ?? true
 	}
 }
 
