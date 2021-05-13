@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Font {
 	
 	public var providerType: FontProviderType? {
@@ -24,6 +25,7 @@ extension Font {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public indirect enum FontProviderType {
 	case named(String, CGFloat, Font.TextStyle?)
 	case style(Font.TextStyle, Font.Design, Font.Weight?)
@@ -242,6 +244,7 @@ public indirect enum FontProviderType {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public enum FontModifierType {
 	case bold, italic, monospacedDigit, lowercaseSmallCaps, smallCaps, uppercaseSmallCaps, weight(Font.Weight)
 	@available(iOS 14.0, *)
@@ -277,6 +280,7 @@ public enum FontModifierType {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Font.TextStyle {
 	public var uiFontStyle: UIFont.TextStyle {
 		switch self {
@@ -296,6 +300,7 @@ extension Font.TextStyle {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Font.Weight {
 	public var uiFontWeight: UIFont.Weight {
 		(Mirror(reflecting: self).children.first?.value as? CGFloat).map {
@@ -304,6 +309,7 @@ extension Font.Weight {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Font.Design {
 	public var uiFontDesign: UIFontDescriptor.SystemDesign {
 		switch self {
