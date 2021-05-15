@@ -56,7 +56,6 @@ extension View {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct GeometryBindingModifier: ViewModifier {
-	public let id = UUID()
 	public let binder: (GeometryProxy) -> Void
 	
 	public init(_ binder: @escaping (GeometryProxy) -> Void) {
@@ -66,11 +65,12 @@ public struct GeometryBindingModifier: ViewModifier {
 	public func body(content: Content) -> some View {
 		content.background(
 			GeometryReader { geometry in
-				Color.clear.preference(key: SizePreferenceKey.self, value: [id: GeometryProxyData(proxy: geometry)])
+				Color.clear.preference(key: SizePreferenceKey.self, value: GeometryProxyData(proxy: geometry))
 			}
 		)
 		.onPreferenceChange(SizePreferenceKey.self) {
-			if let proxy = $0[id] {
+			guard let proxy = $0 else { return }
+			DispatchQueue.main.async {
 				binder(proxy.proxy)
 			}
 		}
@@ -79,10 +79,10 @@ public struct GeometryBindingModifier: ViewModifier {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct SizePreferenceKey: PreferenceKey {
-	static var defaultValue: [UUID: GeometryProxyData] { [:] }
+	static var defaultValue: GeometryProxyData? { nil }
 	
-	static func reduce(value: inout [UUID: GeometryProxyData], nextValue: () -> [UUID: GeometryProxyData]) {
-		value = value.merging(nextValue()) {_, p in p }
+	static func reduce(value: inout GeometryProxyData?, nextValue: () -> GeometryProxyData?) {
+		value = nextValue() ?? value
 	}
 }
 
