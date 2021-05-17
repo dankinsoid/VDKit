@@ -70,9 +70,7 @@ public struct GeometryBindingModifier: ViewModifier {
 		)
 		.onPreferenceChange(SizePreferenceKey.self) {
 			guard let proxy = $0 else { return }
-			DispatchQueue.main.async {
-				binder(proxy.proxy)
-			}
+			binder(proxy.proxy)
 		}
 	}
 }
