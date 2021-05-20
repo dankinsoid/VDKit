@@ -9,7 +9,7 @@
 This repository contains useful extensions on Foundation and UIKit
 
 ## Usage
-#### Chaining
+### Chaining
 Combination of `@dynamicMemberLookup` and subscripts allows to change objects with one expression
 ```swift
 let label = UILabel().chain
@@ -18,11 +18,11 @@ let label = UILabel().chain
   .font[.system(24)]
   .apply()
 ```
-#### Date extensions
+### Date extensions
 `Date` struct provides very little functionality, any operations with dates must be implemented through `Calendar` in very unintuitive, complex and difficult to remember ways.
 To simplify operations with dates, this library provides a simple and intuitive syntax.
 
-##### Some examples
+#### Some examples
 ```swift
 let afterTomorrow: Date = .today + 2.days
 //or .today + .days(2)
