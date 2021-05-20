@@ -10,7 +10,7 @@ This repository contains useful extensions on Foundation and UIKit
 
 ## Usage
 ### Chaining
-Combination of `@dynamicMemberLookup` and subscripts allows to change objects with one expression
+Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) and subscripts allows to change objects with one expression
 ```swift
 let label = UILabel().chain
   .text["Text"]
