@@ -10,7 +10,7 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct BackdropView: UIViewRepresentable {
   
-	public init()
+	public init() {}
 	
 	public func makeUIView(context: Context) -> UIBackdropView {
 		UIBackdropView()
@@ -32,6 +32,23 @@ public struct Backdrop<Content: View>: View {
 		ZStack {
 			BackdropView()
 			content
+		}
+	}
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+struct Backdrop_Previews: PreviewProvider {
+	static var previews: some View {
+		ZStack {
+			HStack {
+				Color.red
+				Color.blue
+				Color.green
+				Color.purple
+			}
+			Backdrop {
+				Text("Top text")
+			}
 		}
 	}
 }
