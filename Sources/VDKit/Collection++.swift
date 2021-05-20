@@ -84,6 +84,15 @@ extension Sequence {
 			return result
 		}
 	}
+	
+	public func reduce<Result>(while condition: (Result) -> Bool, _ initialValue: Result, _ reducing: (Result, Element) -> Result) -> Result {
+		var result = initialValue
+		for element in self {
+			guard condition(result) else { return result }
+			result = reducing(result, element)
+		}
+		return result
+	}
 }
 
 extension RangeReplaceableCollection  {

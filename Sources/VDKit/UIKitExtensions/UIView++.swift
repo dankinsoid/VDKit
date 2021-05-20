@@ -197,12 +197,10 @@ private final class NSKeyValueObservations {
 	}
 }
 
-extension CATransform3D: Equatable {
-	
-	private var ms: [CGFloat] { [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44] }
-	
-	public static func ==(_ lhs: CATransform3D, _ rhs: CATransform3D) -> Bool {
-		lhs.ms == rhs.ms
+extension UIView {
+	public var transformInWindow: CGAffineTransform {
+		([self] + superviews).reversed().reduce(.identity) {
+			$0.concatenating($1.transform)
+		}
 	}
-	
 }
