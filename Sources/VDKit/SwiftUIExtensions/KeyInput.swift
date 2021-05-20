@@ -25,6 +25,8 @@ public final class KeyBridge: ObservableObject, KeyInput, KeyOutput {
 	
 	private var currentInput: KeyInput?
 	
+	public init() {}
+	
 	public func insertText(_ text: String) {
 		currentInput?.insertText(text)
 	}
