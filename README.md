@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/VD.svg?style=flat)](https://cocoapods.org/pods/VD)
 
 ## Description
-This repository contains useful extensions on Foundation and UIKit
+This repository contains useful extensions on Foundation, UIKit and SwiftUI
 
 ## Usage
 ### Chaining
