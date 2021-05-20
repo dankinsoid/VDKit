@@ -6,14 +6,23 @@
 [![Platform](https://img.shields.io/cocoapods/p/VD.svg?style=flat)](https://cocoapods.org/pods/VD)
 
 ## Description
-This repository contains useful extensions on Foundation and UIKit
+This repository contains useful extensions on Foundation, UIKit and SwiftUI
 
 ## Usage
-#### Date extensions
+### Chaining
+Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) and subscripts allows to change objects with one expression
+```swift
+let label = UILabel().chain
+  .text["Text"]
+  .textColor[.red]
+  .font[.system(24)]
+  .apply()
+```
+### Date extensions
 `Date` struct provides very little functionality, any operations with dates must be implemented through `Calendar` in very unintuitive, complex and difficult to remember ways.
 To simplify operations with dates, this library provides a simple and intuitive syntax.
 
-##### Some examples
+#### Some examples
 ```swift
 let afterTomorrow: Date = .today + 2.days
 //or .today + .days(2)
