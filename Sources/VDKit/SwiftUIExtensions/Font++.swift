@@ -266,12 +266,8 @@ public enum FontModifierType {
 				return nil
 			}
 		case "LeadingModifier":
-			if #available(iOS 14.0, *) {
-				if let leading =  Mirror(reflecting: value).children.first?.value as? Font.Leading {
-					self = .leading(leading)
-				} else {
-					return nil
-				}
+			if #available(iOS 14.0, *), let leading =  Mirror(reflecting: value).children.first?.value as? Font.Leading {
+				self = .leading(leading)
 			} else {
 				return nil
 			}
