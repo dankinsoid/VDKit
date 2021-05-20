@@ -9,7 +9,12 @@ import UIKit
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension Color {
+extension Color: _ExpressibleByColorLiteral {
+	
+	public init(_colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float) {
+		self = Color(.displayP3, red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+	}
+	
 	public var ui: UIColor {
 		if #available(iOS 14.0, *) {
 			return UIColor(self)

@@ -39,7 +39,6 @@ extension Optional: OptionalProtocol {
 	public func asOptional() -> Wrapped? {
 		return self
 	}
-    
 }
 
 public enum OptionalException: LocalizedError {

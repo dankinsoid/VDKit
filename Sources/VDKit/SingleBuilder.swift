@@ -25,7 +25,6 @@ public struct SingleBuilder<T> {
 	public static func buildLimitedAvailability(_ component: T) -> T {
 		component
 	}
-	
 }
 
 extension SingleBuilder where T: RangeReplaceableCollection {
@@ -44,14 +43,5 @@ extension SingleBuilder where T: RangeReplaceableCollection {
 	
 	public static func buildOptional(_ component: T?) -> T {
 		component ?? T.init()
-	}
-	
-}
-
-@SingleBuilder<[Int]>
-func f() -> [Int] {
-	switch 2 == 5 {
-	case true:	5
-	case false:	[0]
 	}
 }

@@ -16,15 +16,6 @@ final class VDTests: XCTestCase {
 		XCTAssert(array == [0, 3, 1])
 	}
 	
-	@ArrayBuilder<Int>
-	func builderTests() -> [Int] {
-		3
-		switch 4 == 5 {
-		case true: 5
-		case false: 5
-		}
-	}
-	
 	func chainTests() {
 		let button = UIButton().chain
 			.layer.cornerRadius[43]
@@ -55,5 +46,4 @@ final class VDTests: XCTestCase {
 		("collectionTests", collectionTests),
 		("chainTests", chainTests),
 	]
-	
 }
