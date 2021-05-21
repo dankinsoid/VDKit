@@ -8,24 +8,19 @@
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct Blur<Content: View>: View {
+public struct Blur: View {
 	
-	public let content: Content
 	public var radius: CGFloat
 	public var opaque: Bool
 	
-	public init(radius: CGFloat = 3.0, opaque: Bool = false, @ViewBuilder content: () -> Content) {
-		self.content = content()
+	public init(radius: CGFloat = 3.0, opaque: Bool = false) {
 		self.radius = radius
 		self.opaque = opaque
 	}
 	
 	public var body: some View {
-		ZStack {
-			BackdropView()
-				.blur(radius: radius, opaque: opaque)
-			content
-		}
+		Backdrop()
+			.blur(radius: radius, opaque: opaque)
 	}
 }
 
@@ -38,9 +33,8 @@ struct Blur_Previews: PreviewProvider {
 				Color.blue
 				Color.green
 			}
-			Blur {
-				Text("Top text")
-			}
+			Text("Top text")
+				.background(Blur())
 		}
 	}
 }

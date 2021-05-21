@@ -8,7 +8,7 @@
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct BackdropView: UIViewRepresentable {
+public struct Backdrop: UIViewRepresentable {
   
 	public init() {}
 	
@@ -17,23 +17,6 @@ public struct BackdropView: UIViewRepresentable {
 	}
 	
 	public func updateUIView(_ uiView: UIBackdropView, context: Context) {}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct Backdrop<Content: View>: View {
-	
-	public let content: Content
-	
-	public init(@ViewBuilder content: () -> Content) {
-		self.content = content()
-	}
-	
-	public var body: some View {
-		ZStack {
-			BackdropView()
-			content
-		}
-	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -46,9 +29,8 @@ struct Backdrop_Previews: PreviewProvider {
 				Color.green
 				Color.purple
 			}
-			Backdrop {
-				Text("Top text")
-			}
+			Text("Top text")
+				.background(Backdrop())
 		}
 	}
 }
