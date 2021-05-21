@@ -7,7 +7,7 @@
 
 #if !os(Linux)
 import Foundation
-#if SWIFT_PACKAGE && !DISABLE_SWIZZLING && !os(Linux)
+#if canImport(VDKitRuntime) && SWIFT_PACKAGE && !DISABLE_SWIZZLING && !os(Linux)
 import VDKitRuntime
 #endif
 
@@ -38,7 +38,7 @@ public func onDeallocated(_ base: AnyObject, action: @escaping () -> Void) -> ()
 
 #if !DISABLE_SWIZZLING && !os(Linux)
 	
-extension NSObject {
+extension NSObjectProtocol {
 	
 	@discardableResult
 	public func onSentMessage(_ selector: Selector, action: @escaping ([Any]) -> Void) throws -> () -> Void {
