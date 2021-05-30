@@ -255,6 +255,13 @@ extension NSObjectProtocol {
 	
 }
 
+extension KeyPath {
+	
+	public subscript(_ value: Value) -> TypeChaining<Root> {
+		TypeChaining()[dynamicMember: self][value]
+	}
+}
+
 extension OptionalProtocol {
 	fileprivate var okp: OKP<Wrapped> {
 		get { OKP(optional: asOptional()) }

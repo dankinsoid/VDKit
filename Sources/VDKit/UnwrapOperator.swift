@@ -53,3 +53,31 @@ public enum OptionalException: LocalizedError {
 		}
 	}
 }
+
+extension OptionalProtocol {
+	
+	public var or: Optional<Wrapped>.Or {
+		get { .init(optional: asOptional()) }
+		set { self = .init(newValue.optional) }
+	}
+}
+
+extension Optional {
+	
+	public struct Or {
+		let optional: Optional
+		
+		public subscript(_ value: Wrapped) -> Wrapped {
+			get { optional ?? value }
+			set { self = Or(optional: newValue) }
+		}
+	}
+}
+
+public func ??<Root, Value: Hashable>(_ lhs: KeyPath<Root, Value?>, _ rhs: Value) -> KeyPath<Root, Value> {
+	lhs.appending(path: \.or[rhs])
+}
+
+public func ??<Root, Value: Hashable>(_ lhs: WritableKeyPath<Root, Value?>, _ rhs: Value) -> WritableKeyPath<Root, Value> {
+	lhs.appending(path: \.or[rhs])
+}
