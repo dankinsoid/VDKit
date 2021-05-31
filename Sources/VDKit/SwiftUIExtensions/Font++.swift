@@ -26,21 +26,21 @@ extension Font {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public indirect enum FontProviderType {
+public enum FontProviderType {
 	case named(String, CGFloat, Font.TextStyle?)
 	case style(Font.TextStyle, Font.Design, Font.Weight?)
 	case platform(UIFont)
 	case system(CGFloat, Font.Weight, Font.Design)
-	case modifier(FontProviderType, FontModifierType)
+	case modifier(Font, FontModifierType)
 	
 	public var size: CGFloat? {
 		get {
 			switch self {
-			case .named(_, let size, _):			return size
-			case .style:											return nil
-			case .system(let size, _, _):			return size
-			case .modifier(let provider, _):	return provider.size
-			case .platform(let font):					return font.pointSize
+			case .named(_, let size, _):	return size
+			case .style:									return nil
+			case .system(let size, _, _):	return size
+			case .modifier(let font, _):	return font.providerType?.size
+			case .platform(let font):			return font.pointSize
 			}
 		}
 		set {
@@ -52,9 +52,10 @@ public indirect enum FontProviderType {
 				break
 			case .system(_, let weight, let design):
 				self = .system(value, weight, design)
-			case .modifier(var provider, let modifier):
+			case .modifier(let font, let modifier):
+				guard var provider = font.providerType else { return }
 				provider.size = value
-				self = .modifier(provider, modifier)
+				self = .modifier(provider.font, modifier)
 			case .platform(let font):
 				self = .platform(font.withSize(value))
 			}
@@ -63,11 +64,11 @@ public indirect enum FontProviderType {
 	
 	public var name: String? {
 		switch self {
-		case .named(let name, _, _):			return name
-		case .style:											return nil
-		case .system:											return nil
-		case .modifier(let provider, _):	return provider.name
-		case .platform(let font):					return font.fontName
+		case .named(let name, _, _):	return name
+		case .style:									return nil
+		case .system:									return nil
+		case .modifier(let font, _):	return font.providerType?.name
+		case .platform(let font):			return font.fontName
 		}
 	}
 	
@@ -182,18 +183,18 @@ public indirect enum FontProviderType {
 			}
 		case .system(let size, let weight, let design):
 			return .system(size: size, weight: weight, design: design)
-		case .modifier(let provider, let modifier):
+		case .modifier(let font, let modifier):
 			switch modifier {
-			case .bold:									return provider.font.bold()
-			case .italic:								return provider.font.italic()
-			case .monospacedDigit:			return provider.font.monospacedDigit()
-			case .lowercaseSmallCaps:		return provider.font.lowercaseSmallCaps()
-			case .smallCaps:						return provider.font.smallCaps()
-			case .uppercaseSmallCaps:		return provider.font.uppercaseSmallCaps()
-			case .weight(let weight):		return provider.font.weight(weight)
+			case .bold:									return font.bold()
+			case .italic:								return font.italic()
+			case .monospacedDigit:			return font.monospacedDigit()
+			case .lowercaseSmallCaps:		return font.lowercaseSmallCaps()
+			case .smallCaps:						return font.smallCaps()
+			case .uppercaseSmallCaps:		return font.uppercaseSmallCaps()
+			case .weight(let weight):		return font.weight(weight)
 			case .leading(let leading):
 				if #available(iOS 14.0, *) {
-					return provider.font.leading(leading)
+					return font.leading(leading)
 				} else {
 					return .body
 				}
@@ -234,7 +235,7 @@ public indirect enum FontProviderType {
 			self = .platform(font)
 		default:
 			if typeString.hasPrefix("Modifier"),
-				 let base = (children["base"] as? Font)?.providerType,
+				 let base = children["base"] as? Font,
 				 let modifier = children["modifier"].flatMap({ FontModifierType(value: $0) }) {
 				self = .modifier(base, modifier)
 			} else {

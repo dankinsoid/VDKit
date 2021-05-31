@@ -44,13 +44,4 @@ public struct ComposeBuilder<C: ArrayInitable> {
 	public static func buildLimitedAvailability(_ component: C.Item) -> C.Item {
 		component
 	}
-	
-	//	static func buildExpression(_ expression: [C.Item]) -> C.Item {
-	//		C.Items.create(expression)
-	//	}
-	
-	//	static func buildFinalResult(_ component: [T]) -> <#Result#> {
-	//		<#code#>
-	//	}
-	
 }

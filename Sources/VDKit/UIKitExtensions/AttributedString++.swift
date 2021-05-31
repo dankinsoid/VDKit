@@ -79,7 +79,7 @@ extension NSAttributedString {
 	}
 	
 	public func ligature(_ value: Int = 1) -> NSMutableAttributedString {
-		return attribute(.backgroundColor, value: NSNumber(value: value))
+		return attribute(.ligature, value: NSNumber(value: value))
 	}
 	
 	public func stroke(_ color: UIColor?, width: Double = 0) -> NSMutableAttributedString {
@@ -170,5 +170,52 @@ extension NSMutableAttributedString {
 	
 	fileprivate func addAttribute(_ name: NSAttributedString.Key, value: Any) {
 		addAttribute(name, value: value, range: range)
+	}
+}
+
+public typealias AttributedStringBuilder = ComposeBuilder<AttributedArrayInitable>
+
+public struct AttributedArrayInitable: ArrayInitable {
+	public static func create(from: [NSAttributedString]) -> NSAttributedString {
+		var result = NSMutableAttributedString()
+		from.forEach(result.append)
+		return result
+	}
+}
+
+public extension ComposeBuilder where C == AttributedArrayInitable {
+	
+	@inlinable
+	static func buildExpression(_ text: String) -> NSAttributedString {
+		NSAttributedString(string: text, attributes: [:])
+	}
+	
+	@inlinable
+	static func buildExpression(_ image: UIImage) -> NSAttributedString {
+		let attachment = NSTextAttachment()
+		attachment.image = image
+		return NSAttributedString(attachment: attachment)
+	}
+	
+	@inlinable
+	static func buildExpression(_ attachment: NSTextAttachment) -> NSAttributedString {
+		NSAttributedString(attachment: attachment)
+	}
+	
+	@inlinable
+	static func buildExpression(_ attr: NSAttributedString) -> NSAttributedString {
+		attr
+	}
+}
+
+extension NSAttributedString {
+	convenience init(@AttributedStringBuilder builder: () -> NSAttributedString) {
+		self.init(attributedString: builder())
+	}
+	
+	func withAttributes(_ attrs: [NSAttributedString.Key: Any]) -> NSAttributedString {
+		let copy = NSMutableAttributedString(attributedString: self)
+		copy.addAttributes(attrs, range: NSRange(location: 0, length: string.count))
+		return copy
 	}
 }

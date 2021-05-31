@@ -67,3 +67,7 @@ public func >= <T, V: Comparable>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
 public func ~=<T, R: RangeExpression>(lhs: KeyPath<T, R.Bound>, rhs: R) -> Pattern<T> {
 	Pattern { rhs.contains($0[keyPath: lhs]) }
 }
+
+public func ~=<T, V>(lhs: KeyPath<T, V>, rhs: @escaping (V) -> Bool) -> Pattern<T> {
+	Pattern { rhs($0[keyPath: lhs]) }
+}
