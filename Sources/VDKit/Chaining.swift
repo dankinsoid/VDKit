@@ -9,40 +9,34 @@
 import Foundation
 
 public protocol Chaining {
-	associatedtype W
-	var action: (W) -> W { get }
-	func copy(with action: @escaping (W) -> W) -> Self
+	associatedtype Value
+	func apply(_ value: Value) -> Value
 }
 
-extension Chaining where W: AnyObject {
+extension Chaining {
 	
-	public func `do`(_ action: @escaping (W) -> Void) -> Self {
-		copy {
-			action($0)
-			return $0
+	public func `do`(_ action: @escaping (inout Value) -> Void) -> Chained<Self> {
+		Chained(self) {
+			var result = $0
+			action(&result)
+			return result
 		}
 	}
-	
-}
-
-public protocol TypeChainingProtocol: Chaining {
-	func apply(for values: [W])
 }
 
 public protocol ValueChainingProtocol: Chaining {
-	var wrappedValue: W { get set }
-	func apply() -> W
+	var value: Value { get }
 }
 
 extension ValueChainingProtocol {
 	@discardableResult
-	public func apply() -> W {
-		action(wrappedValue)
+	public func apply() -> Value {
+		apply(value)
 	}
 }
 
 extension ValueChainingProtocol {
-	public func `do`(_ action: @escaping (W) -> Void) -> Self {
+	public func `do`(_ action: @escaping (Value) -> Void) -> Self {
 		let new = apply()
 		action(new)
 		return self
@@ -50,149 +44,97 @@ extension ValueChainingProtocol {
 }
 
 @dynamicMemberLookup
-public struct TypeChaining<W>: TypeChainingProtocol {
-	public private(set) var action: (W) -> W
+public struct TypeChain<Value>: Chaining {
 	
-	public init() {
-		self.action = { $0 }
-	}
+	public init() {}
 	
-	public subscript<A>(dynamicMember keyPath: KeyPath<W, A>) -> ChainingProperty<Self, A> {
-		ChainingProperty<Self, A>(self, getter: keyPath)
+	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
+		ChainProperty<Self, A>(self, getter: keyPath)
 	}
-//
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
-//		ChainingProperty<Self, A, WritableKeyPath<W, A>>(self, getter: keyPath)
+
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<Value, A>) -> ChainProperty<Self, A> {
+//		ChainProperty<Self, A, WritableKeyPath<Value, A>>(self, getter: keyPath)
 //	}
 //
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<W, A>) -> ChainingProperty<Self, A> {
-//		ChainingProperty<Self, A, ReferenceWritableKeyPath<W, A>>(self, getter: keyPath)
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<Value, A>) -> ChainProperty<Self, A> {
+//		ChainProperty<Self, A, ReferenceWritableKeyPath<Value, A>>(self, getter: keyPath)
 //	}
 	
-	public func apply(for values: W...) {
-		apply(for: values)
-	}
-	
-	public func apply(for values: [W]) {
-		values.forEach { _ = action($0) }
-	}
-	
-	public func copy(with action: @escaping (W) -> W) -> TypeChaining<W> {
-		var result = TypeChaining()
-		result.action = action
-		return result
-	}
-	
-}
-
-@dynamicMemberLookup
-public struct ValueChaining<W>: ValueChainingProtocol {
-	public var wrappedValue: W
-	public private(set) var action: (W) -> W = { $0 }
-	
-	public init(_ value: W) {
-		wrappedValue = value
-	}
-	
-	public subscript<A>(dynamicMember keyPath: KeyPath<W, A>) -> ChainingProperty<Self, A> {
-		ChainingProperty<Self, A>(self, getter: keyPath)
-	}
-	
-	public func copy(with action: @escaping (W) -> W) -> ValueChaining<W> {
-		var result = ValueChaining(wrappedValue)
-		result.action = action
-		return result
-	}
-	
-}
-
-public protocol GetterProtocol {
-	associatedtype A
-	associatedtype B
-	var get: (A) -> B { get }
-}
-
-public protocol SetterProtocol: GetterProtocol {
-	var set: (A, B) -> A { get }
-}
-
-public struct Getter<A, B>: GetterProtocol {
-	public let get: (A) -> B
-}
-
-public struct Setter<A, B>: SetterProtocol {
-	public let get: (A) -> B
-	public let set: (A, B) -> A
-}
-
-extension KeyPath: GetterProtocol {
-	public var get: (Root) -> Value {
-		{ $0[keyPath: self] }
-	}
-}
-
-extension WritableKeyPath: SetterProtocol {
-	public var set: (Root, Value) -> Root {
-		{
-			var result = $0
-			result[keyPath: self] = $1
-			return result
-		}
+	public func apply(_ value: Value) -> Value {
+		value
 	}
 }
 
 @dynamicMemberLookup
-public struct ChainingProperty<C: Chaining, B> {
-	public let chaining: C
-	public let getter: KeyPath<C.W, B>
+public struct Chain<Value>: ValueChainingProtocol {
+	public var value: Value
 	
-	public init(_ value: C, getter: KeyPath<C.W, B>) {
+	public init(_ value: Value) {
+		self.value = value
+	}
+	
+	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
+		ChainProperty<Self, A>(self, getter: keyPath)
+	}
+	
+	public func apply(_ value: Value) -> Value {
+		value
+	}
+}
+
+@dynamicMemberLookup
+public struct ChainProperty<Base: Chaining, Value> {
+	public let chaining: Base
+	public let getter: KeyPath<Base.Value, Value>
+	
+	public init(_ value: Base, getter: KeyPath<Base.Value, Value>) {
 		chaining = value
 		self.getter = getter
 	}
 	
-	public subscript<A>(dynamicMember keyPath: KeyPath<B, A>) -> ChainingProperty<C, A> {
-		ChainingProperty<C, A>(chaining, getter: getter.appending(path: keyPath))
+	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Base, A> {
+		ChainProperty<Base, A>(chaining, getter: getter.appending(path: keyPath))
 	}
 	
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<B, A>) -> ChainingProperty<C, A> {
-//		ChainingProperty<C, A>(chaining, getter: getter.append(reference: keyPath))
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<B, A>) -> ChainProperty<C, A> {
+//		ChainProperty<C, A>(chaining, getter: getter.append(reference: keyPath))
 //	}
 //
 }
 
-//extension ChainingProperty where G: WritableKeyPath<C.W, B> {
+//extension ChainProperty where G: WritableKeyPath<C.Value, B> {
 //
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B, A>) -> ChainingProperty<C, A, WritableKeyPath<C.W, A>> {
-//		ChainingProperty<C, A, WritableKeyPath<C.W, A>>(chaining, getter: getter.append(keyPath))
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B, A>) -> ChainProperty<C, A, WritableKeyPath<C.Value, A>> {
+//		ChainProperty<C, A, WritableKeyPath<C.Value, A>>(chaining, getter: getter.append(keyPath))
 //	}
 //
 //}
 //
-extension ChainingProperty where B: OptionalProtocol {
 
-	public subscript<A>(dynamicMember keyPath: KeyPath<B.Wrapped, A>) -> ChainingProperty<C, A?> {
-		ChainingProperty<C, A?>(chaining, getter: getter.appending(path: \.okp[keyPath]))
+extension ChainProperty where Value: OptionalProtocol {
+
+	public subscript<A>(dynamicMember keyPath: KeyPath<Value.Wrapped, A>) -> ChainProperty<Base, A?> {
+		ChainProperty<Base, A?>(chaining, getter: getter.appending(path: \.okp[keyPath]))
 	}
 //
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining, getter: getter.append(reference: \.okp[ref: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A>) -> ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>>(chaining, getter: getter.append(reference: \.okp[ref: keyPath]))
 //	}
 //
-	public subscript<A>(dynamicMember keyPath: WritableKeyPath<B.Wrapped, A?>) -> ChainingProperty<C, A?> {
-		ChainingProperty<C, A?>(chaining, getter: getter.appending(path: \.okp[wro: keyPath]))
+	public subscript<A>(dynamicMember keyPath: WritableKeyPath<Value.Wrapped, A?>) -> ChainProperty<Base, A?> {
+		ChainProperty<Base, A?>(chaining, getter: getter.appending(path: \.okp[wro: keyPath]))
 	}
 //
 }
 //
-//extension ChainingProperty where G: WritableKeyPath<C.W, B>, G.B: OptionalProtocol {
+//extension ChainProperty where G: WritableKeyPath<C.Value, B>, G.B: OptionalProtocol {
 //
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wr: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A>) -> ChainProperty<C, A?, WritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, WritableKeyPath<C.Value, A?>>(chaining, getter: getter.append(\.okp[wr: keyPath]))
 //	}
 //
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining, getter: getter.append(\.okp[wro: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainProperty<C, A?, WritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, WritableKeyPath<C.Value, A?>>(chaining, getter: getter.append(\.okp[wro: keyPath]))
 //	}
 //
 //}
@@ -209,56 +151,74 @@ extension WritableKeyPath {
 	}
 }
 
-extension ChainingProperty where C: TypeChainingProtocol {
 
-	public subscript(_ value: B) -> C {
-		chaining.copy {
-			var result = chaining.action($0)
-			if let kp = getter as? WritableKeyPath<C.W, B> {
-				result[keyPath: kp] = value
-			}
-			return result
-		}
+extension ChainProperty {
+
+	public func apply(for value: Base.Value) -> Base.Value {
+		chaining.apply(value)
 	}
-
-}
-
-extension ChainingProperty where C: ValueChainingProtocol {
-
-	public subscript(_ value: B) -> C {
-		guard let kp = getter as? WritableKeyPath<C.W, B> else { return chaining }
-		return chaining.copy {
+	
+	public func callAsFunction(_ value: Value) -> Chained<Base> {
+		self[value]
+	}
+	
+	public subscript(_ value: Value) -> Chained<Base> {
+		guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return  Chained(chaining) { $0 } }
+		return Chained(chaining) {
 			var result = $0
 			result[keyPath: kp] = value
 			return result
 		}
 	}
-	
-//	public subscript(final value: G.B) -> C.W {
-//		self[value].apply()
-//	}
+}
 
-	public func apply() -> C.W {
+@dynamicMemberLookup
+public struct Chained<Base: Chaining>: Chaining {
+	public let base: Base
+	public let action: (Base.Value) -> Base.Value
+	
+	public init(_ base: Base, action: @escaping (Base.Value) -> Base.Value) {
+		self.base = base
+		self.action = action
+	}
+	
+	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
+		ChainProperty<Self, A>(self, getter: keyPath)
+	}
+	
+	public func apply(_ value: Base.Value) -> Base.Value {
+		action(base.apply(value))
+	}
+}
+
+extension Chained: ValueChainingProtocol where Base: ValueChainingProtocol {
+	public var value: Base.Value { base.value }
+}
+
+extension ChainProperty where Base: ValueChainingProtocol {
+	
+	public func apply() -> Base.Value {
 		chaining.apply()
 	}
-
+	
+	public func callAsFunction(apply value: Value) -> Base.Value {
+		self[value].apply()
+	}
 }
 
 extension NSObjectProtocol {
-	public static var chain: TypeChaining<Self> { TypeChaining() }
-	public var chain: ValueChaining<Self> { ValueChaining(self) }
+	public static var chain: TypeChain<Self> { TypeChain() }
+	public var chain: Chain<Self> { Chain(self) }
 	
-	public func apply(_ chain: TypeChaining<Self>) -> Self {
-		chain.apply(for: self)
-		return self
+	public func apply<C: Chaining>(_ chain: C) -> Self where C.Value == Self {
+		chain.apply(self)
 	}
-	
 }
 
 extension KeyPath {
 	
-	public subscript(_ value: Value) -> TypeChaining<Root> {
-		TypeChaining()[dynamicMember: self][value]
+	public subscript(_ value: Value) -> Chained<TypeChain<Root>> {
+		TypeChain()[dynamicMember: self][value]
 	}
 }
 
@@ -320,39 +280,39 @@ private struct OKP<A> {
 
 //postfix operator ~?
 //
-//public postfix func ~?<C: Chaining, B: GetterProtocol, T>(_ lhs: ChainingProperty<C, T?, B>) -> OptionalChaining<C, B, T> where B.B == T? {
+//public postfix func ~?<C: Chaining, B: GetterProtocol, T>(_ lhs: ChainProperty<C, T?, B>) -> OptionalChaining<C, B, T> where B.B == T? {
 //	OptionalChaining(chaining: lhs)
 //}
 //
 //@dynamicMemberLookup
-//public struct OptionalChaining<C: Chaining, G: GetterProtocol, T> where G.B == T?, C.W == G.A {
-//	public let chaining: ChainingProperty<C, T?, G>
+//public struct OptionalChaining<C: Chaining, G: GetterProtocol, T> where G.B == T?, C.Value == G.A {
+//	public let chaining: ChainProperty<C, T?, G>
 //}
 //
-//extension OptionalChaining where G: KeyPath<C.W, T?> {
+//extension OptionalChaining where G: KeyPath<C.Value, T?> {
 //
-//	public subscript<A>(dynamicMember keyPath: KeyPath<T, A>) -> ChainingProperty<C, A?, KeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, KeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.appending(path: \.okp[keyPath]))
+//	public subscript<A>(dynamicMember keyPath: KeyPath<T, A>) -> ChainProperty<C, A?, KeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, KeyPath<C.Value, A?>>(chaining.chaining, getter: chaining.getter.appending(path: \.okp[keyPath]))
 //	}
 //
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<T, A>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[ref: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<T, A>) -> ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[ref: keyPath]))
 //	}
 //
-//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, ReferenceWritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[refo: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: ReferenceWritableKeyPath<G.B.Wrapped, A?>) -> ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, ReferenceWritableKeyPath<C.Value, A?>>(chaining.chaining, getter: chaining.getter.append(reference: \.okp[refo: keyPath]))
 //	}
 //
 //}
 //
-//extension OptionalChaining where G: WritableKeyPath<C.W, T?> {
+//extension OptionalChaining where G: WritableKeyPath<C.Value, T?> {
 //
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<T, A>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wr: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<T, A>) -> ChainProperty<C, A?, WritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, WritableKeyPath<C.Value, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wr: keyPath]))
 //	}
 //
-//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainingProperty<C, A?, WritableKeyPath<C.W, A?>> {
-//		ChainingProperty<C, A?, WritableKeyPath<C.W, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wro: keyPath]))
+//	public subscript<A>(dynamicMember keyPath: WritableKeyPath<G.B.Wrapped, A?>) -> ChainProperty<C, A?, WritableKeyPath<C.Value, A?>> {
+//		ChainProperty<C, A?, WritableKeyPath<C.Value, A?>>(chaining.chaining, getter: chaining.getter.append(\.okp[wro: keyPath]))
 //	}
 //
 //}

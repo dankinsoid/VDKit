@@ -18,17 +18,20 @@ final class VDTests: XCTestCase {
 	
 	func chainTests() {
 		let button = UIButton().chain
-			.layer.cornerRadius[43]
-			.titleLabel.font[.systemFont(ofSize: 43)]
-			.backgroundColor[.red]
-			.tintColor[.black]
-			.clipsToBounds[true]
-			.isHidden[false]
-			.isUserInteractionEnabled[true]
-			.titleEdgeInsets[.zero]
-			.alpha[0.4]
-			.frame.size[.zero]
+			.layer.cornerRadius(43)
+			.titleLabel.font(.systemFont(ofSize: 43))
+			.backgroundColor(.red)
+			.tintColor(.black)
+			.clipsToBounds(true)
+			.isHidden(false)
+			.isUserInteractionEnabled(true)
+			.titleEdgeInsets(.zero)
+			.alpha(0.4)
+			.frame.size(.zero)
 			.apply()
+		
+		TypeChain<UILabel>().text(nil).text("").text("").apply(UILabel())
+		UILabel().chain.text("").apply()
 		
 		XCTAssert(button.layer.cornerRadius == 43)
 		XCTAssert(button.titleLabel?.font == .systemFont(ofSize: 43))

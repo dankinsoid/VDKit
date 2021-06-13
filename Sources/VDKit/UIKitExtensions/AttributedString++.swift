@@ -177,7 +177,7 @@ public typealias AttributedStringBuilder = ComposeBuilder<AttributedArrayInitabl
 
 public struct AttributedArrayInitable: ArrayInitable {
 	public static func create(from: [NSAttributedString]) -> NSAttributedString {
-		var result = NSMutableAttributedString()
+		let result = NSMutableAttributedString()
 		from.forEach(result.append)
 		return result
 	}

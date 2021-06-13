@@ -71,3 +71,9 @@ extension StringProtocol {
 		String(self)
 	}
 }
+
+public extension CharacterSet {
+	func contains(_ character: Character) -> Bool {
+		character.unicodeScalars.allSatisfy(contains)
+	}
+}
