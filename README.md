@@ -13,9 +13,9 @@ This repository contains useful extensions on Foundation, UIKit and SwiftUI
 Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) and subscripts allows to change objects with one expression
 ```swift
 let label = UILabel().chain
-  .text["Text"]
-  .textColor[.red]
-  .font[.system(24)]
+  .text("Text")
+  .textColor(.red)
+  .font(.system(24))
   .apply()
 ```
 ### Date extensions
