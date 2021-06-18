@@ -15,6 +15,6 @@ let package = Package(
     targets: [
 			.target(name: "VDKitRuntime", dependencies: []),
 			.target(name: "VDKit", dependencies: ["VDKitRuntime"]),
-			.testTarget(name: "VDTests", dependencies: ["VDKit"]),
+			.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
     ]
 )
