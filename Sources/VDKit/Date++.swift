@@ -788,7 +788,7 @@ extension DateFormatter {
 
 extension ClosedRange where Bound == Date {
 	
-	public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) -> DatesCollection {
+	public func each(_ component: Calendar.Component, step: Int = 1, calendar: Calendar = .default) async -> DatesCollection {
 		let count = upperBound.interval(of: component, from: lowerBound) + 1
 		return DatesCollection(from: lowerBound, count: count, component: component, step: step, calendar: calendar)
 	}

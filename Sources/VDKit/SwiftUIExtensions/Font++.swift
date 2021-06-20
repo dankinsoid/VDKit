@@ -143,15 +143,15 @@ public enum FontProviderType {
 				[.traits: [UIFontDescriptor.TraitKey.weight: weight.uiFontWeight]]
 			)
 			
-			case .leading(let leading):
-				if #available(iOS 14.0, *) {
-					switch leading {
-					case .loose:	return provider.uiFont?.withTraits(.traitLooseLeading)
-					default:			return provider.uiFont?.withTraits(.traitTightLeading)
-					}
-				} else {
-					return provider.uiFont
-				}
+//			case .leading(let leading):
+//				if #available(iOS 14.0, *) {
+//					switch leading {
+//					case .loose:	return provider.uiFont?.withTraits(.traitLooseLeading)
+//					default:			return provider.uiFont?.withTraits(.traitTightLeading)
+//					}
+//				} else {
+//					return provider.uiFont
+//				}
 			}
 		}
 	}
@@ -192,12 +192,12 @@ public enum FontProviderType {
 			case .smallCaps:						return font.smallCaps()
 			case .uppercaseSmallCaps:		return font.uppercaseSmallCaps()
 			case .weight(let weight):		return font.weight(weight)
-			case .leading(let leading):
-				if #available(iOS 14.0, *) {
-					return font.leading(leading)
-				} else {
-					return .body
-				}
+//			case .leading(let leading):
+//				if #available(iOS 14.0, *) {
+//					return font.leading(leading)
+//				} else {
+//					return .body
+//				}
 			}
 		case .platform(let font):	return Font(font)
 		}
@@ -248,8 +248,8 @@ public enum FontProviderType {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public enum FontModifierType {
 	case bold, italic, monospacedDigit, lowercaseSmallCaps, smallCaps, uppercaseSmallCaps, weight(Font.Weight)
-	@available(iOS 14.0, *)
-	case leading(Font.Leading)
+//	@available(iOS 14.0, *)
+//	case leading(Font.Leading)
 	
 	init?(value: Any) {
 		let typeString = "\(type(of: value))"
@@ -266,12 +266,12 @@ public enum FontModifierType {
 			} else {
 				return nil
 			}
-		case "LeadingModifier":
-			if #available(iOS 14.0, *), let leading =  Mirror(reflecting: value).children.first?.value as? Font.Leading {
-				self = .leading(leading)
-			} else {
-				return nil
-			}
+//		case "LeadingModifier":
+//			if #available(iOS 14.0, *), let leading =  Mirror(reflecting: value).children.first?.value as? Font.Leading {
+//				self = .leading(leading)
+//			} else {
+//				return nil
+//			}
 		default:	return nil
 		}
 	}

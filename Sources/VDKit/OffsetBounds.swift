@@ -55,9 +55,9 @@ extension OffsetBound {
     
     public func offset(from other: OffsetBound = .first, count: Int) -> Int {
         switch (anchor, other.anchor) {
-        case (.fromStart, .fromEnd):    return count + other.offset - offset 
-        case (.fromEnd, .fromStart):    return count - other.offset + offset
-        default:                        return offset - other.offset
+        case (.fromStart, .fromEnd):	return count + other.offset - offset
+        case (.fromEnd, .fromStart):	return count - other.offset + offset
+        default:                      return offset - other.offset
         }
     }
 }
