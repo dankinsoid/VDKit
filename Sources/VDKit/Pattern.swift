@@ -52,6 +52,10 @@ public func ==<T, V: Equatable>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
 	Pattern { $0[keyPath: lhs] == rhs }
 }
 
+public func ===<T, V: AnyObject>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
+	Pattern { $0[keyPath: lhs] === rhs }
+}
+
 public func !=<T, V: Equatable>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
 	Pattern { $0[keyPath: lhs] != rhs }
 }
