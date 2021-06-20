@@ -13,6 +13,14 @@ public struct Pattern<Value> {
 	public init(_ closure: @escaping (Value) -> Bool) {
 		self.closure = closure
 	}
+	
+	public static func ||(_ lhs: Pattern, _ rhs: Pattern) -> Pattern {
+		Pattern { lhs.closure($0) || rhs.closure($0) }
+	}
+	
+	public static func &&(_ lhs: Pattern, _ rhs: Pattern) -> Pattern {
+		Pattern { lhs.closure($0) || rhs.closure($0) }
+	}
 }
 
 public extension Pattern where Value: Hashable {
@@ -36,8 +44,8 @@ public extension Pattern where Value: Comparable {
 	}
 }
 
-public func ~=<T>(lhs: KeyPath<T, Bool>, rhs: T?) -> Bool {
-	rhs?[keyPath: lhs] ?? false
+public func ~=<T>(lhs: KeyPath<T, Bool>, rhs: T) -> Bool {
+	rhs[keyPath: lhs]
 }
 
 public func ==<T, V: Equatable>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
@@ -64,10 +72,18 @@ public func >= <T, V: Comparable>(lhs: KeyPath<T, V>, rhs: V) -> Pattern<T> {
 	Pattern { $0[keyPath: lhs] >= rhs }
 }
 
+public prefix func !<T>(_ rhs: Pattern<T>) -> Pattern<T> {
+	Pattern { !rhs.closure($0) }
+}
+
 public func ~=<T, R: RangeExpression>(lhs: KeyPath<T, R.Bound>, rhs: R) -> Pattern<T> {
 	Pattern { rhs.contains($0[keyPath: lhs]) }
 }
 
 public func ~=<T, V>(lhs: KeyPath<T, V>, rhs: @escaping (V) -> Bool) -> Pattern<T> {
 	Pattern { rhs($0[keyPath: lhs]) }
+}
+
+public func ~=<T, V: Hashable>(lhs: KeyPath<T, V>, rhs: Set<V>) -> Pattern<T> {
+	Pattern { rhs.contains($0[keyPath: lhs]) }
 }
