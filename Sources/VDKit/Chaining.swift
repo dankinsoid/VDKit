@@ -10,17 +10,22 @@ import Foundation
 
 public protocol Chaining {
 	associatedtype Value
-	func apply(_ value: Value) -> Value
+	var apply: (Value) -> Value { get set }
+	mutating func onGetProperty<P>(_ keyPath: WritableKeyPath<Value, P>, _ value: P)
 }
 
 extension Chaining {
 	
-	public func `do`(_ action: @escaping (inout Value) -> Void) -> Chained<Self> {
-		Chained(self) {
-			var result = $0
+	public mutating func onGetProperty<P>(_ keyPath: WritableKeyPath<Value, P>, _ value: P) {}
+	
+	public func `do`(_ action: @escaping (inout Value) -> Void) -> Self {
+		var result = self
+		result.apply = {[apply] in
+			var result = apply($0)
 			action(&result)
 			return result
 		}
+		return result
 	}
 }
 
@@ -49,7 +54,7 @@ public struct TypeChain<Value>: Chaining {
 	public init() {}
 	
 	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
-		ChainProperty<Self, A>(self, getter: keyPath)
+		ChainProperty(self, getter: keyPath)
 	}
 
 //	public subscript<A>(dynamicMember keyPath: WritableKeyPath<Value, A>) -> ChainProperty<Self, A> {
@@ -60,9 +65,7 @@ public struct TypeChain<Value>: Chaining {
 //		ChainProperty<Self, A, ReferenceWritableKeyPath<Value, A>>(self, getter: keyPath)
 //	}
 	
-	public func apply(_ value: Value) -> Value {
-		value
-	}
+	public var apply: (Value) -> Value = { $0 }
 }
 
 @dynamicMemberLookup
@@ -74,12 +77,10 @@ public struct Chain<Value>: ValueChainingProtocol {
 	}
 	
 	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
-		ChainProperty<Self, A>(self, getter: keyPath)
+		ChainProperty(self, getter: keyPath)
 	}
 	
-	public func apply(_ value: Value) -> Value {
-		value
-	}
+	public var apply: (Value) -> Value = { $0 }
 }
 
 @dynamicMemberLookup
@@ -158,41 +159,21 @@ extension ChainProperty {
 		chaining.apply(value)
 	}
 	
-	public func callAsFunction(_ value: Value) -> Chained<Base> {
+	public func callAsFunction(_ value: Value) -> Base {
 		self[value]
 	}
 	
-	public subscript(_ value: Value) -> Chained<Base> {
-		guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return  Chained(chaining) { $0 } }
-		return Chained(chaining) {
-			var result = $0
+	public subscript(_ value: Value) -> Base {
+		guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return chaining }
+		var result = chaining
+		result.onGetProperty(kp, value)
+		result.apply = {[chaining] in
+			var result = chaining.apply($0)
 			result[keyPath: kp] = value
 			return result
 		}
+		return chaining
 	}
-}
-
-@dynamicMemberLookup
-public struct Chained<Base: Chaining>: Chaining {
-	public let base: Base
-	public let action: (Base.Value) -> Base.Value
-	
-	public init(_ base: Base, action: @escaping (Base.Value) -> Base.Value) {
-		self.base = base
-		self.action = action
-	}
-	
-	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> ChainProperty<Self, A> {
-		ChainProperty<Self, A>(self, getter: keyPath)
-	}
-	
-	public func apply(_ value: Base.Value) -> Base.Value {
-		action(base.apply(value))
-	}
-}
-
-extension Chained: ValueChainingProtocol where Base: ValueChainingProtocol {
-	public var value: Base.Value { base.value }
 }
 
 extension ChainProperty where Base: ValueChainingProtocol {
@@ -217,7 +198,7 @@ extension NSObjectProtocol {
 
 extension KeyPath {
 	
-	public subscript(_ value: Value) -> Chained<TypeChain<Root>> {
+	public subscript(_ value: Value) -> TypeChain<Root> {
 		TypeChain()[dynamicMember: self][value]
 	}
 }
