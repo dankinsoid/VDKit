@@ -172,7 +172,7 @@ extension ChainProperty {
 			result[keyPath: kp] = value
 			return result
 		}
-		return chaining
+		return result
 	}
 }
 

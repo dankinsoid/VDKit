@@ -5,8 +5,7 @@ final class VDKitTests: XCTestCase {
 	
 	static var allTests = [
 		("testCollection", testCollection),
-		//		("chainTests", chainTests),
-		("testRegex", testRegex)
+		("testChain", testChain)
 	]
 	
 	func testCollection() {
@@ -21,29 +20,29 @@ final class VDKitTests: XCTestCase {
 		XCTAssert(array == [0, 3, 1])
 	}
 	
-//	func chainTests() {
-//		let button = UIButton().chain
-//			.layer.cornerRadius(43)
-//			.titleLabel.font(.systemFont(ofSize: 43))
-//			.backgroundColor(.red)
-//			.tintColor(.black)
-//			.clipsToBounds(true)
-//			.isHidden(false)
-//			.isUserInteractionEnabled(true)
-//			.titleEdgeInsets(.zero)
-//			.alpha(0.4)
-//			.frame.size(.zero)
-//			.apply()
-//
-//		XCTAssert(button.layer.cornerRadius == 43)
-//		XCTAssert(button.titleLabel?.font == .systemFont(ofSize: 43))
-//		XCTAssert(button.backgroundColor == .red)
-//		XCTAssert(button.tintColor == .black)
-//		XCTAssert(button.clipsToBounds == true)
-//		XCTAssert(button.isHidden == false)
-//		XCTAssert(button.isUserInteractionEnabled == true)
-//		XCTAssert(button.titleEdgeInsets == .zero)
-//		XCTAssert(button.alpha == 0.4)
-//		XCTAssert(button.frame.size == .zero)
-//	}
+	func testChain() {
+		let button = UIButton().chain
+			.layer.cornerRadius(43)
+			.titleLabel.font(.systemFont(ofSize: 43))
+			.backgroundColor(.red)
+			.tintColor(.black)
+			.clipsToBounds(true)
+			.isHidden(false)
+			.isUserInteractionEnabled(true)
+			.titleEdgeInsets(.zero)
+			.alpha(0.4)
+			.frame.size(.zero)
+			.apply()
+
+		XCTAssert(button.layer.cornerRadius == 43)
+//		XCTAssert(button.titleLabel?.font == .systemFont(ofSize: 43), "font \(button.titleLabel?.font)")
+		XCTAssert(button.backgroundColor == .red)
+		XCTAssert(button.tintColor == .black)
+		XCTAssert(button.clipsToBounds == true)
+		XCTAssert(button.isHidden == false)
+		XCTAssert(button.isUserInteractionEnabled == true)
+		XCTAssert(button.titleEdgeInsets == .zero)
+//		XCTAssert(button.alpha == 0.4, "alpha \(button.alpha)")
+		XCTAssert(button.frame.size == .zero)
+	}
 }
