@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '1.67.0'
+s.version          = '1.68.0'
 s.summary          = 'This repository contains useful extensions on Foundation and UIKit'
 
 s.description      = <<-DESC
@@ -13,7 +13,7 @@ s.license          = { :type => 'MIT', :file => 'LICENSE' }
 s.author           = { 'voidilov' => 'voidilov@gmail.com' }
 s.source           = { :git => 'https://github.com/dankinsoid/VDKit.git', :tag => s.version.to_s }
 
-s.ios.deployment_target = '12.0'
+s.ios.deployment_target = '11.0'
 s.ios.public_header_files =  'Sources/VDKit/Runtime/**/*.h'
 s.swift_versions = '5.4'
 s.source_files = 'Sources/**/*'
