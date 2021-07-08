@@ -33,7 +33,7 @@ final class VDKitTests: XCTestCase {
 			.alpha(0.4)
 			.frame.size(.zero)
 			.apply()
-
+		
 		XCTAssert(button.layer.cornerRadius == 43)
 //		XCTAssert(button.titleLabel?.font == .systemFont(ofSize: 43), "font \(button.titleLabel?.font)")
 		XCTAssert(button.backgroundColor == .red)
@@ -44,5 +44,13 @@ final class VDKitTests: XCTestCase {
 		XCTAssert(button.titleEdgeInsets == .zero)
 //		XCTAssert(button.alpha == 0.4, "alpha \(button.alpha)")
 		XCTAssert(button.frame.size == .zero)
+	}
+}
+
+extension UIViewEnvironment {
+	
+	public var cornerRadius: CGFloat {
+		get { self[\.cornerRadius, 0] }
+		set { self[\.cornerRadius, 0] = newValue }
 	}
 }

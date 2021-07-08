@@ -42,6 +42,10 @@ public final class UIViewEnvironment {
 		}
 	}
 	
+	public subscript<T>(dynamicMember keyPath: KeyPath<UIView, T>) -> UIViewEnvironmentPath<T> {
+		UIViewEnvironmentPath(keyPath: keyPath, environment: self)
+	}
+	
 	public subscript<T>(dynamicMember keyPath: ReferenceWritableKeyPath<UIView, T>) -> T {
 		get {
 			if keyPaths.contains(keyPath) {
@@ -52,6 +56,21 @@ public final class UIViewEnvironment {
 		}
 		set {
 			set(keyPath: keyPath, value: newValue)
+			keyPaths.insert(keyPath)
+		}
+	}
+	
+	public subscript<V: UIView, T>(_ keyPath: ReferenceWritableKeyPath<V, T>) -> T? {
+		get {
+			if keyPaths.contains(keyPath) {
+				return (view as? V)?[keyPath: keyPath]
+			} else {
+				return view?.superview?.environments[keyPath]
+			}
+		}
+		set {
+			guard let value = newValue else { return }
+			set(keyPath: keyPath, value: value)
 			keyPaths.insert(keyPath)
 		}
 	}
@@ -87,19 +106,14 @@ public final class UIViewEnvironment {
 		}
 	}
 	
-	@discardableResult
-	public func bind<T>(_ keyPath: ReferenceWritableKeyPath<UIView, T>) -> () -> Void {
-		bind(\.[dynamicMember: keyPath], to: keyPath)
-	}
-	
-	private func set<T>(keyPath: ReferenceWritableKeyPath<UIView, T>, value: T) {
-		view?[keyPath: keyPath] = value
+	private func set<V: UIView, T>(keyPath: ReferenceWritableKeyPath<V, T>, value: T) {
+		(view as? V)?[keyPath: keyPath] = value
 		view?.subviews.forEach {
 			$0.environments.setRecursive(keyPath: keyPath, value: value)
 		}
 	}
 	
-	private func setRecursive<T>(keyPath: ReferenceWritableKeyPath<UIView, T>, value: T) {
+	private func setRecursive<V: UIView, T>(keyPath: ReferenceWritableKeyPath<V, T>, value: T) {
 		guard !keyPaths.contains(keyPath) else { return }
 		set(keyPath: keyPath, value: value)
 	}
@@ -120,6 +134,21 @@ public final class UIViewEnvironment {
 		_ = try? view?.onMethodInvoked(#selector(UIView.didMoveToWindow)) { _ in
 			action()
 		}
+	}
+}
+
+@dynamicMemberLookup
+public struct UIViewEnvironmentPath<Value> {
+	public let keyPath: KeyPath<UIView, Value>
+	public let environment: UIViewEnvironment
+	
+	public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> UIViewEnvironmentPath<T> {
+		UIViewEnvironmentPath<T>(keyPath: self.keyPath.appending(path: keyPath), environment: environment)
+	}
+	
+	public subscript<T>(dynamicMember keyPath: ReferenceWritableKeyPath<Value, T>) -> T {
+		get { environment[dynamicMember: self.keyPath.appending(path: keyPath)] }
+		nonmutating set { environment[dynamicMember: self.keyPath.appending(path: keyPath)] = newValue }
 	}
 }
 
