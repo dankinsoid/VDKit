@@ -180,10 +180,16 @@ extension Date {
 	public static var yesterday: Date { today - .day }
 	public static var tomorrow: Date { today + .day }
 	
-	public var isToday: Bool { start(of: .day) == .today }
+	public var isToday: Bool { Calendar.default.isDateInToday(self) }
+	public func isToday(calendar: Calendar) -> Bool { calendar.isDateInToday(self) }
 	public var isYesterday: Bool { start(of: .day) == .yesterday }
-	public var isTomorrow: Bool { start(of: .day) == .tomorrow }
+	public func isYesterday(calendar: Calendar) -> Bool { start(of: .day, calendar: calendar) == .yesterday }
+	public var isTomorrow: Bool { Calendar.default.isDateInTomorrow(self) }
+	public func isTomorrow(calendar: Calendar) -> Bool { calendar.isDateInTomorrow(self) }
 	public var isCurrentWeek: Bool { start(of: .week) == Date.today.start(of: .week) }
+	public func isCurrentWeek(calendar: Calendar) -> Bool {
+		start(of: .week, calendar: calendar) == Date.today.start(of: .week, calendar: calendar)
+	}
 	public var iso860: String {
 		string("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", locale: Locale(identifier: "en_US_POSIX"), timeZone: TimeZone(secondsFromGMT: 0) ?? .default)
 	}
