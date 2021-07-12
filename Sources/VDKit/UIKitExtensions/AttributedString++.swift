@@ -209,7 +209,7 @@ public extension ComposeBuilder where C == AttributedArrayInitable {
 }
 
 extension NSAttributedString {
-	convenience init(@AttributedStringBuilder builder: () -> NSAttributedString) {
+	public convenience init(@AttributedStringBuilder builder: () -> NSAttributedString) {
 		self.init(attributedString: builder())
 	}
 	
