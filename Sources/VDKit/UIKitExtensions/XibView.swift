@@ -53,5 +53,4 @@ open class XibUIView: UIView {
     open func afterInit() {
         (self as? XibViewProtocol)?.loadXibAndAddContent()
     }
-    
 }
