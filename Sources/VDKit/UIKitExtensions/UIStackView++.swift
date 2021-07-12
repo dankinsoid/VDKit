@@ -23,5 +23,4 @@ extension UIStackView {
             update($0.element.0, $0.element.1, $0.offset)
         }
     }
-    
 }
