@@ -48,6 +48,10 @@ open class BlurEffectView: UIVisualEffectView {
 		super.init(effect: UIBlurEffect(style: style.defaultStyle))
 	}
 	
+	public convenience init(color: UIColor?) {
+		self.init(style: .custom(color ?? .clear))
+	}
+	
 	required public init?(coder aDecoder: NSCoder) {
 		self.style = .light
 		super.init(coder: aDecoder)
