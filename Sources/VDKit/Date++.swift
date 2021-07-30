@@ -218,7 +218,14 @@ extension Date {
 	public func components(calendar: Calendar = .default) -> DateComponents {
 		calendar.dateComponents(Calendar.Component.allCases, from: self)
 	}
-	
+    
+    public func components(in component: Calendar.Component, calendar: Calendar = .default) -> DateComponents {
+        let components = self.components(calendar: calendar).rawValue.filter {
+            $0.key < component
+        }
+        return DateComponents(rawValue: components)
+    }
+    
 	public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
 		calendar.component(component, from: self)
 	}
