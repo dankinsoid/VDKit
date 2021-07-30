@@ -9,12 +9,12 @@ let package = Package(
         .iOS(.v11)
     ],
     products: [
-			.library(name: "VDKit", targets: ["VDKit"]),
+		.library(name: "VDKit", targets: ["VDKit"]),
     ],
     dependencies: [],
     targets: [
-			.target(name: "VDKitRuntime", dependencies: []),
-			.target(name: "VDKit", dependencies: ["VDKitRuntime"]),
-			.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
+		.target(name: "VDKitRuntime", dependencies: []),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime"]),
+		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
     ]
 )

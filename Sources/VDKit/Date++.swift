@@ -459,12 +459,12 @@ extension Date {
 	public func yearForWeekOfYear(calendar: Calendar = .default) -> Int { calendar.component(.yearForWeekOfYear, from: self) }
 }
 
-extension Calendar.Component: CaseIterable {
+extension Calendar.Component: CaseIterable, Comparable {
 	public typealias AllCases = Set<Calendar.Component>
 	
 	public static var week: Calendar.Component { .weekOfYear }
 	
-	fileprivate static var sorted: [Calendar.Component] { [.nanosecond, .second, .minute, .hour, .day, .weekday, .weekdayOrdinal, .weekOfMonth, .weekOfYear, .month, .quarter, .year, .yearForWeekOfYear, .timeZone, .era, .calendar] }
+    public static var sorted: [Calendar.Component] { [.nanosecond, .second, .minute, .hour, .day, .weekday, .weekdayOrdinal, .weekOfMonth, .weekOfYear, .month, .quarter, .year, .yearForWeekOfYear, .timeZone, .era, .calendar] }
 	
 	public static var allCases: Set<Calendar.Component> {
 		[.year, .month, .day, .hour, .minute, .second, .weekday, .weekdayOrdinal, .quarter, .weekOfMonth, .weekOfYear, .yearForWeekOfYear, .nanosecond, .calendar, .timeZone, .era]
@@ -477,7 +477,7 @@ extension Calendar.Component: CaseIterable {
 		}
 	}
 	
-	fileprivate var smaller: Calendar.Component? {
+    public var smaller: Calendar.Component? {
 		switch self {
 		case .era:                  return .year
 		case .year:                 return .month
@@ -499,7 +499,7 @@ extension Calendar.Component: CaseIterable {
 		}
 	}
 	
-	fileprivate var allLarger: Set<Calendar.Component> {
+    public var allLarger: Set<Calendar.Component> {
 		var result: Set<Calendar.Component> = []
 		var current = larger
 		while let component = current {
@@ -509,7 +509,7 @@ extension Calendar.Component: CaseIterable {
 		return result
 	}
 	
-	fileprivate var larger: Calendar.Component? {
+    public var larger: Calendar.Component? {
 		switch self {
 		case .era:                  return nil
 		case .year:                 return .era
@@ -531,7 +531,7 @@ extension Calendar.Component: CaseIterable {
 		}
 	}
 	
-	fileprivate var inSeconds: TimeInterval {
+    public var inSeconds: TimeInterval {
 		switch self {
 		case .era:                  return .infinity
 		case .year:                 return 365.2425 * Calendar.Component.day.inSeconds
@@ -560,6 +560,9 @@ extension Calendar.Component: CaseIterable {
 		return inSeconds / other
 	}
 	
+    public static func <(lhs: Calendar.Component, rhs: Calendar.Component) -> Bool {
+        sorted.filter({ $0 == lhs || $0 == rhs }) == [lhs, rhs]
+    }
 }
 
 public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictionaryLiteral {
