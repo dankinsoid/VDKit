@@ -73,6 +73,28 @@ extension Collection {
 	public func compactMapDictionary<Key: Hashable, Value>(_ transform: (Element) -> (Key, Value)?) -> [Key: Value] {
 		compactMapDictionary(transform, uniquingKeysWith: { _, second in second })
 	}
+    
+    func grouped(by isEqual: (Element, Element) -> Bool) -> [[Element]] {
+        var groups: [[Element]] = []
+        for element in self {
+            if let i = groups.firstIndex(where: { isEqual($0[0], element) }) {
+                groups[i].append(element)
+            } else {
+                groups.append([element])
+            }
+        }
+        return groups
+    }
+    
+    func grouped<T>(by keyPath: KeyPath<Element, T>, _ isEqual: (T, T) -> Bool) -> [[Element]] {
+        grouped {
+            isEqual($0[keyPath: keyPath], $1[keyPath: keyPath])
+        }
+    }
+    
+    func grouped<T: Equatable>(by keyPath: KeyPath<Element, T>) -> [[Element]] {
+        grouped(by: keyPath, ==)
+    }
 }
 
 extension Sequence {
