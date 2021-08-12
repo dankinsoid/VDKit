@@ -272,7 +272,7 @@ extension Date {
 		return true
 	}
     
-    public func isSame(_ component: Calendar.Component, as date: Date, calendar: Calendar = .default) -> Bool {
+    public func isInSame(_ component: Calendar.Component, as date: Date, calendar: Calendar = .default) -> Bool {
         if component == .day {
             return calendar.isDate(self, inSameDayAs: date)
         }
