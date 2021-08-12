@@ -229,6 +229,11 @@ extension Date {
 	public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
 		calendar.component(component, from: self)
 	}
+    
+    public subscript(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
+        get { self.component(component, calendar: calendar) }
+        set { set(component, value: newValue, calendar: calendar) }
+    }
 	
 	public func start(of component: Calendar.Component, calendar: Calendar = .default) -> Date {
 		if component == .day {
@@ -439,7 +444,29 @@ extension Date {
 		}
 		return next ?? prev
 	}
-	
+    
+    public func rounded(_ component: Calendar.Component, by value: Int, calendar: Calendar = .default) -> Date {
+        guard value > 0 else { return setting(component, value: value, calendar: calendar) ?? self }
+        var count = self.component(component, calendar: calendar)
+        count = Int(Foundation.round(Double(count) / Double(value))) * value
+        return setting(component, value: count, calendar: calendar) ?? self
+    }
+    
+    public mutating func round(_ component: Calendar.Component, by value: Int, calendar: Calendar = .default) {
+        self = rounded(component, by: value, calendar: calendar)
+    }
+    
+    public func rounded(_ component: Calendar.Component, from date: Date, by value: Int, calendar: Calendar = .default) -> Date {
+        guard value > 0 else { return setting(component, value: value, calendar: calendar) ?? self }
+        var count = interval(of: component, from: date, calendar: calendar)
+        count = Int(Foundation.round(Double(count) / Double(value))) * value
+        return date + .components([component: count])
+    }
+    
+    public mutating func round(_ component: Calendar.Component, from date: Date, by value: Int, calendar: Calendar = .default) {
+        self = rounded(component, from: date, by: value, calendar: calendar)
+    }
+
 	public func month(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .month, in: larger, startFromZero: false, calendar: calendar) }
 	public func day(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .day, in: larger, startFromZero: false, calendar: calendar) }
 	public func hour(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .hour, in: larger, startFromZero: false, calendar: calendar) }
@@ -464,6 +491,21 @@ extension Date {
 	public func weekOfMonth(calendar: Calendar = .default) -> Int { calendar.component(.weekOfMonth, from: self) }
 	public func weekOfYear(calendar: Calendar = .default) -> Int { calendar.component(.weekOfYear, from: self) }
 	public func yearForWeekOfYear(calendar: Calendar = .default) -> Int { calendar.component(.yearForWeekOfYear, from: self) }
+    
+    public var era: Int { get { self[.era] } set { self[.era] = newValue } }
+    public var year: Int { get { self[.year] } set { self[.year] = newValue } }
+    public var month: Int { get { self[.month] } set { self[.month] = newValue } }
+    public var day: Int { get { self[.day] } set { self[.day] = newValue } }
+    public var hour: Int { get { self[.hour] } set { self[.hour] = newValue } }
+    public var minute: Int { get { self[.minute] } set { self[.minute] = newValue } }
+    public var second: Int { get { self[.second] } set { self[.second] = newValue } }
+    public var nanosecond: Int { get { self[.nanosecond] } set { self[.nanosecond] = newValue } }
+    public var weekday: Int { get { self[.weekday] } set { self[.weekday] = newValue } }
+    public var weekdayOrdinal: Int { get { self[.weekdayOrdinal] } set { self[.weekdayOrdinal] = newValue } }
+    public var quarter: Int { get { self[.quarter] } set { self[.quarter] = newValue } }
+    public var weekOfMonth: Int { get { self[.weekOfMonth] } set { self[.weekOfMonth] = newValue } }
+    public var weekOfYear: Int { get { self[.weekOfYear] } set { self[.weekOfYear] = newValue } }
+    public var yearForWeekOfYear: Int { get { self[.yearForWeekOfYear] } set { self[.yearForWeekOfYear] = newValue } }
 }
 
 extension Calendar.Component: CaseIterable, Comparable {
