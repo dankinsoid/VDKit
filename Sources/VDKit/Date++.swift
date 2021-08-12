@@ -308,6 +308,10 @@ extension Date {
 		return lower..<upper
 	}
 	
+    public func count(of smaller: Calendar.Component, calendar: Calendar = .default) -> Int {
+        smaller.larger.map { count(of: smaller, in: $0, calendar: calendar) } ?? 1
+    }
+        
 	public func count(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Int {
 		if smaller.larger == larger || larger.smaller == smaller {
 			return range(of: smaller, in: larger, calendar: calendar)?.count ?? 0
@@ -412,13 +416,25 @@ extension Date {
 	
 	@discardableResult
 	public mutating func set(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Bool {
-		let result = calendar.date(bySetting: component, value: value, of: self)
+        let result = setting(component, value: value, calendar: calendar)
 		self = result ?? self
 		return result != nil
 	}
 	
 	public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
-		calendar.date(bySetting: component, value: value, of: self)
+        switch component {
+        case .nanosecond, .second, .minute, .hour:
+            var comps = components(calendar: calendar)
+            comps.setValue(value, for: component)
+            return calendar.date(from: comps)
+        case .day, .weekday, .weekdayOrdinal, .weekOfYear, .weekOfMonth, .era, .month, .quarter, .year, .yearForWeekOfYear:
+            let diff = value - self.component(component, calendar: calendar)
+            return adding(component, value: diff, calendar: calendar)
+        case .calendar, .timeZone:
+            return nil
+        @unknown default:
+            return nil
+        }
 	}
 	
 	public func compare(with date: Date, accuracy component: Calendar.Component, calendar: Calendar = .default) -> ComparisonResult {
