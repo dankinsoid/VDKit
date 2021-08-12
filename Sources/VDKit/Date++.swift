@@ -271,7 +271,18 @@ extension Date {
 		}
 		return true
 	}
-	
+    
+    public func isSame(_ component: Calendar.Component, as date: Date, calendar: Calendar = .default) -> Bool {
+        if component == .day {
+            return calendar.isDate(self, inSameDayAs: date)
+        }
+        return start(of: component, calendar: calendar) == date.start(of: component, calendar: calendar)
+    }
+    
+    public func isEqual(to date: Date, toGranularity: Calendar.Component, calendar: Calendar = .default) -> Bool {
+        calendar.isDate(self, equalTo: date, toGranularity: toGranularity)
+    }
+    
 	public func interval(of component: Calendar.Component, from date: Date, calendar: Calendar = .default) -> Int {
 		calendar.dateComponents([component], from: date.start(of: component, calendar: calendar), to: start(of: component, calendar: calendar)).component(component) ?? 0
 	}
