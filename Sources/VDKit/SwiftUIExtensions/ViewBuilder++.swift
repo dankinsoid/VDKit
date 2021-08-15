@@ -11,7 +11,7 @@ import SwiftUI
 extension ViewBuilder {
     
     public static func buildArray<C: View>(_ components: [C]) -> some View {
-        ForEach(components.indices) {
+        ForEach(components.indices, id: \.self) {
             components[$0]
         }
     }
