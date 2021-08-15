@@ -11,6 +11,10 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension EdgeInsets {
 	
+    public static var zero: EdgeInsets {
+        EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+    }
+    
 	public init(_ value: CGFloat, _ edges: Edge.Set) {
 		self = .init(
 			top: edges.contains(.top) ? value : 0,

@@ -38,8 +38,13 @@ public struct AdditionalSafeAreaModifier: ViewModifier {
         self.insets = insets
     }
     
+    @ViewBuilder
     public func body(content: Content) -> some View {
-        AdditionalSafeAreaView(content: content, edges: insets)
+        if insets == .zero {
+            content
+        } else {
+            AdditionalSafeAreaView(content: content, edges: insets)
+        }
     }
 }
 
