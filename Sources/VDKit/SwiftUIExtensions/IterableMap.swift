@@ -11,6 +11,10 @@ import SwiftUI
 extension IterableView {
     
     public func iterableModifier<M: ViewModifier>(_ modifier: M) -> IterableMapView<Self, M> {
+        iterableModifier { _ in modifier }
+    }
+    
+    public func iterableModifier<M: ViewModifier>(_ modifier: @escaping (Int) -> M) -> IterableMapView<Self, M> {
         IterableMapView(base: self, modifier: modifier)
     }
 }
@@ -18,15 +22,20 @@ extension IterableView {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct IterableMapView<Base: IterableView, Modifier: ViewModifier>: IterableView {
     public var base: Base
-    public var modifier: Modifier
+    public var modifier: (Int) -> Modifier
     public var count: Int { base.count }
     
     public var body: some View {
-        base.modifier(modifier)
+        if count > 0 {
+            for (i, view) in base.subviews.enumerated() {
+                view.modifier(modifier(i))
+            }
+        }
     }
     
     public func iterate<V: IterableViewVisitor>(with visitor: V, reversed: Bool) -> Bool {
-        base.iterate(with: MapIterableViewVisitor(modifier: modifier, base: visitor), reversed: reversed)
+        let visitor = MapIterableViewVisitor(modifier: modifier, base: visitor)
+        return base.iterate(with: visitor, reversed: reversed)
     }
     
     public func subrange(at range: Range<Int>) -> some IterableView {
@@ -35,11 +44,19 @@ public struct IterableMapView<Base: IterableView, Modifier: ViewModifier>: Itera
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct MapIterableViewVisitor<Base: IterableViewVisitor, Modifier: ViewModifier>: IterableViewVisitor {
-    var modifier: Modifier
+final class MapIterableViewVisitor<Base: IterableViewVisitor, Modifier: ViewModifier>: IterableViewVisitor {
+    var modifier: (Int) -> Modifier
     var base: Base
+    var count = 0
+    
+    init(modifier: @escaping (Int) -> Modifier, base: Base) {
+        self.modifier = modifier
+        self.base = base
+    }
     
     func visit<V>(_ value: V) -> Bool where V : View {
-        base.visit(value.modifier(modifier))
+        let result = base.visit(value.modifier(modifier(count)))
+        count += 1
+        return result
     }
 }

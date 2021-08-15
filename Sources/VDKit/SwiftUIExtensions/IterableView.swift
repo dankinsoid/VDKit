@@ -37,6 +37,10 @@ public protocol IterableView: IterableViewType, View {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension IterableView {
+    
+    public var subviews: [Subview] {
+        (0..<count).map { self[$0] }
+    }
 	
 	public subscript(_ index: Int) -> Subview {
 		subrange(at: index..<(index + 1))
