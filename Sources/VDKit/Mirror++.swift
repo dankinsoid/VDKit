@@ -19,7 +19,7 @@ extension Mirror {
 	}
 	
     public var asJson: [String?: Any] {
-        Dictionary(children.map { ($0.label, Mirror(reflecting: $0.value).asJson) }, uniquingKeysWith: { _, p in p })
+        Dictionary(children.map { ($0.label, Mirrored($0.value).asJson) }, uniquingKeysWith: { _, p in p })
 	}
     
     public var dictionary: [String?: Any] {
@@ -45,5 +45,19 @@ extension Mirror {
             }
         }
         return nil
+    }
+}
+
+private struct Mirrored<T> {
+    var mirror: Mirror
+    var value: T
+    
+    init(_ value: T) {
+        self.value = value
+        self.mirror = Mirror(reflecting: value)
+    }
+    
+    var asJson: [String?: Any] {
+        mirror.children.isEmpty ? [nil: value] : mirror.asJson
     }
 }
