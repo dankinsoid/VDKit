@@ -71,6 +71,6 @@ extension Binding: KeyInput where Value == String {
 extension View {
 	
 	public func field(keyOutput: KeyOutput?) -> some View {
-		environment(KeyOutputKey.self, keyOutput)
+        environment(\.keyOutput, keyOutput)
 	}
 }
