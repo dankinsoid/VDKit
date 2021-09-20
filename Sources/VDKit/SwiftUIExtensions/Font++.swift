@@ -145,7 +145,7 @@ public enum FontProviderType {
 			
 			case .leading(let leading):
 				if #available(iOS 14.0, *) {
-					switch leading {
+          switch leading as? Font.Leading {
 					case .loose:	return provider.uiFont?.withTraits(.traitLooseLeading)
 					default:			return provider.uiFont?.withTraits(.traitTightLeading)
 					}
@@ -193,7 +193,7 @@ public enum FontProviderType {
 			case .uppercaseSmallCaps:		return font.uppercaseSmallCaps()
 			case .weight(let weight):		return font.weight(weight)
 			case .leading(let leading):
-				if #available(iOS 14.0, *) {
+        if #available(iOS 14.0, *), let leading = leading as? Font.Leading {
 					return font.leading(leading)
 				} else {
 					return .body
@@ -247,9 +247,7 @@ public enum FontProviderType {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public enum FontModifierType {
-	case bold, italic, monospacedDigit, lowercaseSmallCaps, smallCaps, uppercaseSmallCaps, weight(Font.Weight)
-	@available(iOS 14.0, *)
-	case leading(Font.Leading)
+	case bold, italic, monospacedDigit, lowercaseSmallCaps, smallCaps, uppercaseSmallCaps, weight(Font.Weight), leading(FontLeadingType)
 	
 	init?(value: Any) {
 		let typeString = "\(type(of: value))"
@@ -276,6 +274,11 @@ public enum FontModifierType {
 		}
 	}
 }
+
+public protocol FontLeadingType {}
+
+@available(iOS 14, *)
+extension Font.Leading: FontLeadingType {}
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Font.TextStyle {
