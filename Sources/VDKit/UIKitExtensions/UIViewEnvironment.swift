@@ -29,14 +29,15 @@ public final class UIViewEnvironment {
 		self.view = view
 	}
 	
-	public subscript<T>(_ keyPath: KeyPath<UIViewEnvironment, T>, defaultValue: T) -> T {
+	public subscript<T>(_ keyPath: KeyPath<UIViewEnvironment, T>) -> T? {
 		get {
 			if let any = values[keyPath], type(of: any) == T.self {
-				return (any as? T) ?? defaultValue
+				return any as? T
 			}
-			return view?.superview?.environments[keyPath, defaultValue] ?? defaultValue
+			return view?.superview?.environments[keyPath]
 		}
 		set {
+            guard let newValue = newValue else { return }
 			values[keyPath] = newValue
 			send(keyPath: keyPath, value: newValue)
 		}

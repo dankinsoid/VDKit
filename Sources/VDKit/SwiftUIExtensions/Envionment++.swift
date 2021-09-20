@@ -15,9 +15,9 @@ private struct AnyTypeKey<T>: EnvironmentKey {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension EnvironmentValues {
     
-    public subscript<T>(_ keyPath: KeyPath<EnvironmentValues, T>, default defaultValue: T) -> T {
+    public subscript<T>(_ keyPath: KeyPath<EnvironmentValues, T>) -> T? {
         get {
-            self[AnyTypeKey<T>.self][keyPath] ?? defaultValue
+            self[AnyTypeKey<T>.self][keyPath]
         }
         set {
             self[AnyTypeKey<T>.self][keyPath] = newValue

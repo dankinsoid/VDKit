@@ -50,7 +50,7 @@ final class VDKitTests: XCTestCase {
 extension UIViewEnvironment {
 	
 	public var cornerRadius: CGFloat {
-		get { self[\.cornerRadius, 0] }
-		set { self[\.cornerRadius, 0] = newValue }
+		get { self[\.cornerRadius] ?? 0 }
+		set { self[\.cornerRadius] = newValue }
 	}
 }
