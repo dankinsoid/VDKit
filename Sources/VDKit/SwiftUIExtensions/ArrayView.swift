@@ -13,7 +13,7 @@ public struct ArrayView<Content: IterableView>: IterableView, ExpressibleByArray
 	public var content: [Content]
 	
 	public var body: some View {
-		ForEach(0..<content.count) { content[$0] }
+        ForEach(Array(content.enumerated()), id: \.offset) { $0.element }
 	}
 	
 	public init<C: Collection>(_ content: C) where C.Element == Content {

@@ -6,35 +6,35 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-extension ChainProperty where Value == UIViewEnvironment, Base: ValueChainingProtocol {
+extension ChainProperty where Value == ObjectEnvironment<Base.Value>, Base: ValueChainingProtocol {
 	
-	public func observe<T>(_ keyPath: KeyPath<UIViewEnvironment, T>, observer: @escaping (T) -> Void) -> Base {
+	public func observe<T>(_ keyPath: KeyPath<Value, T>, observer: @escaping (T) -> Void) -> Base {
 		observe(keyPath) {
 			$0.observe(keyPath, observer: observer)
 		}
 	}
 	
-	public func bind<T>(_ keyPath: KeyPath<UIViewEnvironment, T>, to: ReferenceWritableKeyPath<UIView, T>) -> Base {
+	public func bind<T>(_ keyPath: KeyPath<Value, T>, to: ReferenceWritableKeyPath<Base.Value, T>) -> Base {
 		observe(keyPath) {
 			$0.bind(keyPath, to: to)
 		}
 	}
 	
-	public func bind<T>(_ keyPath: KeyPath<UIViewEnvironment, T?>, to: ReferenceWritableKeyPath<UIView, T>) -> Base {
+	public func bind<T>(_ keyPath: KeyPath<Value, T?>, to: ReferenceWritableKeyPath<Base.Value, T>) -> Base {
 		observe(keyPath) {
 			$0.bind(keyPath, to: to)
 		}
 	}
 	
-	public func bind<T>(_ keyPath: KeyPath<UIViewEnvironment, T>, to: ReferenceWritableKeyPath<UIView, T?>) -> Base {
+	public func bind<T>(_ keyPath: KeyPath<Value, T>, to: ReferenceWritableKeyPath<Base.Value, T?>) -> Base {
 		observe(keyPath) {
 			$0.bind(keyPath, to: to)
 		}
 	}
 	
-	private func observe<T>(_ keyPath: KeyPath<UIViewEnvironment, T>, observer: @escaping (UIViewEnvironment) -> Void) -> Base {
+	private func observe<T>(_ keyPath: KeyPath<Value, T>, observer: @escaping (Value) -> Void) -> Base {
 		var result = chaining
 		result.apply = {[chaining] in
 			let result = chaining.apply($0)
@@ -44,7 +44,7 @@ extension ChainProperty where Value == UIViewEnvironment, Base: ValueChainingPro
 		return result
 	}
 	
-	public func bind<T>(_ keyPath: ReferenceWritableKeyPath<UIView, T>) -> Base {
+	public func bind<T>(_ keyPath: ReferenceWritableKeyPath<Base.Value, T>) -> Base {
 		bind(\.[dynamicMember: keyPath], to: keyPath)
 	}
 }
