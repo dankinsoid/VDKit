@@ -265,7 +265,7 @@ extension Date {
     /// - Returns: The value for the component.
     public subscript(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
         get { calendar.component(component, from: self) }
-        set { set(component, value: newValue, calendar: calendar) }
+        set { set(newValue, component, calendar: calendar) }
     }
     
     /// Returns the first moment of a given Date, as a Date.
@@ -481,11 +481,12 @@ extension Date {
     
     @discardableResult
     public mutating func set(_ value: Int, _ component: Calendar.Component, calendar: Calendar = .default) -> Bool {
-        let result = setting(component, value: value, calendar: calendar)
+        let result = setting(value, component, calendar: calendar)
         self = result ?? self
         return result != nil
     }
     
+    @available(*, deprecated, message: "Use set(value, component)")
 	@discardableResult
 	public mutating func set(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Bool {
         set(value, component, calendar: calendar)
@@ -497,10 +498,11 @@ extension Date {
     
     public func setting(_ components: DateComponents, calendar: Calendar = .default) -> Date {
         components.rawValue.sorted(by: { $0.key > $1.key }).reduce(self) {
-            $0.setting($1.key, value: $1.value) ?? $0
+            $0.setting($1.value, $1.key) ?? $0
         }
     }
     
+    @available(*, deprecated, message: "Use setting(value, component)")
     public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
         setting(value, component, calendar: calendar)
     }
@@ -557,10 +559,10 @@ extension Date {
 	}
     
     public func rounded(_ component: Calendar.Component, by value: Int, calendar: Calendar = .default) -> Date {
-        guard value > 0 else { return setting(component, value: value, calendar: calendar) ?? self }
+        guard value > 0 else { return setting(value, component, calendar: calendar) ?? self }
         var count = self.component(component, calendar: calendar)
         count = Int(Foundation.round(Double(count) / Double(value))) * value
-        return setting(component, value: count, calendar: calendar) ?? self
+        return setting(count, component, calendar: calendar) ?? self
     }
     
     public mutating func round(_ component: Calendar.Component, by value: Int, calendar: Calendar = .default) {
@@ -568,7 +570,7 @@ extension Date {
     }
     
     public func rounded(_ component: Calendar.Component, from date: Date, by value: Int, calendar: Calendar = .default) -> Date {
-        guard value > 0 else { return setting(component, value: value, calendar: calendar) ?? self }
+        guard value > 0 else { return setting(value, component, calendar: calendar) ?? self }
         var count = interval(of: component, from: date, calendar: calendar)
         count = Int(Foundation.round(Double(count) / Double(value))) * value
         return date + .components([component: count])
