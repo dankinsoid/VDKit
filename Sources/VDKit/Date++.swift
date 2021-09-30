@@ -413,15 +413,34 @@ extension Date {
 	public func adding(_ component: Calendar.Component, value: Int, wrapping: Bool = false, calendar: Calendar = .default) -> Date {
 		calendar.date(byAdding: component, value: value, to: self, wrappingComponents: wrapping) ?? addingTimeInterval(TimeInterval(value * count(of: .second, in: component)))
 	}
-	
+    
+    @discardableResult
+    public mutating func set(_ value: Int, _ component: Calendar.Component, calendar: Calendar = .default) -> Bool {
+        let result = setting(component, value: value, calendar: calendar)
+        self = result ?? self
+        return result != nil
+    }
+    
 	@discardableResult
 	public mutating func set(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Bool {
-        let result = setting(component, value: value, calendar: calendar)
-		self = result ?? self
-		return result != nil
+        set(value, component, calendar: calendar)
 	}
-	
-	public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
+    
+    public mutating func set(_ components: DateComponents, calendar: Calendar = .default) {
+        self = setting(components, calendar: calendar)
+    }
+    
+    public func setting(_ components: DateComponents, calendar: Calendar = .default) -> Date {
+        components.rawValue.sorted(by: { $0.key > $1.key }).reduce(self) {
+            $0.setting($1.key, value: $1.value) ?? $0
+        }
+    }
+    
+    public func setting(_ component: Calendar.Component, value: Int, calendar: Calendar = .default) -> Date? {
+        setting(value, component, calendar: calendar)
+    }
+    
+	public func setting(_ value: Int, _ component: Calendar.Component, calendar: Calendar = .default) -> Date? {
         switch component {
         case .nanosecond, .second, .minute, .hour:
             var comps = components(calendar: calendar)
