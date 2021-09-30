@@ -10,7 +10,6 @@ extension Calendar {
 	public func name(forWeekday weekday: Int) -> String {
 		standaloneWeekdaySymbols[weekday - firstWeekday]
 	}
-	
 }
 
 extension Locale {
@@ -18,7 +17,7 @@ extension Locale {
 }
 
 extension TimeZone {
-		public static var `default` = TimeZone.autoupdatingCurrent
+    public static var `default` = TimeZone.autoupdatingCurrent
 }
 
 public enum Weekdays: Int, CustomStringConvertible {
@@ -180,16 +179,40 @@ extension Date {
 	public static var yesterday: Date { today - .day }
 	public static var tomorrow: Date { today + .day }
 	
+    /// true if the given date is within today, as defined by default calendar and calendar’s locale; otherwise, false.
 	public var isToday: Bool { Calendar.default.isDateInToday(self) }
+    
+    /// Returns a Boolean value indicating whether the given date is within today.
+    /// - Parameter calendar: The calendar to use
+    /// - Returns: true if the given date is within today, as defined by the calendar and calendar’s locale; otherwise, false.
 	public func isToday(calendar: Calendar) -> Bool { calendar.isDateInToday(self) }
+    
+    ///true if the given date is within yesterday, as defined by default calendar and calendar’s locale; otherwise, false.
 	public var isYesterday: Bool { start(of: .day) == .yesterday }
+    
+    /// Returns a Boolean value indicating whether the given date is within today.
+    /// - Parameter calendar: The calendar to use
+    /// - Returns: true if the given date is within yesterday, as defined by the calendar and calendar’s locale; otherwise, false.
 	public func isYesterday(calendar: Calendar) -> Bool { start(of: .day, calendar: calendar) == .yesterday }
+    
+    ///true if the given date is within tomorrow, as defined by default calendar and calendar’s locale; otherwise, false.
 	public var isTomorrow: Bool { Calendar.default.isDateInTomorrow(self) }
+    
+    /// Returns a Boolean value indicating whether the given date is within today.
+    /// - Parameter calendar: The calendar to use
+    /// - Returns: true if the given date is within tomorrow, as defined by the calendar and calendar’s locale; otherwise, false.
 	public func isTomorrow(calendar: Calendar) -> Bool { calendar.isDateInTomorrow(self) }
+    
+    ///true if the given date is within current week, as defined by default calendar and calendar’s locale; otherwise, false.
 	public var isCurrentWeek: Bool { start(of: .week) == Date.today.start(of: .week) }
+    
+    /// Returns a Boolean value indicating whether the given date is within today.
+    /// - Parameter calendar: The calendar to use
+    /// - Returns: true if the given date is within current week, as defined by the calendar and calendar’s locale; otherwise, false.
 	public func isCurrentWeek(calendar: Calendar) -> Bool {
 		start(of: .week, calendar: calendar) == Date.today.start(of: .week, calendar: calendar)
 	}
+    
 	public var iso860: String {
 		string("yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", locale: Locale(identifier: "en_US_POSIX"), timeZone: TimeZone(secondsFromGMT: 0) ?? .default)
 	}
@@ -226,15 +249,32 @@ extension Date {
         return DateComponents(rawValue: components)
     }
     
+    /// Returns the value for one component of a date.
+    /// - Parameters:
+    ///   - component: The component to calculate
+    ///   - calendar: The calendar to use
+    /// - Returns: The value for the component.
 	public func component(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
 		calendar.component(component, from: self)
 	}
     
+    /// Returns the value for one component of a date.
+    /// - Parameters:
+    ///   - component: The component to calculate
+    ///   - calendar: The calendar to use
+    /// - Returns: The value for the component.
     public subscript(_ component: Calendar.Component, calendar: Calendar = .default) -> Int {
-        get { self.component(component, calendar: calendar) }
+        get { calendar.component(component, from: self) }
         set { set(component, value: newValue, calendar: calendar) }
     }
-	
+    
+    /// Returns the first moment of a given Date, as a Date.
+    ///
+    /// For example, pass in `.day`, if you want the start of today.
+    /// - Parameters:
+    ///   - component: The component to compute for
+    ///   - calendar: The calendar to use
+    /// - Returns: The first moment of the given date.
 	public func start(of component: Calendar.Component, calendar: Calendar = .default) -> Date {
 		if component == .day {
 			return calendar.startOfDay(for: self)
@@ -243,7 +283,15 @@ extension Date {
 		set.insert(component)
 		return calendar.date(from: calendar.dateComponents(set, from: self)) ?? self
 	}
-	
+    
+    /// Returns the last moment of a given Date, as a Date, with given accuracy.
+    ///
+    /// For example, pass in `.day`, if you want the start of today.
+    /// - Parameters:
+    ///   - component: The component to compute for
+    ///   - accuracy: The component to compute for
+    ///   - calendar: The calendar to use
+    /// - Returns: The last moment of the given date.
 	public func end(of component: Calendar.Component, accuracy: Calendar.Component? = nil, calendar: Calendar = .default) -> Date {
 		var smaller: Calendar.Component?
 		if let smallest = accuracy, calendar.range(of: smallest, in: component, for: self) != nil {
@@ -371,9 +419,26 @@ extension Date {
 		}
 	}
 	
+    @available(*, deprecated, message: "Use ordinality instead")
 	public func position(of smaller: Calendar.Component, in larger: Calendar.Component, startFromZero: Bool = true, calendar: Calendar = .default) -> Int {
 		interval(of: smaller, from: start(of: larger, calendar: calendar), calendar: calendar) + (startFromZero ? 0 : smaller.first)
 	}
+    
+    /// Returns, for a given absolute time, the ordinal number of a smaller calendar component (such as a day) within a specified larger calendar component (such as a week).
+    /// ```swift
+    /// date.ordinality(of: .day, in: .week)
+    /// ```
+    /// The ordinality is in most cases not the same as the decomposed value of the component. Typically return values are 1 and greater. For example, the time 00:45 is in the first hour of the day, and for components hour and day respectively, the result would be 1. An exception is the week-in-month calculation, which returns 0 for days before the first week in the month containing the date.
+    /// - Note:
+    ///        Some computations can take a relatively long time.
+    /// - Parameters:
+    ///   - smaller: The smaller calendar component.
+    ///   - larger: The larger calendar component.
+    ///   - calendar: The calendar to use
+    /// - Returns: The ordinal number of smaller within larger at the time specified by date. Returns nil if larger is not logically bigger than smaller in the calendar, or the given combination of components does not make sense (or is a computation which is undefined).
+    public func ordinality(of smaller: Calendar.Component, in larger: Calendar.Component, calendar: Calendar = .default) -> Int? {
+        calendar.ordinality(of: smaller, in: larger, for: self)
+    }
 	
 	public func from(_ other: Date) -> DateDifference {
 		.dates(from: other, to: self)
@@ -494,15 +559,15 @@ extension Date {
         self = rounded(component, from: date, by: value, calendar: calendar)
     }
 
-	public func month(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .month, in: larger, startFromZero: false, calendar: calendar) }
-	public func day(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .day, in: larger, startFromZero: false, calendar: calendar) }
-	public func hour(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .hour, in: larger, startFromZero: false, calendar: calendar) }
-	public func minute(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .minute, in: larger, startFromZero: false, calendar: calendar) }
-	public func second(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .second, in: larger, startFromZero: false, calendar: calendar) }
-	public func nanosecond(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .nanosecond, in: larger, startFromZero: false, calendar: calendar) }
-	public func weekday(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .weekday, in: larger, startFromZero: false, calendar: calendar) }
-	public func quarter(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .quarter, in: larger, startFromZero: false, calendar: calendar) }
-	public func week(in larger: Calendar.Component, calendar: Calendar = .default) -> Int { position(of: .weekOfYear, in: larger, startFromZero: false, calendar: calendar) }
+	public func month(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .month, in: larger, calendar: calendar) }
+	public func day(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .day, in: larger, calendar: calendar) }
+	public func hour(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .hour, in: larger, calendar: calendar) }
+	public func minute(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .minute, in: larger, calendar: calendar) }
+	public func second(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .second, in: larger, calendar: calendar) }
+	public func nanosecond(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .nanosecond, in: larger, calendar: calendar) }
+	public func weekday(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .weekday, in: larger, calendar: calendar) }
+	public func quarter(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .quarter, in: larger, calendar: calendar) }
+	public func week(in larger: Calendar.Component, calendar: Calendar = .default) -> Int? { ordinality(of: .weekOfYear, in: larger, calendar: calendar) }
 	
 	public func era(calendar: Calendar = .default) -> Int { calendar.component(.era, from: self) }
 	public func year(calendar: Calendar = .default) -> Int { calendar.component(.year, from: self) }
@@ -817,7 +882,6 @@ public enum DateDifference: Hashable, Equatable, Comparable, ExpressibleByDictio
 	fileprivate static func operation(_ operation: (Int, Int) -> Int, _ lhs: DateDifference, _ rhs: DateDifference, at keyPath: KeyPath<DateDifference, Int>) -> Int {
 		operation(lhs[keyPath: keyPath], rhs[keyPath: keyPath])
 	}
-	
 }
 
 extension BinaryInteger {
@@ -868,7 +932,6 @@ extension DateFormatter {
 		dateFormat = format
 		locale = .default
 	}
-	
 }
 
 extension ClosedRange where Bound == Date {
@@ -877,7 +940,6 @@ extension ClosedRange where Bound == Date {
 		let count = upperBound.interval(of: component, from: lowerBound) + 1
 		return DatesCollection(from: lowerBound, count: count, component: component, step: step, calendar: calendar)
 	}
-	
 }
 
 extension Range where Bound == Date {
@@ -886,7 +948,6 @@ extension Range where Bound == Date {
 		let count = upperBound.interval(of: component, from: lowerBound)
 		return DatesCollection(from: lowerBound, count: count, component: component, step: step, calendar: calendar)
 	}
-	
 }
 
 @available(iOS 10.0, *)
@@ -927,7 +988,6 @@ public struct DatesCollection: Collection {
 	public func index(after i: Int) -> Int {
 		i + 1
 	}
-	
 }
 
 extension Calendar.SearchDirection {
@@ -944,6 +1004,4 @@ extension Calendar.SearchDirection {
 			}
 		}
 	}
-	
 }
-

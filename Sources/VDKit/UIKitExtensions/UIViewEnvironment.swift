@@ -40,6 +40,8 @@ extension UIViewController {
     }
 }
 
+public typealias UIViewEnvironment = ObjectEnvironment<UIView>
+
 @dynamicMemberLookup
 public final class ObjectEnvironment<Base: AnyObject> {
 	private var values: [PartialKeyPath<ObjectEnvironment>: Any] = [:]
