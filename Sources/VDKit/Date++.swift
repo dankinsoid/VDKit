@@ -984,7 +984,7 @@ extension DateInterval {
 	
 }
 
-public struct DatesCollection: Collection {
+public struct DatesCollection: Collection, RandomAccessCollection {
 	public var array: [Date] { Array(self) }
 	public var startIndex: Int { 0 }
 	public var endIndex: Int { count }
@@ -1009,6 +1009,10 @@ public struct DatesCollection: Collection {
 	public func index(after i: Int) -> Int {
 		i + 1
 	}
+    
+    public func index(_ i: Int, offsetBy distance: Int) -> Int {
+        i + distance
+    }
 }
 
 extension Calendar.SearchDirection {
