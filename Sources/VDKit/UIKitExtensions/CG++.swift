@@ -198,6 +198,19 @@ extension CGSize: PareProtocol {
 
 extension CGRect {
     
+    public static func between(_ lhs: CGPoint, _ rhs: CGPoint) -> CGRect {
+        CGRect(
+            origin: CGPoint(
+                x: min(lhs.x, rhs.x),
+                y: min(lhs.y, rhs.y)
+            ),
+            size: CGSize(
+                width: abs(lhs.x - rhs.x),
+                height: abs(lhs.y - rhs.y)
+            )
+        )
+    }
+    
     public var center: CGPoint {
         CGPoint(x: width / 2, y: height / 2)
     }
