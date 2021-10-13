@@ -55,20 +55,16 @@ public struct Field<Input: View>: UIViewRepresentable {
 		uiView.hostingInput?.rootView = inputView
 		
 		uiView.onEditingChange = { value in
-			DispatchQueue.main.async {
-				if value != isEditing?.wrappedValue {
-					isEditing?.wrappedValue = value
-				}
-				context.environment.fieldOnChangeEditing(value)
-			}
+            if value != isEditing?.wrappedValue {
+                isEditing?.wrappedValue = value
+            }
+            context.environment.fieldOnChangeEditing(value)
 		}
 		uiView.onChange = { value in
 			if value != text { text = value }
 		}
 		uiView.onChangeSelection = { value in
-			DispatchQueue.main.async {
-				if value != selection?.wrappedValue { selection?.wrappedValue = value }
-			}
+            if value != selection?.wrappedValue { selection?.wrappedValue = value }
 		}
 		uiView.onDelete = context.environment.fieldOnDelete
 		
