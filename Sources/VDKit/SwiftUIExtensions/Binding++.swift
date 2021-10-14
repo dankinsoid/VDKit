@@ -10,11 +10,14 @@ import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Binding {
-	
-	public init(wrappedValue: Value) {
-		self = .var(wrappedValue)
-	}
-	
+    
+    public func map<T>(get: @escaping (Value) -> T, set: @escaping (inout Value, T) -> Void) -> Binding<T> {
+        Binding<T>(
+            get: { get(self.wrappedValue) },
+            set: { set(&self.wrappedValue, $0) }
+        )
+    }
+    
 	public func map<T>(get: @escaping (Value) -> T, set: @escaping (Value, T) -> Value) -> Binding<T> {
 		Binding<T>(
 			get: { get(self.wrappedValue) },
@@ -71,27 +74,39 @@ extension Binding {
 		}
 	}
 	
-	public static func `var`(_ initial: Value) -> Binding {
-		let wrapper = Wrapper(initial)
-		return Binding(
-			get: { wrapper.value },
-			set: { wrapper.value = $0 }
-		)
-	}
-	
-	public static func `let`(_ value: Value) -> Binding {
-		Binding(
-			get: { value },
-			set: { _ in }
-		)
-	}
-	
 	public static func `var`<Base>(_ base: Base, _ keyPath: ReferenceWritableKeyPath<Base, Value>) -> Binding {
 		Binding(
 			get: { base[keyPath: keyPath] },
 			set: { base[keyPath: keyPath] = $0 }
 		)
 	}
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Binding where Value: OptionalProtocol {
+    
+    public func or(_ rhs: Value.Wrapped) -> Binding<Value.Wrapped> {
+        map {
+            $0.asOptional() ?? rhs
+        } set: {
+            $0 = .init($1)
+        }
+    }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+public prefix func !(_ rhs: Binding<Bool>) -> Binding<Bool> {
+    rhs.toggled
+
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+public func ??<T>(_ lhs: Binding<T?>, _ rhs: T) -> Binding<T> {
+    lhs.map {
+        $0 ?? rhs
+    } set: {
+        $0 = $1
+    }
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -106,9 +121,4 @@ extension Binding where Value: Equatable {
 			}
 		)
 	}
-}
-
-private final class Wrapper<T> {
-	var value: T
-	init(_ value: T) { self.value = value }
 }

@@ -8,7 +8,7 @@ import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 @propertyWrapper
-public struct EnvironmentModel<Model: ObservableObject>: DynamicProperty {
+public struct EnvironmentStateObject<Model: ObservableObject>: DynamicProperty {
 
     @StateObject private var object = Object()
     @State private var updater = false
@@ -33,7 +33,6 @@ public struct EnvironmentModel<Model: ObservableObject>: DynamicProperty {
         } set: {
             self.wrappedValue = $0
         }
-
     }
     
     public init(wrappedValue: @escaping @autoclosure () -> Model) {
@@ -67,11 +66,11 @@ public struct EnvironmentModel<Model: ObservableObject>: DynamicProperty {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
-    public func environmentModel<M: ObservableObject>(_ model: @escaping @autoclosure () -> M) -> some View {
+    public func environmentStateObject<M: ObservableObject>(_ model: @escaping @autoclosure () -> M) -> some View {
         modifier(EnvironmentModelModifier(model: model, key: String(reflecting: M.self)))
     }
     
-    public func environmentModel<M: ObservableObject, ID: Hashable>(id: ID, _ model: @escaping @autoclosure () -> M) -> some View {
+    public func environmentStateObject<M: ObservableObject, ID: Hashable>(id: ID, _ model: @escaping @autoclosure () -> M) -> some View {
         modifier(EnvironmentModelModifier(model: model, key: id))
     }
 }
