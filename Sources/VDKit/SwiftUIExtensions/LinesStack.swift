@@ -81,7 +81,7 @@ private struct _TagsView<Data: Collection, ID: Hashable, Content: View>: View {
       ForEach(rowElements.map { Element(getId: getId, element: $0) }) { element in
         content(element.element)
           .fixedSize()
-          .bindSize(to: $elementsSize[element.id].or[.zero])
+          .bindSize(to: $elementsSize[element.id] ?? .zero)
       }
     }
   }

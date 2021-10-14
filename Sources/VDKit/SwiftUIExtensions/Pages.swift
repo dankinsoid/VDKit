@@ -108,7 +108,8 @@ extension Pages {
     } before: {
       $0 > data.startIndex ? data.index($0, offsetBy: -1) : nil
     } after: {
-      $0 < data.index(data.endIndex, offsetBy: -1) ? data.index(after: $0) : nil
+      let next = data.index(after: $0)
+      return next < data.endIndex ? next : nil
     }
   }
   

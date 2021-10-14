@@ -79,21 +79,6 @@ public struct Field<Input: View>: UIViewRepresentable {
 		if let isEditing = self.isEditing?.wrappedValue, uiView.isEditing != isEditing {
 			_ = isEditing ? uiView.becomeFirstResponder() : uiView.resignFirstResponder()
 		}
-		
-		context.environment[KeyOutputKey.self]?.setInput(FieldKeyInput(field: uiView))
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-private struct FieldKeyInput<Input: View>: KeyInput {
-	weak var field: UIField<Input>?
-
-	func insertText(_ text: String) {
-		field?.insertText(text)
-	}
-
-	func deleteBackward() {
-		field?.deleteBackward()
 	}
 }
 
