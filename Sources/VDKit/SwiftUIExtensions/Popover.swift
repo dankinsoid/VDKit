@@ -11,9 +11,9 @@ import SwiftUI
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension View {
   
-  public func smallPopover<T: View>(_ isPresented: Binding<Bool>, size: CGSize? = nil, insets: EdgeInsets = .zero, @ViewBuilder content: () -> T) -> some View {
+  public func smallPopover<T: View>(_ isPresented: Binding<Bool>, color: Color? = nil, size: CGSize? = nil, insets: EdgeInsets = .zero, @ViewBuilder content: () -> T) -> some View {
     background(
-      Popover(content: content(), size: size, insets: insets, isAppear: isPresented)
+      Popover(content: content(), color: color, size: size, insets: insets, isAppear: isPresented)
     )
   }
 }
@@ -22,12 +22,13 @@ extension View {
 private struct Popover<T: View>: UIViewControllerRepresentable {
   
   let content: T
+  let color: Color?
   let size: CGSize?
   let insets: EdgeInsets
   @Binding var isAppear: Bool
   
   func makeUIViewController(context: Context) -> UIViewControllerType {
-    UIViewControllerType(content: content, size: size, insets: insets.ui)
+    UIViewControllerType(content: content, color: color, size: size, insets: insets.ui)
   }
   
   func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
@@ -35,8 +36,12 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
     uiViewController.size = size
     uiViewController.insets = insets.ui
     uiViewController.popover?.rootView = content
+    uiViewController.color = color
     if let size = size {
       uiViewController.popover?.preferredContentSize = size
+    }
+    if let color = color {
+      uiViewController.popover?.popoverPresentationController?.backgroundColor = color.ui
     }
     uiViewController.onHide = {
       isAppear = false
@@ -50,14 +55,16 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
   
   final class UIViewControllerType: UIViewController, UIPopoverPresentationControllerDelegate {
     var content: T
+    var color: Color?
     var size: CGSize?
     var insets: UIEdgeInsets
     var onHide: (() -> Void)?
     weak var popover: UIHostingController<T>?
     
-    init(content: T, size: CGSize?, insets: UIEdgeInsets) {
+    init(content: T, color: Color?, size: CGSize?, insets: UIEdgeInsets) {
       self.content = content
       self.size = size
+      self.color = color
       self.insets = insets
       super.init(nibName: nil, bundle: nil)
     }
@@ -84,6 +91,9 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
       popupVC.popoverPresentationController?.delegate = self
       popupVC.popoverPresentationController?.sourceView = view
       popupVC.popoverPresentationController?.sourceRect = view?.bounds.inset(by: insets) ?? .zero
+      if let color = color {
+        popupVC.popoverPresentationController?.backgroundColor = color.ui
+      }
       popupVC.onDeinit = onHide
       popover = popupVC
       present(popupVC, animated: animated, completion: nil)
@@ -99,6 +109,11 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
     
     final class Hosting: UIHostingController<T> {
       var onDeinit: (() -> Void)?
+      
+      override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+      }
       
       override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

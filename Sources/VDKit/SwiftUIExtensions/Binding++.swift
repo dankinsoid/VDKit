@@ -83,6 +83,28 @@ extension Binding {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Binding where Value: Equatable {
+  public func `is`(_ value: Value, false other: Value) -> Binding<Bool> {
+  	Binding<Bool> {
+      value == wrappedValue
+    } set: {
+      wrappedValue = $0 ? value : other
+    }
+  }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Binding where Value: OptionalProtocol, Value: Equatable {
+  public func `is`(_ value: Value) -> Binding<Bool> {
+    Binding<Bool> {
+      value == wrappedValue
+    } set: {
+      wrappedValue = $0 ? value : .init(nil)
+    }
+  }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Binding where Value: OptionalProtocol {
     
     public func or(_ rhs: Value.Wrapped) -> Binding<Value.Wrapped> {

@@ -373,15 +373,15 @@ extension View {
 	}
 	
 	public func fieldOnCommit(_ block: @escaping () -> Void) -> some View {
-		OnCommitView(content: self, action: block)
+    environment(\.fieldOnCommit, block)
 	}
 	
 	public func fieldOnDelete(_ block: @escaping () -> Void) -> some View {
-		OnDeleteView(content: self, action: block)
+    environment(\.fieldOnDelete, block)
 	}
 	
 	public func fieldOnChangeEditing(_ block: @escaping (Bool) -> Void) -> some View {
-		OnChangeEditingView(content: self, action: block)
+    environment(\.fieldOnChangeEditing, block)
 	}
 	
 	public func field(textContent type: UITextContentType) -> some View {
@@ -430,48 +430,6 @@ extension View {
 	
 	public func field(edgeInset: CGFloat, at edges: Edge.Set) -> some View {
 		environment(\.fieldEdgeInsets, EdgeInsets(edgeInset, edges))
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-private struct OnCommitView<Content: View>: View {
-	@Environment(\.fieldOnCommit) var onCommit
-	let content: Content
-	let action: () -> Void
-	
-	var body: some View {
-		content.environment(\.fieldOnCommit) {
-			onCommit()
-			action()
-		}
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-private struct OnDeleteView<Content: View>: View {
-	@Environment(\.fieldOnDelete) var onDelete
-	let content: Content
-	let action: () -> Void
-	
-	var body: some View {
-		content.environment(\.fieldOnDelete) {
-			onDelete()
-			action()
-		}
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-private struct OnChangeEditingView<Content: View>: View {
-	@Environment(\.fieldOnChangeEditing) var onChangeEditing
-	let content: Content
-	let action: (Bool) -> Void
-	
-	var body: some View {
-		content.environment(\.fieldOnChangeEditing) {
-			onChangeEditing($0)
-			action($0)
-		}
 	}
 }
 
