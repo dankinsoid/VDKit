@@ -83,7 +83,7 @@ private struct MenuWrapper: UIViewRepresentable {
   
   func updateUIView(_ uiView: UIViewType, context: Context) {
     uiView.edge = edge
-    uiView.items = items
+    uiView.items = Array(items.prefix(30))
     uiView.onHide = {[_isPresented] in
       if _isPresented.wrappedValue {
         _isPresented.wrappedValue = false
