@@ -203,21 +203,18 @@ extension Collection where Element: Collection {
 	}
 }
 
-extension Dictionary {
-	
-	public func union(with other: [Key: Value], uniquingKeysWith: (Value, Value) throws -> Value) rethrows -> [Key: Value] {
-		var result = self
-		for (key, value) in other {
-			if let existed = result[key] {
-				result[key] = try uniquingKeysWith(existed, value)
-			} else {
-				result[key] = value
-			}
-		}
-		return result
-	}
-	
-	public func union(with other: [Key: Value]) -> [Key: Value] {
-		union(with: other, uniquingKeysWith: { _, second in second })
-	}
+public func +=<K, V>(left: inout [K: V], right: [K: V]) {
+  left = left + right
+}
+
+public func +<K, V>(left: [K: V], right: [K: V]) -> [K: V] {
+  left.merging(right, uniquingKeysWith: { _, rhs in rhs })
+}
+
+private extension Dictionary {
+  mutating func mutate(for key: Key, mutator: (inout Value?) -> Void) {
+    var val = self[key]
+    mutator(&val)
+    self[key] = val
+  }
 }
