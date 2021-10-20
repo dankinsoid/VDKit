@@ -195,10 +195,9 @@ private struct MenuWrapper: UIViewRepresentable {
       UIMenuController.shared.menuItems = items.enumerated().map {
         UIMenuItem(title: $0.element.title, action: NSSelectorFromString(prefix + "\($0.offset)"))
       }
-      UIMenuController.shared.showMenu(from: self, rect: bounds.inset(by: insets.ui))
-			
-			DispatchQueue.main.async {
-				self.becomeFirstResponder()
+			DispatchQueue.main.async {[self] in
+				UIMenuController.shared.showMenu(from: self, rect: bounds.inset(by: insets.ui))
+				becomeFirstResponder()
 			}
     }
   }
