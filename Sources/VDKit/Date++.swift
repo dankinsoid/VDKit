@@ -22,7 +22,7 @@ extension TimeZone {
 
 public enum Weekdays: Int, CustomStringConvertible {
 	case sunday = 1, monday, tuesday, wednesday, thursday, friday, saturday
-	
+
 	public var description: String {
 		switch self {
 		case .sunday:       return "sunday"

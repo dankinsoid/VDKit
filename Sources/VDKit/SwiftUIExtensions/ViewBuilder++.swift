@@ -9,10 +9,26 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension ViewBuilder {
-    
-    public static func buildArray<C: View>(_ components: [C]) -> some View {
-        ForEach(components.indices, id: \.self) {
-            components[$0]
-        }
-    }
+	
+	@inline(__always)
+	public static func buildArray<C: View>(_ components: [C]) -> some View {
+		ForEach(components.indices, id: \.self) {
+			components[$0]
+		}
+	}
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension ViewBuilder {
+	
+	@inline(__always)
+	public static func buildExpression<V: View>(_ expression: V) -> V {
+		expression
+	}
+	
+	@inline(__always)
+	public static func buildExpression<V: SubviewProtocol>(_ expression: @escaping @autoclosure () -> V) -> some View {
+		SubviewRepresentableView(expression)
+			.edgesIgnoringSafeArea(.all)
+	}
 }

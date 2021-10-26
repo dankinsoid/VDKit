@@ -38,6 +38,12 @@ extension ValueChainingProtocol {
 	public func apply() -> Value {
 		apply(value)
 	}
+	
+	public func modifier(_ chain: TypeChain<Value>) -> Self {
+		self.do {
+			$0 = chain.apply($0)
+		}
+	}
 }
 
 extension ValueChainingProtocol {
