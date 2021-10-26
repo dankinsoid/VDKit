@@ -18,3 +18,27 @@ extension UILabel {
 		self.attributedText = text
 	}
 }
+
+#if canImport(Combine)
+import Combine
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension UILabel {
+	
+	public convenience init<P: Publisher>(_ text: P) where P.Output == String, P.Failure == Never {
+		self.init(frame: .zero)
+		text.subscribe(
+			AnySubscriber(
+				receiveSubscription: {
+					_ = $0.request(.unlimited)
+				},
+				receiveValue: {[weak self] in
+					self?.text = $0
+					return .unlimited
+				},
+				receiveCompletion: nil
+			)
+		)
+	}
+}
+#endif

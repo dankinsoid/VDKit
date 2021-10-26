@@ -11,65 +11,101 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public struct UIKitView<V: UIView>: UIViewRepresentable {
+public struct UIKitView<Content: UIKitViewWrappable, V>: View where Content.V == V {
+	private let content: Content
+	
+	public var body: some View {
+		content
+	}
+	
+	private init(_ content: Content) {
+		self.content = content
+	}
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension UIKitView where Content == _UIViewView<V> {
+	
+	public init(_ make: @escaping () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(.init(make, update: update))
+	}
+
+	public init(_ make: @escaping @autoclosure () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(make, update: update)
+	}
+
+	public init(_ make: @escaping () -> Chain<V>, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init({ make().apply() }, update: update)
+	}
+
+	public init(_ make: @escaping @autoclosure () -> Chain<V>, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(make, update: update)
+	}
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension UIKitView where Content == _UIViewControllerView<V> {
+	
+	public init(_ make: @escaping () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(.init(make, update: update))
+	}
+	
+	public init(_ make: @escaping @autoclosure () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(make, update: update)
+	}
+	
+	public init(_ make: @escaping () -> Chain<V>, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init({ make().apply() }, update: update)
+	}
+	
+	public init(_ make: @escaping @autoclosure () -> Chain<V>, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
+		self = .init(make, update: update)
+	}
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public protocol UIKitViewWrappable: View {
+	associatedtype V
+	associatedtype VContext
+	init(_ make: @escaping () -> V, update: @escaping (V, VContext) -> Void)
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public struct _UIViewView<V: UIView>: UIViewRepresentable, UIKitViewWrappable {
 	
 	let make: () -> V
-	let update: (V, UIViewRepresentableContext<UIKitView<V>>) -> Void
+	let update: (V, Context) -> Void
 	
-	public init(_ make: @escaping () -> V, update: @escaping (V, UIViewRepresentableContext<UIKitView<V>>) -> Void = {_, _ in }) {
+	public init(_ make: @escaping () -> V, update: @escaping (V, Context) -> Void = {_, _ in }) {
 		self.make = make
 		self.update = update
 	}
 	
-	public init(_ make: @escaping @autoclosure () -> V, update: @escaping (V, UIViewRepresentableContext<UIKitView<V>>) -> Void = {_, _ in }) {
-		self = .init(make, update: update)
-	}
-	
-	public init(_ make: @escaping () -> Chain<V>, update: @escaping (V, UIViewRepresentableContext<UIKitView<V>>) -> Void = {_, _ in }) {
-		self = .init({ make().apply() }, update: update)
-	}
-	
-	public init(_ make: @escaping @autoclosure () -> Chain<V>, update: @escaping (V, UIViewRepresentableContext<UIKitView<V>>) -> Void = {_, _ in }) {
-		self = .init(make, update: update)
-	}
-	
-	public func makeUIView(context: UIViewRepresentableContext<UIKitView<V>>) -> V {
+	public func makeUIView(context: Context) -> V {
 		make()
 	}
 	
-	public func updateUIView(_ uiView: V, context: UIViewRepresentableContext<UIKitView<V>>) {
+	public func updateUIView(_ uiView: V, context: Context) {
 		update(uiView, context)
 	}
 }
 
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public struct UIKitViewController<V: UIViewController>: UIViewControllerRepresentable {
+public struct _UIViewControllerView<V: UIViewController>: UIViewControllerRepresentable, UIKitViewWrappable {
 	
 	let make: () -> V
-	let update: (V, UIViewControllerRepresentableContext<UIKitViewController<V>>) -> Void
+	let update: (V, Context) -> Void
 	
-	public init(_ make: @escaping () -> V, update: @escaping (V, UIViewControllerRepresentableContext<UIKitViewController<V>>) -> Void = {_, _ in }) {
+	public init(_ make: @escaping () -> V, update: @escaping (V, Context) -> Void = {_, _ in }) {
 		self.make = make
 		self.update = update
 	}
 	
-	public init(_ make: @escaping @autoclosure () -> V, update: @escaping (V, UIViewControllerRepresentableContext<UIKitViewController<V>>) -> Void = {_, _ in }) {
-		self = .init(make, update: update)
-	}
-	
-	public init(_ make: @escaping () -> Chain<V>, update: @escaping (V, UIViewControllerRepresentableContext<UIKitViewController<V>>) -> Void = {_, _ in }) {
-		self = .init({ make().apply() }, update: update)
-	}
-	
-	public init(_ make: @escaping @autoclosure () -> Chain<V>, update: @escaping (V, UIViewControllerRepresentableContext<UIKitViewController<V>>) -> Void = {_, _ in }) {
-		self = .init(make, update: update)
-	}
-	
-	public func makeUIViewController(context: UIViewControllerRepresentableContext<UIKitViewController<V>>) -> V {
+	public func makeUIViewController(context: Context) -> V {
 		make()
 	}
 	
-	public func updateUIViewController(_ uiViewController: V, context: UIViewControllerRepresentableContext<UIKitViewController<V>>) {
+	public func updateUIViewController(_ uiViewController: V, context: Context) {
 		update(uiViewController, context)
 	}
 }
@@ -80,29 +116,4 @@ extension View {
 		UIHostingController(rootView: self)
 	}
 }
-
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public struct SubviewRepresentableView<V: SubviewProtocol>: UIViewRepresentable {
-	
-	let make: () -> V
-	
-	public init(_ make: @escaping () -> V) {
-		self.make = make
-	}
-	
-	public init(_ make: @escaping @autoclosure () -> V) {
-		self.make = make
-	}
-	
-	public func makeUIView(context: UIViewRepresentableContext<SubviewRepresentableView<V>>) -> UIView {
-		let content = make().createViewToAdd()
-		content.translatesAutoresizingMaskIntoConstraints = false
-		content.contentPriority.both.both = .required
-		return content
-	}
-	
-	public func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<SubviewRepresentableView<V>>) {}
-	
-}
-
 #endif

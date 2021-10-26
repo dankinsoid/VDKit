@@ -28,7 +28,15 @@ extension ViewBuilder {
 	
 	@inline(__always)
 	public static func buildExpression<V: SubviewProtocol>(_ expression: @escaping @autoclosure () -> V) -> some View {
-		SubviewRepresentableView(expression)
+		UIKitView {
+			expression().createViewToAdd()
+		}
+		.edgesIgnoringSafeArea(.all)
+	}
+	
+	@inline(__always)
+	public static func buildExpression<V: UIViewController>(_ expression: @escaping @autoclosure () -> V) -> some View {
+		UIKitView(expression)
 			.edgesIgnoringSafeArea(.all)
 	}
 }
