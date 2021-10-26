@@ -9,6 +9,9 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+public typealias ValueStateSubject<Value> = StateSubject<PassthroughSubject<Value, Never>, Value>
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 @propertyWrapper
 public struct StateSubject<S: Subject, Output>: DynamicProperty, Publisher where S.Failure == Never, S.Output == Output {
 	public typealias Failure = Never
@@ -96,6 +99,9 @@ extension StateSubject where S == PassthroughSubject<Output, Never>, S.Output: O
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+public typealias StateTimer = StatePublisher<Publishers.Autoconnect<Timer.TimerPublisher>, Date>
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 @propertyWrapper
 public struct StatePublisher<P: Publisher, Output>: DynamicProperty, Publisher where P.Failure == Never, P.Output == Output {
 	public typealias Failure = Never
@@ -151,18 +157,10 @@ extension StatePublisher where P.Output: OptionalProtocol {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension StatePublisher where P == PassthroughSubject<Output, Never> {
+extension StatePublisher where P == Publishers.Autoconnect<Timer.TimerPublisher> {
 	
-	public init(wrappedValue: Output) {
-		self = StatePublisher(wrappedValue: wrappedValue, PassthroughSubject())
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension StatePublisher where P == PassthroughSubject<Output, Never>, P.Output: OptionalProtocol {
-	
-	public init() {
-		self = StatePublisher(wrappedValue: .none, PassthroughSubject())
+	public init(_ interval: TimeInterval, tolerance: TimeInterval? = nil, in mode: RunLoop.Mode = .default, options: RunLoop.SchedulerOptions? = nil) {
+		self = StatePublisher(wrappedValue: Date(), Timer.publish(every: interval, tolerance: tolerance, on: .main, in: mode, options: options).autoconnect())
 	}
 }
 
