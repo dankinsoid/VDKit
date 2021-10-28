@@ -10,7 +10,7 @@ import Foundation
 
 public protocol Chaining {
 	associatedtype Value
-	var apply: (Value) -> Value { get set }
+	var apply: (inout Value) -> Void { get set }
 	mutating func onGetProperty<P>(_ keyPath: WritableKeyPath<Value, P>, _ value: P)
 }
 
@@ -20,10 +20,9 @@ extension Chaining {
 	
 	public func `do`(_ action: @escaping (inout Value) -> Void) -> Self {
 		var result = self
-		result.apply = {[apply] in
-			var result = apply($0)
+		result.apply = {[apply] result in
+			apply(&result)
 			action(&result)
-			return result
 		}
 		return result
 	}
@@ -36,13 +35,13 @@ public protocol ValueChainingProtocol: Chaining {
 extension ValueChainingProtocol {
 	@discardableResult
 	public func apply() -> Value {
-		apply(value)
+		var result = value
+		apply(&result)
+		return result
 	}
 	
 	public func modifier(_ chain: TypeChain<Value>) -> Self {
-		self.do {
-			$0 = chain.apply($0)
-		}
+		self.do(chain.apply)
 	}
 }
 
@@ -71,7 +70,7 @@ public struct TypeChain<Value>: Chaining {
 //		ChainProperty<Self, A, ReferenceWritableKeyPath<Value, A>>(self, getter: keyPath)
 //	}
 	
-	public var apply: (Value) -> Value = { $0 }
+	public var apply: (inout Value) -> Void = {_ in }
 }
 
 @dynamicMemberLookup
@@ -86,7 +85,7 @@ public struct Chain<Value>: ValueChainingProtocol {
 		ChainProperty(self, getter: keyPath)
 	}
 	
-	public var apply: (Value) -> Value = { $0 }
+	public var apply: (inout Value) -> Void = {_ in }
 }
 
 @dynamicMemberLookup
@@ -161,8 +160,8 @@ extension WritableKeyPath {
 
 extension ChainProperty {
 
-	public func apply(for value: Base.Value) -> Base.Value {
-		chaining.apply(value)
+	public func apply(for value: inout Base.Value) {
+		chaining.apply(&value)
 	}
 	
 	public func callAsFunction(_ value: Value) -> Base {
@@ -173,10 +172,9 @@ extension ChainProperty {
 		guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return chaining }
 		var result = chaining
 		result.onGetProperty(kp, value)
-		result.apply = {[chaining] in
-			var result = chaining.apply($0)
+		result.apply = {[chaining] result in
+			chaining.apply(&result)
 			result[keyPath: kp] = value
-			return result
 		}
 		return result
 	}
@@ -198,7 +196,9 @@ extension NSObjectProtocol {
 	public var chain: Chain<Self> { Chain(self) }
 	
 	public func apply<C: Chaining>(_ chain: C) -> Self where C.Value == Self {
-		chain.apply(self)
+		var result = self
+		chain.apply(&result)
+		return result
 	}
 }
 
@@ -265,7 +265,9 @@ private struct OKP<A> {
 	
 }
 
-//postfix operator ~?
+postfix operator ~
+
+public postfix func ~<T>(_ lhs: T) -> Chain<T> { Chain(lhs) }
 //
 //public postfix func ~?<C: Chaining, B: GetterProtocol, T>(_ lhs: ChainProperty<C, T?, B>) -> OptionalChaining<C, B, T> where B.B == T? {
 //	OptionalChaining(chaining: lhs)

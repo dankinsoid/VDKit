@@ -36,10 +36,9 @@ extension ChainProperty where Value == ObjectEnvironment<Base.Value>, Base: Valu
 	
 	private func observe<T>(_ keyPath: KeyPath<Value, T>, observer: @escaping (Value) -> Void) -> Base {
 		var result = chaining
-		result.apply = {[chaining] in
-			let result = chaining.apply($0)
+		result.apply = {[chaining] result in
+			chaining.apply(&result)
 			observer(result[keyPath: getter])
-			return result
 		}
 		return result
 	}
