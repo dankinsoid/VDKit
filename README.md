@@ -88,7 +88,7 @@ Calendar.default = customCalendar
 ### VDLayout
 
 ### UIKitIntegration
-Combination of `VDChain` and `VDLayout` to easy use `UIKit` elements in `SwiftUI` code
+Combination of [`VDChain`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) and [`VDLayout`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdlayout) to easy use `UIKit` elements in `SwiftUI` code
 ```swift
 let text: String 
 let textColor: Color 
