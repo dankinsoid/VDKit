@@ -5,7 +5,7 @@
 //  Created by Данил Войдилов on 07.10.2021.
 //
 
-import Foundation
+#if canImport(UIKit)
 import UIKit
 import SwiftUI
 
@@ -89,3 +89,4 @@ private final class OffsetDelegate: ObservableObject {
         return result
     }
 }
+#endif

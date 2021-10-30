@@ -67,6 +67,9 @@ public struct ContentFrame: Hashable, Equatable, Animatable {
     }
 }
 
+#if canImport(UIKit)
+import UIKit
+
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension UIScrollView {
     
@@ -127,3 +130,4 @@ extension UIScrollView {
         setContentOffset(point(offset), animated: animated)
     }
 }
+#endif

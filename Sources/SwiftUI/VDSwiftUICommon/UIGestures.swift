@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 06.10.2021.
 //
 
+#if canImport(UIKit) && canImport(SwiftUI)
 import SwiftUI
 import UIKit
 
@@ -54,3 +55,4 @@ private struct GesturesView<Content: View, Gesture: UIGestureRecognizer>: UIView
     }
   }
 }
+#endif

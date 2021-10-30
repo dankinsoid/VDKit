@@ -5,6 +5,8 @@
 //  Created by Данил Войдилов on 13.05.2021.
 //
 
+#if canImport(UIKit)
+import UIKit
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -343,3 +345,4 @@ extension UIFont {
 		return withTraits(.traitBold)
 	}
 }
+#endif

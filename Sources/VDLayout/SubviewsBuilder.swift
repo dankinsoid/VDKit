@@ -6,8 +6,9 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
-@_exported import VDBuilders
+import VDBuilders
 
 public typealias SubviewsBuilder = ArrayBuilder<SubviewProtocol>
 
@@ -31,4 +32,5 @@ extension ArrayBuilder where T == SubviewProtocol {
 	}
 }
 
+#endif
 #endif

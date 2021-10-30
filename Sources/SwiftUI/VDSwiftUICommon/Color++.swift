@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 13.05.2021.
 //
 
+#if canImport(UIKit) && canImport(SwiftUI)
 import UIKit
 import SwiftUI
 
@@ -257,3 +258,4 @@ fileprivate extension UIColor {
 		return (hue, saturation, brightness, alpha)
 	}
 }
+#endif

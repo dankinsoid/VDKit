@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIView {
@@ -116,3 +117,4 @@ extension UILayoutPriority: ExpressibleByFloatLiteral {
 		UILayoutPriority(raw)
 	}
 }
+#endif

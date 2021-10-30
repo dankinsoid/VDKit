@@ -5,6 +5,7 @@
 //  Created by Daniil on 10.08.2019.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 @available(iOS 11.0, *)
@@ -70,3 +71,4 @@ extension UITextField {
 		set { self.font = self.font?.withSize(newValue).scaled }
 	}
 }
+#endif

@@ -6,6 +6,7 @@
 //  Copyright © 2019 Данил Войдилов. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public protocol XibViewProtocol: UIView {
@@ -54,3 +55,4 @@ open class XibUIView: UIView {
         (self as? XibViewProtocol)?.loadXibAndAddContent()
     }
 }
+#endif

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIButton {
@@ -59,3 +60,4 @@ extension UIButton {
 		contentEdgeInsets.left = iconButton + right + left
 	}
 }
+#endif

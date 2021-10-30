@@ -5,6 +5,8 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
+#if canImport(UIKit)
+import Foundation
 import UIKit
 
 public enum Edges: Int8, CaseIterable {
@@ -89,3 +91,4 @@ extension CACornerMask {
 		}
 	}
 }
+#endif

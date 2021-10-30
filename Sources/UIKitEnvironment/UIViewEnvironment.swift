@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 import VDKitRuntime
 
@@ -231,3 +232,4 @@ private final class ObjectEnvironmentOwner {
 }
 
 private var environmentsKey = "environmentsKey"
+#endif

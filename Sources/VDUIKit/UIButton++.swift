@@ -5,6 +5,7 @@
 //  Created by Daniil on 10.08.2019.
 //
 
+#if canImport(UIKit)
 import UIKit
 import ObjectiveC
 
@@ -64,3 +65,4 @@ public extension UIButton {
 	}
     
 }
+#endif

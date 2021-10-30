@@ -5,7 +5,7 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
-import UIKit
+import CoreGraphics
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -24,10 +24,6 @@ extension EdgeInsets {
     )
   }
   
-  public var ui: UIEdgeInsets {
-    UIEdgeInsets(top: top, left: leading, bottom: bottom, right: trailing)
-  }
-  
   public static func all(_ value: CGFloat) -> EdgeInsets { EdgeInsets(value, .all) }
   public static func top(_ value: CGFloat) -> EdgeInsets { EdgeInsets(value, .top) }
   public static func bottom(_ value: CGFloat) -> EdgeInsets { EdgeInsets(value, .bottom) }
@@ -37,6 +33,16 @@ extension EdgeInsets {
   public static func horizontal(_ value: CGFloat) -> EdgeInsets { EdgeInsets(value, .horizontal) }
 }
 
+#if canImport(UIKit)
+import UIKit
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension EdgeInsets {
+	
+	public var ui: UIEdgeInsets {
+		UIEdgeInsets(top: top, left: leading, bottom: bottom, right: trailing)
+	}
+}
+
 extension UIEdgeInsets {
   
   @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -44,3 +50,4 @@ extension UIEdgeInsets {
     EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
   }
 }
+#endif

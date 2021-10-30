@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
 	name: "VDKit",
 	platforms: [
-		.iOS(.v11), .macOS(.v10_11), .watchOS(.v5)
+		.iOS(.v11), .macOS(.v10_11)
 	],
 	products: [
 		.library(name: "VDKit", targets: ["VDKit"]),

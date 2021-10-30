@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 14.10.2021.
 //
 
+#if canImport(UIKit)
 import Foundation
 import SwiftUI
 import UIKit
@@ -203,3 +204,4 @@ private struct MenuWrapper: UIViewRepresentable {
     }
   }
 }
+#endif

@@ -6,7 +6,8 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
-#if canImport(SwiftUI)
+#if canImport(SwiftUI) && canImport(UIKit)
+import UIKit
 import SwiftUI
 import Combine
 import VDChain

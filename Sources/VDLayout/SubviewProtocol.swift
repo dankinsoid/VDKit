@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 import VDKitRuntime
 import VDChain
@@ -145,3 +146,4 @@ extension String: SubviewProtocol {
 		return result
 	}
 }
+#endif

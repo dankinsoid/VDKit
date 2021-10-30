@@ -4,7 +4,7 @@
 //
 //  Created by Данил Войдилов on 20.05.2021.
 //
-
+#if canImport(SwiftUI)
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -47,13 +47,20 @@ extension View {
 		#endif
 		return self
 	}
+}
+
+#if canImport(UIKit)
+import UIKit
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension View {
 	
 	public func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
 		clipShape(RoundedCorner(radius: radius, corners: corners))
 	}
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 struct RoundedCorner: Shape {
 	
 	var radius: CGFloat = .infinity
@@ -64,3 +71,5 @@ struct RoundedCorner: Shape {
 		return Path(path.cgPath)
 	}
 }
+#endif
+#endif

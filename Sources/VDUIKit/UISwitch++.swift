@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UISwitch {
@@ -14,3 +15,4 @@ extension UISwitch {
 		set { subviews.first?.subviews.first?.backgroundColor = newValue }
 	}
 }
+#endif

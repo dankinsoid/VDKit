@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 13.05.2021.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import Combine
 
@@ -34,3 +35,4 @@ extension UIHostingController {
 		self.init(update: update, view)
 	}
 }
+#endif

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Данил Войдилов. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 open class ViewShadowIn: UIView {
@@ -236,3 +237,4 @@ open class OutShadow: UIView {
         return path
     }
 }
+#endif

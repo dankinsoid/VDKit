@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIStackView {
@@ -36,3 +37,4 @@ extension UIStackView {
 		}
 	}
 }
+#endif

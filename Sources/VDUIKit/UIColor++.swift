@@ -5,6 +5,7 @@
 //  Created by Daniil on 10.08.2019.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 infix operator |: AdditionPrecedence
@@ -298,3 +299,4 @@ extension UIImage {
     self.init(cgImage: cgImage)
   }
 }
+#endif

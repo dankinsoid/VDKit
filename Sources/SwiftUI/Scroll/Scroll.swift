@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 06.10.2021.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 import VDSwiftUICommon
@@ -398,3 +399,4 @@ public struct Scroll<Content: View>: UIViewRepresentable {
     }
   }
 }
+#endif

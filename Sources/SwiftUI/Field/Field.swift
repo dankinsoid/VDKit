@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 import VDSwiftUICommon
@@ -499,3 +500,4 @@ struct Field_Previews: PreviewProvider {
 		}
 	}
 }
+#endif

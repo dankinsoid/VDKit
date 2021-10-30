@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIControl {
@@ -27,3 +28,4 @@ extension UIControl {
 }
 
 extension UIControl.State: Hashable {}
+#endif

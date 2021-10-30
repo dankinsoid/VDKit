@@ -5,6 +5,7 @@
 //  Created by Daniil on 10.08.2019.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension CAPropertyAnimation {
@@ -66,3 +67,4 @@ extension UIView {
     }
     
 }
+#endif

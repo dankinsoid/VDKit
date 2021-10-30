@@ -61,7 +61,63 @@ extension NSAttributedString: Collection {
 }
 
 extension NSAttributedString {
+	fileprivate var range: NSRange {
+		return NSRange(location: 0, length: length)
+	}
+	
+	fileprivate func attribute(_ key: NSAttributedString.Key, value: Any?) -> NSMutableAttributedString {
+		guard let value = value else { return NSMutableAttributedString(attributedString: self) }
+		let attributed = NSMutableAttributedString(attributedString: self)
+		attributed.addAttribute(key, value: value)
+		return attributed
+	}
+	
+	fileprivate func attributes(_ attrs: [NSAttributedString.Key: Any]) -> NSMutableAttributedString {
+		let attributed = NSMutableAttributedString(attributedString: self)
+		attributed.addAttributes(attrs)
+		return attributed
+	}
+}
+
+extension NSMutableAttributedString {
     
+	fileprivate func addAttributes(_ attrs: [NSAttributedString.Key: Any]) {
+		addAttributes(attrs, range: range)
+	}
+	
+	fileprivate func addAttribute(_ name: NSAttributedString.Key, value: Any) {
+		addAttribute(name, value: value, range: range)
+	}
+}
+
+public typealias AttributedStringBuilder = ComposeBuilder<AttributedArrayInitable>
+
+public struct AttributedArrayInitable: ArrayInitable {
+	public static func create(from: [NSAttributedString]) -> NSAttributedString {
+		let result = NSMutableAttributedString()
+		from.forEach(result.append)
+		return result
+	}
+}
+
+public extension ComposeBuilder where C == AttributedArrayInitable {
+	
+	@inlinable
+	static func buildExpression(_ text: String) -> NSAttributedString {
+		NSAttributedString(string: text, attributes: [:])
+	}
+	
+	@inlinable
+	static func buildExpression(_ attr: NSAttributedString) -> NSAttributedString {
+		attr
+	}
+}
+
+#if canImport(UIKit)
+import UIKit
+
+extension NSAttributedString {
+	
 	public func color(_ color: UIColor?) -> NSMutableAttributedString {
 		return attribute(.foregroundColor, value: color)
 	}
@@ -105,16 +161,16 @@ extension NSAttributedString {
 	public func bold() -> NSMutableAttributedString {
 		guard let font = attribute(.font, at: 0, longestEffectiveRange: nil, in: range) as? UIFont,
 					let descriptor = font.fontDescriptor.withSymbolicTraits(.traitBold) else {
-			return NSMutableAttributedString(attributedString: self)
-		}
+						return NSMutableAttributedString(attributedString: self)
+					}
 		return attribute(.font, value: UIFont(descriptor: descriptor, size: font.pointSize))
 	}
 	
 	public func italic() -> NSMutableAttributedString {
 		guard let font = attribute(.font, at: 0, longestEffectiveRange: nil, in: range) as? UIFont,
 					let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic) else {
-			return NSMutableAttributedString(attributedString: self)
-		}
+						return NSMutableAttributedString(attributedString: self)
+					}
 		return attribute(.font, value: UIFont(descriptor: descriptor, size: font.pointSize))
 	}
 	
@@ -141,63 +197,7 @@ extension NSAttributedString {
 		}
 		return attribute(.baselineOffset, value: number)
 	}
-	
-	private func attribute(_ key: NSAttributedString.Key, value: Any?) -> NSMutableAttributedString {
-		guard let value = value else { return NSMutableAttributedString(attributedString: self) }
-		let attributed = NSMutableAttributedString(attributedString: self)
-		attributed.addAttribute(key, value: value)
-		return attributed
-	}
-	
-	private func attributes(_ attrs: [NSAttributedString.Key: Any]) -> NSMutableAttributedString {
-		let attributed = NSMutableAttributedString(attributedString: self)
-		attributed.addAttributes(attrs)
-		return attributed
-	}
 }
-
-extension NSAttributedString {
-	fileprivate var range: NSRange {
-		return NSRange(location: 0, length: length)
-	}
-}
-
-extension NSMutableAttributedString {
-    
-	fileprivate func addAttributes(_ attrs: [NSAttributedString.Key: Any]) {
-		addAttributes(attrs, range: range)
-	}
-	
-	fileprivate func addAttribute(_ name: NSAttributedString.Key, value: Any) {
-		addAttribute(name, value: value, range: range)
-	}
-}
-
-public typealias AttributedStringBuilder = ComposeBuilder<AttributedArrayInitable>
-
-public struct AttributedArrayInitable: ArrayInitable {
-	public static func create(from: [NSAttributedString]) -> NSAttributedString {
-		let result = NSMutableAttributedString()
-		from.forEach(result.append)
-		return result
-	}
-}
-
-public extension ComposeBuilder where C == AttributedArrayInitable {
-	
-	@inlinable
-	static func buildExpression(_ text: String) -> NSAttributedString {
-		NSAttributedString(string: text, attributes: [:])
-	}
-	
-	@inlinable
-	static func buildExpression(_ attr: NSAttributedString) -> NSAttributedString {
-		attr
-	}
-}
-
-#if canImport(UIKit)
-import UIKit
 
 public extension ComposeBuilder where C == AttributedArrayInitable {
 	

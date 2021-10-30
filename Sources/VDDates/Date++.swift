@@ -527,7 +527,7 @@ extension Date {
 		calendar.compare(self, to: date, toGranularity: component)
 	}
 	
-	@available(iOS 10.0, *)
+	@available(iOS 10.0, macOS 10.12, *)
 	public func nextWeekend(direction: Calendar.SearchDirection = .forward, calendar: Calendar = .default) -> DateInterval? {
 		calendar.nextWeekend(startingAfter: self, direction: direction)
 	}
@@ -971,7 +971,7 @@ extension Range where Bound == Date {
 	}
 }
 
-@available(iOS 10.0, *)
+@available(iOS 10.0, macOS 10.12, *)
 extension DateInterval {
 	
 	public var difference: DateDifference {

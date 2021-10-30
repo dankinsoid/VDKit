@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 15.08.2021.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -60,3 +61,4 @@ extension View {
         additionalSafeArea(EdgeInsets(length, edges))
     }
 }
+#endif

@@ -5,7 +5,7 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
-import UIKit
+import QuartzCore
 
 extension CALayer {
 	public var superlayers: [CALayer] {
@@ -13,7 +13,6 @@ extension CALayer {
 	}
 	
 	public var transformInWindow: CATransform3D {
-		([self] + superlayers).reversed().reduce(.identity) { $0.concatenating($1.transform)
-		}
+		([self] + superlayers).reversed().reduce(CATransform3DIdentity) { CATransform3DConcat($0, $1.transform) }
 	}
 }

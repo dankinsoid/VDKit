@@ -5,7 +5,8 @@
 //  Created by Данил Войдилов on 14.10.2021.
 //
 
-import Foundation
+#if canImport(UIKit) && canImport(SwiftUI)
+import UIKit
 import SwiftUI
 
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
@@ -126,3 +127,4 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
     }
   }
 }
+#endif

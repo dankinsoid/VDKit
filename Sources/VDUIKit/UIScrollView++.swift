@@ -6,6 +6,7 @@
 //  Copyright © 2020 Данил Войдилов. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIScrollView {
@@ -43,3 +44,4 @@ extension UIEdgeInsets {
 		self = UIEdgeInsets(top: top, left: h.0, bottom: bottom, right: h.1)
 	}
 }
+#endif

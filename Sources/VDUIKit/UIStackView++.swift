@@ -6,6 +6,7 @@
 //  Copyright © 2020 Daniil. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIStackView {
@@ -24,3 +25,4 @@ extension UIStackView {
         }
     }
 }
+#endif

@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 07.10.2021.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -84,3 +85,4 @@ extension View {
         environment(\.scroll.indexDisplayMode, indexDisplayMode)
     }
 }
+#endif

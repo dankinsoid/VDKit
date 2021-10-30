@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 20.05.2021.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UITextField {
@@ -47,3 +48,4 @@ extension UITextField {
 		return from..<to
 	}
 }
+#endif

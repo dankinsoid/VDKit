@@ -6,6 +6,7 @@
 //  Copyright © 2019 Данил Войдилов. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 open class BlurEffectView: UIVisualEffectView {
@@ -76,3 +77,4 @@ open class BlurEffectView: UIVisualEffectView {
 	}
 	
 }
+#endif

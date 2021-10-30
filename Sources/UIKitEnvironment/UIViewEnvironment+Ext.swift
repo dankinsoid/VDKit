@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import Foundation
 import VDChain
 
@@ -48,3 +49,4 @@ extension ChainProperty where Value == ObjectEnvironment<Base.Value>, Base: Valu
 		bind(\.[dynamicMember: keyPath], to: keyPath)
 	}
 }
+#endif

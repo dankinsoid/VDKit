@@ -5,6 +5,7 @@
 //  Created by Данил Войдилов on 14.10.2021.
 //
 
+#if canImport(UIKit)
 import UIKit
 import SwiftUI
 import VDSwiftUICommon
@@ -152,3 +153,4 @@ private final class PageHosting<Content: View, Element>: UIHostingController<Con
     fatalError()
   }
 }
+#endif

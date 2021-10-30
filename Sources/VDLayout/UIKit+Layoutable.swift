@@ -6,6 +6,7 @@
 //  Copyright © 2021 Magic Solutions. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 open class LayoutableView: UIView {
@@ -44,3 +45,4 @@ open class LayoutableViewController: UIViewController {
 		[]
 	}
 }
+#endif
