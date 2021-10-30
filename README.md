@@ -89,7 +89,7 @@ Calendar.default = customCalendar
 
 ### UIKitIntegration
 Combination of [`VDChain`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) and [`VDLayout`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdlayout) to easy use `UIKit` elements in `SwiftUI` code.
-This realization uses `@autoclosures` in order to avoid `UIView` re-creation. `§` operator creates `UIKitView`, `UIKitView` supports [chaining](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) to update `UIView`.
+This realization uses `@autoclosure`s in order to avoid `UIView` re-creation. `§` operator creates `UIKitView`, `UIKitView` supports [chaining](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) to update `UIView`.
 ```swift
 @State var text: String 
 let textColor: Color 
