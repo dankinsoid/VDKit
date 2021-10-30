@@ -9,16 +9,16 @@
 This repository contains useful extensions on Foundation, UIKit and SwiftUI
 
 ## Usage
-### Chaining
-Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) with `KeyPath`es and `callAsFunction` (or subscripts) allows to change objects with one expression
+### VDChain
+Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) with `KeyPath`es and `callAsFunction`
 ```swift
-let label = UILabel().chain
+let label = UILabel()~
   .text("Text")
   .textColor(.red)
   .font(.system(24))
   .apply()
 ```
-### Date extensions
+### VDDates
 `Date` struct provides very little functionality, any operations with dates must be implemented through `Calendar` in very unintuitive, complex and difficult to remember ways.
 To simplify operations with dates, this library provides a simple and intuitive syntax.
 
@@ -78,6 +78,43 @@ Or you can set your own `default` value for all functions
 ```swift
 Calendar.default = customCalendar
 ```
+### VDBuilders
+`ArrayBuilder<T>` - result builder to create arrays
+`ComposeBuilder`
+`SingleBuilder`
+
+### VDLayout
+
+### UIKitIntegration
+Combination of `VDChain` and `VDLayout` to easy use `UIKit` elements in `SwiftUI` code
+```swift
+let text: String 
+let textColor: Color 
+
+var body: some View {
+  VStack {
+    Text(text)
+      .foregroundColor(textColor)
+  
+    UILabel()§
+      .text(text)
+      .contentPriority.horizontal.compression(.required)
+    
+    UIKitView {
+      UILabel()
+    } update: { label, context in
+      label.text = text
+    }
+    
+    UIImageView()
+  }
+  .uiKitViewEnvironment(for: UILabel.self)
+  .textColor(textColor.ui)
+  .tintColor(.red)
+}
+```
+
+
 ## Installation
 1.  [CocoaPods](https://cocoapods.org)
 
