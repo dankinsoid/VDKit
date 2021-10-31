@@ -419,7 +419,7 @@ extension Date {
 		}
 	}
 	
-    @available(*, deprecated, message: "Use ordinality instead")
+	@available(*, deprecated, message: "Use ordinality instead")
 	public func position(of smaller: Calendar.Component, in larger: Calendar.Component, startFromZero: Bool = true, calendar: Calendar = .default) -> Int {
 		interval(of: smaller, from: start(of: larger, calendar: calendar), calendar: calendar) + (startFromZero ? 0 : smaller.first)
 	}
