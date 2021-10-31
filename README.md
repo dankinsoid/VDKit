@@ -56,6 +56,7 @@ let iso860String = Date().iso860
 let defaultDateString = Date().string(date: .long, time: .short)
 let relativeDateString = Date().string("dd.MM.yyyy",
                             relative: [
+                                .day(1): "Tomorrow",
                                 .day(0): "Today, HH:mm",
                                 .day(-1): "Yesterday",
                                 .week(0): "EEEE",       
@@ -79,17 +80,13 @@ Or you can set your own `default` value for all functions
 Calendar.default = customCalendar
 ```
 ### VDBuilders
-`ArrayBuilder<T>` - result builder to create arrays
-
-`ComposeBuilder`
-
-`SingleBuilder`
-
-### VDLayout
+- `ArrayBuilder<T>` - result builder to create arrays
+- `ComposeBuilder`
+- `SingleBuilder`
 
 ### UIKitIntegration
-Combination of [`VDChain`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) and [`VDLayout`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdlayout) to easy use `UIKit` elements in `SwiftUI` code.
-This realization uses `@autoclosure`s in order to avoid `UIView` re-creation. `§` operator creates `UIKitView`, `UIKitView` supports [chaining](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) to update `UIView`. `uiKitViewEnvironment` modifier allows to set `UIView`s properties as environments via chaining.
+Easy integration `UIKit` elements to `SwiftUI` code.
+This realization uses `@autoclosure`s in order to avoid `UIView` re-creation. `§` operator creates `UIKitView`, `UIKitView` supports [chaining](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) to update `UIView`. `.uiKitViewEnvironment` modifier allows to set `UIView`s properties as environments via chaining.
 ```swift
 @State var text: String 
 let textColor: Color 
@@ -116,18 +113,52 @@ var body: some View {
   .tintColor(.red)
 }
 ```
+### VDLayout
+`SwiftUI` like syntaxis for `UIKit` via function builders and [`chaining`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain)
+```swift
+class YourView: LtView {
 
+  @SubviewsBuilder
+  override func layout() -> [SubviewProtocol] {
+    UIStackView(.vertical) { 
+      UILabel()~
+        .textColor(.black)
+        .font(.systemFont(ofSize: 20))
+
+      someView { 
+        someImageView~
+          .image(someImage)
+      }
+
+      Text("SubviewsBuilder supports SwiftUI views too")
+    }
+  }
+}
+```
+`VDLayout` is good for use with [`ConstraintsOperators`](https://github.com/dankinsoid/ConstraintsOperators), just need make `Constraints<Item>` impelemts `SubviewProtocol` 
+```swift
+UIView { 
+  label
+    .height(30)
+    .width(someView.width / 2 + 10)
+    .centerX(0)
+    .edges(.vertical).equal(to: 10)
+}
+```
+### UIKitEnvironment
+```swift
+view.environments.someValue = 0
+
+extension UIViewEnvironment {
+  var someValue: Int {
+    get { self[\.someValue] ?? 0 }
+    set { self[\.someValue] = newValue }
+  }
+}
+```
 
 ## Installation
-1.  [CocoaPods](https://cocoapods.org)
-
-Add the following line to your Podfile:
-```ruby
-pod 'VD'
-```
-and run `pod update` from the podfile directory first.
-
-2. [Swift Package Manager](https://github.com/apple/swift-package-manager)
+1.  [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
 Create a `Package.swift` file.
 ```swift
@@ -137,7 +168,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.122.0")
+    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.123.0")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VDKit"])
