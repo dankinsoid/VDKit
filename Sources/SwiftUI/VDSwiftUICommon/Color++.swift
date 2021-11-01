@@ -5,9 +5,13 @@
 //  Created by Данил Войдилов on 13.05.2021.
 //
 
-#if canImport(UIKit) && canImport(SwiftUI)
-import UIKit
+#if canImport(SwiftUI)
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Color: _ExpressibleByColorLiteral {
@@ -16,24 +20,46 @@ extension Color: _ExpressibleByColorLiteral {
     self = Color(.sRGB, red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
 	}
 	
+#if canImport(UIKit)
 	public var ui: UIColor {
-		if #available(iOS 14.0, *) {
-			return UIColor(self)
+		get {
+			if #available(iOS 14.0, *) {
+				return UIColor(self)
+			} else {
+				if self == .clear { return .clear }
+				let (r, g, b, a) = _rgba
+				return UIColor(red: r, green: g, blue: b, alpha: a)
+			}
+		}
+		set {
+			self = Color(newValue)
+		}
+	}
+#elseif canImport(AppKit)
+	public var ns: NSColor {
+		if #available(macOS 11.0, *) {
+			return NSColor(self)
 		} else {
 			if self == .clear { return .clear }
-			let scanner = Scanner(string: self.description.trimmingCharacters(in: CharacterSet.alphanumerics.inverted))
-			var hexNumber: UInt64 = 0
-			var r: CGFloat = 0.0, g: CGFloat = 0.0, b: CGFloat = 0.0, a: CGFloat = 0.0
-			
-			let result = scanner.scanHexInt64(&hexNumber)
-			if result {
-				r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
-				g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
-				b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
-				a = CGFloat(hexNumber & 0x000000ff) / 255
-			}
-			return UIColor(red: r, green: g, blue: b, alpha: a)
+			let (r, g, b, a) = _rgba
+			return NSColor(red: r, green: g, blue: b, alpha: a)
 		}
+	}
+#endif
+	
+	private var _rgba: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+		let scanner = Scanner(string: self.description.trimmingCharacters(in: CharacterSet.alphanumerics.inverted))
+		var hexNumber: UInt64 = 0
+		var (r, g, b, a): (CGFloat, CGFloat, CGFloat, CGFloat) = (0, 0, 0, 0)
+		
+		let result = scanner.scanHexInt64(&hexNumber)
+		if result {
+			r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
+			g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+			b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+			a = CGFloat(hexNumber & 0x000000ff) / 255
+		}
+		return (r, g, b, a)
 	}
   
   public init(_ rgb: UInt) {
@@ -105,16 +131,19 @@ extension Color: _ExpressibleByColorLiteral {
     return Double(hexComponent) / 255.0
   }
   
-  public var red: Double { rgba.red }
-  public var green: Double { rgba.green }
-  public var blue: Double { rgba.blue }
+	public var red: Double { get { rgba.red } set { rgba.red = newValue } }
+	public var green: Double { get { rgba.green } set { rgba.green = newValue } }
+	public var blue: Double { get { rgba.blue } set { rgba.blue = newValue } }
   
-  public var hue: Double { hsba.hue }
-  public var saturation: Double { hsba.saturation }
-  public var brightness: Double { hsba.brightness }
+	public var hue: Double { get { hsba.hue } set { hsba.hue = newValue } }
+	public var saturation: Double { get { hsba.saturation } set { hsba.saturation = newValue } }
+	public var brightness: Double { get { hsba.brightness } set { hsba.brightness = newValue } }
   
-  public var opacity: Double { rgba.opacity }
-  
+  public var opacity: Double {
+		get { rgba.opacity }
+		set { self = self.opacity(newValue) }
+	}
+	
   public var hex: String { hex(hideOpacity: false) }
   
   public func hex(hideOpacity: Bool) -> String {
@@ -138,16 +167,34 @@ extension Color: _ExpressibleByColorLiteral {
         Int(a * multiplier)
       )
     }
-  }
-  
-  public var rgba: (red: Double, green: Double, blue: Double, opacity: Double) {
-    let (r, g, b, a) = ui.rgba
-    return (Double(r), Double(g), Double(b), Double(a))
-  }
+	}
+	
+	public var rgba: (red: Double, green: Double, blue: Double, opacity: Double) {
+		get {
+#if canImport(UIKit)
+			let (r, g, b, a) = ui.rgba
+#elseif canImport(AppKit)
+			let (r, g, b, a) = ns.rgba
+#endif
+			return (Double(r), Double(g), Double(b), Double(a))
+		}
+		set {
+			self = Color(.sRGB, red: newValue.red, green: newValue.green, blue: newValue.blue, opacity: newValue.opacity)
+		}
+	}
   
   public var hsba: (hue: Double, saturation: Double, brightness: Double, opacity: Double) {
-    let (h, s, b, a) = ui.hsba
-    return (Double(h), Double(s), Double(b), Double(a))
+		get {
+#if canImport(UIKit)
+			let (h, s, b, a) = ui.hsba
+#elseif canImport(AppKit)
+			let (h, s, b, a) = ns.hsba
+#endif
+			return (Double(h), Double(s), Double(b), Double(a))
+		}
+		set {
+			self = Color(hue: newValue.hue, saturation: newValue.saturation, brightness: newValue.saturation, opacity: newValue.opacity)
+		}
   }
   
   public func red(_ red: Double) -> Color {
@@ -238,6 +285,7 @@ fileprivate func +(_ lhs: RGBA, _ rhs: RGBA) -> RGBA {
   return (lhs.0 + rhs.0, lhs.1 + rhs.1, lhs.2 + rhs.2, lhs.3 + rhs.3)
 }
 
+#if canImport(UIKit)
 fileprivate extension UIColor {
 	
 	var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
@@ -258,4 +306,23 @@ fileprivate extension UIColor {
 		return (hue, saturation, brightness, alpha)
 	}
 }
+#elseif canImport(AppKit)
+fileprivate extension NSColor {
+	
+	var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+		let ciColor: CIColor = CIColor(color: self) ?? CIColor()
+		return (ciColor.red, ciColor.green, ciColor.blue, ciColor.alpha)
+	}
+	
+	var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+		var hue: CGFloat = 0
+		self.getHue(nil, saturation: nil, brightness: nil, alpha: nil)
+		var saturation: CGFloat = 0
+		var brightness: CGFloat = 0
+		var alpha: CGFloat = 0
+		getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+		return (hue, saturation, brightness, alpha)
+	}
+}
+#endif
 #endif
