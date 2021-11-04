@@ -218,3 +218,17 @@ private extension Dictionary {
     self[key] = val
   }
 }
+
+extension Set {
+	
+	public subscript(_ element: Element) -> Bool {
+		get { contains(element) }
+		set {
+			if newValue {
+				insert(element)
+			} else {
+				remove(element)
+			}
+		}
+	}
+}
