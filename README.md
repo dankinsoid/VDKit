@@ -9,16 +9,16 @@
 This repository contains useful extensions on Foundation, UIKit and SwiftUI
 
 ## Usage
-### Chaining
-Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) with `KeyPath`es and `callAsFunction` (or subscripts) allows to change objects with one expression
+### VDChain
+Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) with `KeyPath`es and `callAsFunction`
 ```swift
-let label = UILabel().chain
+let label = UILabel()~
   .text("Text")
   .textColor(.red)
   .font(.system(24))
   .apply()
 ```
-### Date extensions
+### VDDates
 `Date` struct provides very little functionality, any operations with dates must be implemented through `Calendar` in very unintuitive, complex and difficult to remember ways.
 To simplify operations with dates, this library provides a simple and intuitive syntax.
 
@@ -56,6 +56,7 @@ let iso860String = Date().iso860
 let defaultDateString = Date().string(date: .long, time: .short)
 let relativeDateString = Date().string("dd.MM.yyyy",
                             relative: [
+                                .day(1): "Tomorrow",
                                 .day(0): "Today, HH:mm",
                                 .day(-1): "Yesterday",
                                 .week(0): "EEEE",       
@@ -78,16 +79,86 @@ Or you can set your own `default` value for all functions
 ```swift
 Calendar.default = customCalendar
 ```
-## Installation
-1.  [CocoaPods](https://cocoapods.org)
+### VDBuilders
+- `ArrayBuilder<T>` - result builder to create arrays
+- `ComposeBuilder`
+- `SingleBuilder`
 
-Add the following line to your Podfile:
-```ruby
-pod 'VD'
+### UIKitIntegration
+Easy integration `UIKit` elements to `SwiftUI` code.
+This realization uses `@autoclosure`s in order to avoid `UIView` re-creation. `§` operator creates `UIKitView`, `UIKitView` supports [chaining](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain) to update `UIView`. `.uiKitViewEnvironment` modifier allows to set `UIView`s properties as environments via chaining.
+```swift
+@State var text: String 
+let textColor: Color 
+
+var body: some View {
+  VStack {
+    Text(text)
+      .foregroundColor(textColor)
+  
+    UILabel()§
+      .text(text)
+      .contentPriority.horizontal.compression(.required)
+    
+    UIKitView {
+      UILabel()
+    } update: { label, context in
+      label.text = text
+    }
+    
+    UIImageView()
+  }
+  .uiKitViewEnvironment(for: UILabel.self)
+  .textColor(textColor.ui)
+  .tintColor(.red)
+}
 ```
-and run `pod update` from the podfile directory first.
+### VDLayout
+`SwiftUI` like syntaxis for `UIKit` via function builders and [`chaining`](https://github.com/dankinsoid/VDKit/blob/master/README.md#vdchain)
+```swift
+class YourView: LtView {
 
-2. [Swift Package Manager](https://github.com/apple/swift-package-manager)
+  @SubviewsBuilder
+  override func layout() -> [SubviewProtocol] {
+    UIStackView(.vertical) { 
+      UILabel()~
+        .textColor(.black)
+        .font(.systemFont(ofSize: 20))
+
+      someView { 
+        someImageView~
+          .image(someImage)
+      }
+
+      Text("SubviewsBuilder supports SwiftUI views too")
+    }
+  }
+}
+```
+`VDLayout` is good for use with [`ConstraintsOperators`](https://github.com/dankinsoid/ConstraintsOperators), just need make `Constraints<Item>` impelemts `SubviewProtocol` 
+```swift
+UIView { 
+  label
+    .height(30)
+    .width(someView.width / 2 + 10)
+    .centerX(0)
+    .edges(.vertical).equal(to: 10)
+}
+```
+### UIKitEnvironment
+```swift
+view.environments.someValue = 0
+
+extension UIViewEnvironment {
+  var someValue: Int {
+    get { self[\.someValue] ?? 0 }
+    set { self[\.someValue] = newValue }
+  }
+}
+```
+
+## Installation
+1.  [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
 Create a `Package.swift` file.
 ```swift
@@ -97,7 +168,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.122.0")
+    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.127.0")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VDKit"])

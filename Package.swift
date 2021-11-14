@@ -59,7 +59,7 @@ let package = Package(
 		.target(name: "Scroll", dependencies: ["VDCommon", "VDSwiftUICommon", "VDCoreGraphics"], path: "Sources/SwiftUI/Scroll"),
 		.target(name: "VDSwiftUI", dependencies: ["UIKitIntegration", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics"]),
 		
-		.target(name: "UIKitIntegration", dependencies: ["VDLayout"]),
+		.target(name: "UIKitIntegration", dependencies: ["VDChain"]),
 		
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
 		.target(name: "VDLayout", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),

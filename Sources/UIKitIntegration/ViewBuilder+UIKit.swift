@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import VDLayout
 
 #if canImport(UIKit)
 import UIKit
@@ -21,11 +20,9 @@ extension ViewBuilder {
 	}
 	
 	@inline(__always)
-	public static func buildExpression<V: SubviewProtocol>(_ expression: @escaping @autoclosure () -> V) -> some View {
-		UIKitView {
-			expression().createViewToAdd()
-		}
-		.edgesIgnoringSafeArea(.all)
+	public static func buildExpression<V: UIView>(_ expression: @escaping @autoclosure () -> V) -> some View {
+		UIKitView(expression)
+			.edgesIgnoringSafeArea(.all)
 	}
 	
 	@inline(__always)
