@@ -11,7 +11,6 @@
 @_exported import DragNDrop
 @_exported import EnvironmentStateObject
 @_exported import Field
-@_exported import IterableView
 @_exported import Pages
 @_exported import Scroll
 @_exported import LinesStack
