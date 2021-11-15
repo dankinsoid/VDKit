@@ -25,7 +25,6 @@ let package = Package(
 		.library(name: "DragNDrop", targets: ["DragNDrop"]),
 		.library(name: "EnvironmentStateObject", targets: ["EnvironmentStateObject"]),
 		.library(name: "Field", targets: ["Field"]),
-		.library(name: "IterableView", targets: ["IterableView"]),
 		.library(name: "Pages", targets: ["Pages"]),
 		.library(name: "Scroll", targets: ["Scroll"]),
 		.library(name: "VDUIKit", targets: ["VDUIKit"]),
