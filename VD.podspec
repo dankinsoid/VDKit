@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = 'VD'
-s.version          = '1.128.0'
+s.version          = '1.129.0'
 s.summary          = 'This repository contains useful extensions on Foundation and UIKit'
 
 s.description      = <<-DESC
@@ -34,7 +34,6 @@ s.module_name = 'VDKit'
 #     myLib.dependency 'DragNDrop'
 #     myLib.dependency 'EnvironmentStateObject'
 #     myLib.dependency 'Field'
-#     myLib.dependency 'IterableView'
 #     myLib.dependency 'Pages'
 #     myLib.dependency 'Scroll'
 #     myLib.dependency 'VDUIKit'
@@ -51,7 +50,6 @@ s.subspec 'VDSwiftUI' do |myLib|
     myLib.dependency 'DragNDrop'
     myLib.dependency 'EnvironmentStateObject'
     myLib.dependency 'Field'
-    myLib.dependency 'IterableView'
     myLib.dependency 'Pages'
     myLib.dependency 'Scroll'
     myLib.dependency 'LinesStack'
@@ -118,11 +116,6 @@ end
 s.subspec 'Field' do |myLib|
     myLib.dependency 'VDSwiftUICommon'
     myLib.source_files = 'Sources/SwiftUI/Field/**/*.swift'
-end
-
-s.subspec 'IterableView' do |myLib|
-    myLib.dependency 'VDCommon'
-    myLib.source_files = 'Sources/SwiftUI/Iterable/**/*.swift'
 end
 
 s.subspec 'Pages' do |myLib|
