@@ -10,12 +10,13 @@ import Combine
 import VDOptional
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public typealias ValueStateSubject<Value> = StateSubject<PassthroughSubject<Value, Never>, Value>
+public typealias ValueStateSubject<Value> = StateSubject<PassthroughSubject<Value, Never>>
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 @propertyWrapper
-public struct StateSubject<S: Subject, Output>: DynamicProperty, Publisher where S.Failure == Never, S.Output == Output {
+public struct StateSubject<S: Subject>: DynamicProperty, Publisher where S.Failure == Never {
 	public typealias Failure = Never
+	public typealias Output = S.Output
 	
 	public var wrappedValue: Output {
 		get {
@@ -73,6 +74,14 @@ public struct StateSubject<S: Subject, Output>: DynamicProperty, Publisher where
 		
 		init() {}
 	}
+	
+	public init<Value>(wrappedValue: Value) where S == PassthroughSubject<Value, Never> {
+		self = StateSubject(wrappedValue: wrappedValue, PassthroughSubject())
+	}
+	
+	public init<Value>() where S == PassthroughSubject<Value?, Never> {
+		self = StateSubject(wrappedValue: nil, PassthroughSubject())
+	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -80,22 +89,6 @@ extension StateSubject where Output: OptionalProtocol {
 	
 	public init(_ publisher: @escaping @autoclosure () -> S) {
 		self = StateSubject(wrappedValue: .none, publisher())
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension StateSubject where S == PassthroughSubject<Output, Never> {
-	
-	public init(wrappedValue: Output) {
-		self = StateSubject(wrappedValue: wrappedValue, PassthroughSubject())
-	}
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension StateSubject where S == PassthroughSubject<Output, Never>, S.Output: OptionalProtocol {
-	
-	public init() {
-		self = StateSubject(wrappedValue: .none, PassthroughSubject())
 	}
 }
 
