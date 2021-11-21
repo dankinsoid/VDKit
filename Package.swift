@@ -31,6 +31,7 @@ let package = Package(
 		.library(name: "VDOptional", targets: ["VDOptional"]),
 		.library(name: "VDMirror", targets: ["VDMirror"]),
 		.library(name: "LinesStack", targets: ["LinesStack"]),
+		.library(name: "LoadingPlaceholder", targets: ["LoadingPlaceholder"]),
 		.library(name: "VDCoreGraphics", targets: ["VDCoreGraphics"]),
 		.library(name: "VDKitRuntime", targets: ["VDKitRuntime"])
 	],
@@ -52,19 +53,20 @@ let package = Package(
 		.target(name: "VDSwiftUICommon", dependencies: ["VDMirror", "VDOptional", "VDBuilders"], path: "Sources/SwiftUI/VDSwiftUICommon"),
 		.target(name: "BindGeometry", dependencies: [], path: "Sources/SwiftUI/BindGeometry"),
 		.target(name: "LinesStack", dependencies: ["BindGeometry"], path: "Sources/SwiftUI/LinesStack"),
+		.target(name: "LoadingPlaceholder", dependencies: ["BindGeometry"], path: "Sources/SwiftUI/LoadingPlaceholder"),
 		.target(name: "DragNDrop", dependencies: ["EnvironmentStateObject", "VDSwiftUICommon", "BindGeometry"], path: "Sources/SwiftUI/DragNDrop"),
 		.target(name: "EnvironmentStateObject", dependencies: [], path: "Sources/SwiftUI/EnvironmentStateObject"),
 		.target(name: "Field", dependencies: ["VDSwiftUICommon"], path: "Sources/SwiftUI/Field"),
 		.target(name: "Pages", dependencies: ["VDSwiftUICommon"], path: "Sources/SwiftUI/Pages"),
 		.target(name: "Scroll", dependencies: ["VDCommon", "VDSwiftUICommon", "VDCoreGraphics"], path: "Sources/SwiftUI/Scroll"),
-		.target(name: "VDSwiftUI", dependencies: ["UIKitIntegration", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics"]),
+		.target(name: "VDSwiftUI", dependencies: ["UIKitIntegration", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
 		
 		.target(name: "UIKitIntegration", dependencies: ["VDChain"]),
 		
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
 		.target(name: "VDLayout", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),
 		
-		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "VDLayout", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics"]),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "VDLayout", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
 		
 //		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
 	]

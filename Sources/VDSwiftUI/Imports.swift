@@ -15,3 +15,4 @@
 @_exported import Scroll
 @_exported import LinesStack
 @_exported import VDCoreGraphics
+@_exported import LoadingPlaceholder
