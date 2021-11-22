@@ -25,49 +25,47 @@ public struct Shimmering: View {
 	}
 	
 	public var body: some View {
-		ZStack {
-			LinearGradient(
-				stops: [
-					Gradient.Stop(color: glareColor.opacity(0), location: 0),
-					Gradient.Stop(color: glareColor.opacity(0), location: 1 / gradientK),
-					Gradient.Stop(color: glareColor, location: (1 + gradientWidth / 2) / gradientK),
-					Gradient.Stop(color: glareColor.opacity(0), location: (1 + gradientWidth) / gradientK),
-					Gradient.Stop(color: glareColor.opacity(0), location: 1)
-				],
-				startPoint: .topLeading,
-				endPoint: .bottomTrailing
+		LinearGradient(
+			stops: [
+				Gradient.Stop(color: glareColor.opacity(0), location: 0),
+				Gradient.Stop(color: glareColor.opacity(0), location: 1 / gradientK),
+				Gradient.Stop(color: glareColor, location: (1 + gradientWidth / 2) / gradientK),
+				Gradient.Stop(color: glareColor.opacity(0), location: (1 + gradientWidth) / gradientK),
+				Gradient.Stop(color: glareColor.opacity(0), location: 1)
+			],
+			startPoint: .topLeading,
+			endPoint: .bottomTrailing
+		)
+			.padding(
+				EdgeInsets(
+					top: -(frame.minY + UIScreen.main.bounds.height * (1 + gradientWidth)),
+					leading: -(frame.minX + UIScreen.main.bounds.width * (1 + gradientWidth)),
+					bottom: -(UIScreen.main.bounds.height * (1 + gradientWidth) - frame.maxY),
+					trailing: -(UIScreen.main.bounds.width * (1 + gradientWidth) - frame.maxX)
+				)
 			)
-				.padding(
-					EdgeInsets(
-						top: -(frame.minY + UIScreen.main.bounds.height * (1 + gradientWidth)),
-						leading: -(frame.minX + UIScreen.main.bounds.width * (1 + gradientWidth)),
-						bottom: -(UIScreen.main.bounds.height * (1 + gradientWidth) - frame.maxY),
-						trailing: -(UIScreen.main.bounds.width * (1 + gradientWidth) - frame.maxX)
-					)
-				)
-				.offset(
-					x: progress * UIScreen.main.bounds.width * (1 + gradientWidth),
-					y: progress * UIScreen.main.bounds.height * (1 + gradientWidth)
-				)
-		}
-		.background(backgroundColor)
-		.cornerRadius(roundCorners ? min(frame.width, frame.height) / 2 : 0)
-		.clipped()
-		.bindFrame(in: .global, to: $frame)
-		.onAppear {
-			let mod = CACurrentMediaTime().truncatingRemainder(dividingBy: fullDuration)
-			let duration = fullDuration - mod
-			progress = mod / fullDuration
-			withAnimation(.linear(duration: duration)) {
-				progress = 1
-			}
-			DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(Int(duration * 1_000_000))) {
-				progress = 0
-				withAnimation(.linear(duration: fullDuration).repeatForever(autoreverses: false)) {
-					progress = 1 - progress
+			.offset(
+				x: progress * UIScreen.main.bounds.width * (1 + gradientWidth),
+				y: progress * UIScreen.main.bounds.height * (1 + gradientWidth)
+			)
+			.background(backgroundColor)
+			.cornerRadius(roundCorners ? min(frame.width, frame.height) / 2 : 0)
+			.clipped()
+			.bindFrame(in: .global, to: $frame)
+			.onAppear {
+				let mod = CACurrentMediaTime().truncatingRemainder(dividingBy: fullDuration)
+				let duration = fullDuration - mod
+				progress = mod / fullDuration
+				withAnimation(.linear(duration: duration)) {
+					progress = 1
+				}
+				DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(Int(duration * 1_000_000))) {
+					progress = 0
+					withAnimation(.linear(duration: fullDuration).repeatForever(autoreverses: false)) {
+						progress = 1 - progress
+					}
 				}
 			}
-		}
 	}
 }
 
