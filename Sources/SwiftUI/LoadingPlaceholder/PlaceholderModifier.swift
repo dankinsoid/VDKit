@@ -48,4 +48,8 @@ extension View {
 			Shimmering()
 		}
 	}
+	
+	public func showLoadingPlaceholder(_ show: Bool) -> some View {
+		environment(\.showLoadingPlaceholder, show)
+	}
 }

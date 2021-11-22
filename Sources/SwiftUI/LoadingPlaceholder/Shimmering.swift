@@ -135,7 +135,4 @@ extension View {
 	public func shimmering(glareRelativeWidth: Double) -> some View {
 		environment(\.shimmeringGlareWidth, glareRelativeWidth)
 	}
-	public func showLoadingPlaceholder(_ show: Bool) -> some View {
-		environment(\.showLoadingPlaceholder, show)
-	}
 }
