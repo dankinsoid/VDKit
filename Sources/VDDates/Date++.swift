@@ -930,14 +930,6 @@ public func -(_ lhs: Date, _ rhs: DateDifference) -> Date {
 	lhs.adding(-rhs)
 }
 
-public func +(_ lhs: Date?, _ rhs: DateDifference) -> Date? {
-	lhs?.adding(rhs)
-}
-
-public func -(_ lhs: Date?, _ rhs: DateDifference) -> Date? {
-	lhs?.adding(-rhs)
-}
-
 public func +=(_ lhs: inout Date, _ rhs: DateDifference) {
 	lhs = lhs + rhs
 }
