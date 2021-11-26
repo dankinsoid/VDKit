@@ -107,9 +107,17 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	var isUpdating = false
 	var hostingInput: UIHostingController<Input>? {
 		didSet {
-			hostingInput?.loadViewIfNeeded()
-			inputView = hostingInput?.view
+			let vc = KeyboardViewController<Input>()
+			vc.hosting = hostingInput
+			_inputViewController = vc
 		}
+	}
+	
+	private var _inputViewController : UIInputViewController?
+	
+	override open var inputViewController: UIInputViewController? {
+		get { _inputViewController }
+		set { _inputViewController = newValue }
 	}
 	
 	public var edgeInsets: UIEdgeInsets = .init() {
@@ -236,6 +244,30 @@ private final class SelfSizingHostingController<Content>: UIHostingController<Co
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		self.view.invalidateIntrinsicContentSize()
+	}
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+private final class KeyboardViewController<Content: View>: UIInputViewController {
+	
+	var hosting: UIHostingController<Content>? {
+		didSet {
+			guard let vc = hosting else { return }
+			loadViewIfNeeded()
+			addChild(vc)
+			vc.view.translatesAutoresizingMaskIntoConstraints = false
+			view.addSubview(vc.view)
+			view.topAnchor.constraint(equalTo: vc.view.topAnchor).isActive = true
+			view.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor).isActive = true
+			view.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor).isActive = true
+			view.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor).isActive = true
+		}
+	}
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		inputView?.translatesAutoresizingMaskIntoConstraints = false
+		inputView?.allowsSelfSizing = true
 	}
 }
 
