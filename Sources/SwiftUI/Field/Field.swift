@@ -30,7 +30,7 @@ public struct Field<Input: View>: UIViewRepresentable {
 	public func makeUIView(context: Context) -> UIField<Input> {
 		let result = UIField<Input>()
 		if inputView as? EmptyInputView == nil {
-			result.hostingInput = UIHostingController(rootView: inputView)
+			result.hostingInput = SelfSizingHostingController(rootView: inputView)
 		}
 		return result
 	}
@@ -222,6 +222,19 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 			from: position(from: beginningOfDocument, offset: range.lowerBound) ?? endOfDocument,
 			to: position(from: beginningOfDocument, offset: range.upperBound) ?? endOfDocument
 		)
+	}
+}
+
+private final class SelfSizingHostingController<Content>: UIHostingController<Content> where Content: View {
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .clear
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		self.view.invalidateIntrinsicContentSize()
 	}
 }
 
