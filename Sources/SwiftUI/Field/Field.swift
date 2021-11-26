@@ -225,6 +225,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 private final class SelfSizingHostingController<Content>: UIHostingController<Content> where Content: View {
 	
 	override func viewDidLoad() {
@@ -486,7 +487,7 @@ extension View {
 	}
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct Field_Previews: PreviewProvider {
 	
 	static var previews: some View {
@@ -499,7 +500,14 @@ struct Field_Previews: PreviewProvider {
 		
 		var body: some View {
 			VStack {
-				Field($text, placeholder: "fff", selection: $selection)
+				Field($text, placeholder: "fff", selection: $selection) {
+					DatePicker(
+						"",
+						selection: .constant(Date()),
+						displayedComponents: [.date]
+					)
+						.datePickerStyle(.graphical)
+				}
 					.font(.system(size: 26).italic())
 					.field(textColor: .green)
 					.field(keyboard: .numberPad)
