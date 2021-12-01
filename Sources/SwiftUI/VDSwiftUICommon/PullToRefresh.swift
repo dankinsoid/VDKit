@@ -21,20 +21,17 @@ extension View {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-private struct PullToRefresh: UIViewRepresentable {
+private struct PullToRefresh: UIViewControllerRepresentable {
 	@Binding var isRefreshing: Bool
 	var tint: Color
 	var title: NSAttributedString?
 	var action: () -> Void
 	
-	func makeUIView(context: Context) -> UIViewType {
-		let result = UIViewType()
-		result.isUserInteractionEnabled = false
-		result.isHidden = true
-		return result
+	func makeUIViewController(context: Context) -> UIViewControllerType {
+		UIViewControllerType()
 	}
 	
-	func updateUIView(_ uiView: UIViewType, context: Context) {
+	func updateUIViewController(_ uiView: UIViewControllerType, context: Context) {
 		uiView.refreshControl.tintColor = tint.ui
 		uiView.refreshControl.attributedTitle = title
 		uiView.action = {
@@ -47,7 +44,7 @@ private struct PullToRefresh: UIViewRepresentable {
 		}
 	}
 	
-	final class UIViewType: UIView {
+	final class UIViewControllerType: UIViewController {
 		let refreshControl = UIRefreshControl()
 		private weak var scroll: UIScrollView?
 		var action: () -> Void = {}
@@ -56,7 +53,7 @@ private struct PullToRefresh: UIViewRepresentable {
 		}
 		
 		init() {
-			super.init(frame: .zero)
+			super.init(nibName: nil, bundle: nil)
 			refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
 		}
 		
@@ -64,15 +61,27 @@ private struct PullToRefresh: UIViewRepresentable {
 			fatalError("init(coder:) has not been implemented")
 		}
 		
-		override func didMoveToWindow() {
-			super.didMoveToWindow()
+		override func viewDidLoad() {
+			super.viewDidLoad()
+			view.isUserInteractionEnabled = false
+			view.isHidden = true
+			refreshControl.backgroundColor = .clear
+			NotificationCenter.default.addObserver(self, selector: #selector(didiEnter(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+		}
+		
+		override func viewWillAppear(_ animated: Bool) {
+			super.viewWillAppear(animated)
+			reset()
+		}
+		
+		override func viewDidAppear(_ animated: Bool) {
+			super.viewDidAppear(animated)
 			findScroll()
 		}
 		
 		func findScroll() {
-			print("isAdded", isAdded)
 			guard !isAdded else { return }
-			if let scroll = superview?.superview?.allSubviews().compactMap({ $0 as? UIScrollView }).first(where: { $0.refreshControl == nil }) {
+			if let scroll = view.superview?.superview?.allSubviews().compactMap({ $0 as? UIScrollView }).first(where: { $0.refreshControl == nil }) {
 				add(to: scroll)
 			}
 		}
@@ -83,8 +92,23 @@ private struct PullToRefresh: UIViewRepresentable {
 			self.scroll = scroll
 		}
 		
+		private func reset() {
+			guard refreshControl.isRefreshing, let scrollView = scroll else { return }
+			let offset = scrollView.contentOffset
+			
+			UIView.performWithoutAnimation {
+				refreshControl.endRefreshing()
+			}
+			refreshControl.beginRefreshing()
+			scrollView.contentOffset = offset
+		}
+		
 		@objc private func refresh(refreshControl: UIRefreshControl) {
 			action()
+		}
+		
+		@objc private func didiEnter(notification: Notification) {
+			reset()
 		}
 	}
 }
