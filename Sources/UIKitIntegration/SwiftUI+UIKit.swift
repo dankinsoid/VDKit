@@ -12,7 +12,7 @@ import SwiftUI
 import Combine
 import VDChain
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @dynamicMemberLookup
 public struct UIKitView<Content: UIKitViewWrappable, V>: Chaining, View where Content.V == V {
 	public var apply: (inout V) -> Void = { _ in }
@@ -43,13 +43,13 @@ public struct UIKitView<Content: UIKitViewWrappable, V>: Chaining, View where Co
 
 postfix operator §
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public postfix func §<T: UIView>(_ lhs: @escaping @autoclosure () -> T) -> UIKitView<_UIViewView<T>, T> { UIKitView(_UIViewView(lhs), update: {_, _ in}) }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public postfix func §<T: UIViewController>(_ lhs: @escaping @autoclosure () -> T) -> UIKitView<_UIViewControllerView<T>, T> { UIKitView(_UIViewControllerView(lhs), update: {_, _ in}) }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension UIKitView where Content == _UIViewView<V> {
 	
 	public init(_ make: @escaping () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
@@ -69,7 +69,7 @@ extension UIKitView where Content == _UIViewView<V> {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension UIKitView where Content == _UIViewControllerView<V> {
 	
 	public init(_ make: @escaping () -> V, update: @escaping (V, Content.VContext) -> Void = {_, _ in }) {
@@ -89,7 +89,7 @@ extension UIKitView where Content == _UIViewControllerView<V> {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol UIKitViewWrappable: View {
 	associatedtype V
 	associatedtype VContext
@@ -97,7 +97,7 @@ public protocol UIKitViewWrappable: View {
 	init(_ make: @escaping () -> V)
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct _UIViewView<V: UIView>: UIViewRepresentable, UIKitViewWrappable {
 	
 	let make: () -> V
@@ -116,7 +116,7 @@ public struct _UIViewView<V: UIView>: UIViewRepresentable, UIKitViewWrappable {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct _UIViewControllerView<V: UIViewController>: UIViewControllerRepresentable, UIKitViewWrappable {
 	
 	let make: () -> V
@@ -135,14 +135,14 @@ public struct _UIViewControllerView<V: UIViewController>: UIViewControllerRepres
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	public var uiKit: UIHostingController<Self> {
 		UIHostingController(rootView: self)
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	public func uiKitViewEnvironment<T: UIView>(for type: T.Type) -> UIKitViewEnvironment<T, Self> {
 		UIKitViewEnvironment(content: self)
@@ -153,7 +153,7 @@ extension View {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension EnvironmentValues {
 	fileprivate var uikit: (Any) -> Void {
 		get { self[UIKitKey.self] }
@@ -165,7 +165,7 @@ extension EnvironmentValues {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @dynamicMemberLookup
 public struct UIKitViewEnvironment<T, Content: View>: Chaining, View {
 	public var apply: (inout T) -> Void = { _ in }

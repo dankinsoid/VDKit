@@ -7,6 +7,15 @@
 
 import SwiftUI
 import BindGeometry
+#if canImport(UIKit)
+import UIKit
+private let screenSize = UIScreen.main.bounds.size
+#elseif canImport(Cocoa)
+import Cocoa
+private let screenSize = NSScreen.main?.frame.size ?? .zero
+#else
+private let screenSize = CGSize.zero
+#endif
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct Shimmering: View {
@@ -38,15 +47,15 @@ public struct Shimmering: View {
 		)
 			.padding(
 				EdgeInsets(
-					top: -(frame.minY + UIScreen.main.bounds.height * (1 + gradientWidth)),
-					leading: -(frame.minX + UIScreen.main.bounds.width * (1 + gradientWidth)),
-					bottom: -(UIScreen.main.bounds.height * (1 + gradientWidth) - frame.maxY),
-					trailing: -(UIScreen.main.bounds.width * (1 + gradientWidth) - frame.maxX)
+					top: -(frame.minY + screenSize.height * (1 + gradientWidth)),
+					leading: -(frame.minX + screenSize.width * (1 + gradientWidth)),
+					bottom: -(screenSize.height * (1 + gradientWidth) - frame.maxY),
+					trailing: -(screenSize.width * (1 + gradientWidth) - frame.maxX)
 				)
 			)
 			.offset(
-				x: progress * UIScreen.main.bounds.width * (1 + gradientWidth),
-				y: progress * UIScreen.main.bounds.height * (1 + gradientWidth)
+				x: progress * screenSize.width * (1 + gradientWidth),
+				y: progress * screenSize.height * (1 + gradientWidth)
 			)
 			.background(backgroundColor)
 			.cornerRadius(roundCorners ? min(frame.width, frame.height) / 2 : 0)
@@ -136,3 +145,4 @@ extension View {
 		environment(\.shimmeringGlareWidth, glareRelativeWidth)
 	}
 }
+

@@ -52,7 +52,7 @@ extension View {
 #if canImport(UIKit)
 import UIKit
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	
 	public func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
@@ -60,7 +60,7 @@ extension View {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 struct RoundedCorner: Shape {
 	
 	var radius: CGFloat = .infinity

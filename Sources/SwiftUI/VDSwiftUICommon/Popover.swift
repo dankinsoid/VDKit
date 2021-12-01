@@ -9,35 +9,41 @@
 import UIKit
 import SwiftUI
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
   
-  public func smallPopover<T: View>(_ isPresented: Binding<Bool>, color: Color? = nil, size: CGSize? = nil, insets: EdgeInsets = .zero, @ViewBuilder content: () -> T) -> some View {
+  public func smallPopover<T: View>(_ isPresented: Binding<Bool>, edge: Edge? = nil, color: Color? = nil, size: CGSize? = nil, insets: EdgeInsets = .zero, @ViewBuilder content: () -> T) -> some View {
     background(
-      Popover(content: content(), color: color, size: size, insets: insets, isAppear: isPresented)
+      Popover(content: content(), color: color, size: size, insets: insets, edge: edge, isAppear: isPresented)
     )
   }
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct Popover<T: View>: UIViewControllerRepresentable {
   
   let content: T
   let color: Color?
   let size: CGSize?
   let insets: EdgeInsets
+	let edge: Edge?
   @Binding var isAppear: Bool
+	@Environment(\.self) private var environments
+	private var view: AllEnvironments<T> {
+		AllEnvironments(environments: environments, content: content)
+	}
   
   func makeUIViewController(context: Context) -> UIViewControllerType {
-    UIViewControllerType(content: content, color: color, size: size, insets: insets.ui)
+    UIViewControllerType(content: view, color: color, size: size, insets: insets.ui)
   }
   
   func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-    uiViewController.content = content
+    uiViewController.content = view
     uiViewController.size = size
     uiViewController.insets = insets.ui
-    uiViewController.popover?.rootView = content
-    uiViewController.color = color
+		uiViewController.edge = edge
+		uiViewController.color = color
+    uiViewController.popover?.rootView = view
     if let size = size {
       uiViewController.popover?.preferredContentSize = size
     }
@@ -55,14 +61,15 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
   }
   
   final class UIViewControllerType: UIViewController, UIPopoverPresentationControllerDelegate {
-    var content: T
+    var content: AllEnvironments<T>
     var color: Color?
     var size: CGSize?
     var insets: UIEdgeInsets
+		var edge: Edge?
     var onHide: (() -> Void)?
-    weak var popover: UIHostingController<T>?
+    weak var popover: Hosting?
     
-    init(content: T, color: Color?, size: CGSize?, insets: UIEdgeInsets) {
+    init(content: AllEnvironments<T>, color: Color?, size: CGSize?, insets: UIEdgeInsets) {
       self.content = content
       self.size = size
       self.color = color
@@ -91,6 +98,21 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
       }
       popupVC.popoverPresentationController?.delegate = self
       popupVC.popoverPresentationController?.sourceView = view
+			
+			switch edge {
+			case .leading:
+				popupVC.popoverPresentationController?.permittedArrowDirections = .right
+			case .trailing:
+				popupVC.popoverPresentationController?.permittedArrowDirections = .left
+			case .top:
+				popupVC.popoverPresentationController?.permittedArrowDirections = .down
+			case .bottom:
+				popupVC.popoverPresentationController?.permittedArrowDirections = .up
+			case .none:
+				popupVC.popoverPresentationController?.permittedArrowDirections = .any
+			}
+			
+			popupVC.popoverPresentationController?.permittedArrowDirections = .left
       popupVC.popoverPresentationController?.sourceRect = view?.bounds.inset(by: insets) ?? .zero
       if let color = color {
         popupVC.popoverPresentationController?.backgroundColor = color.ui
@@ -108,7 +130,7 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
       .none
     }
     
-    final class Hosting: UIHostingController<T> {
+    final class Hosting: UIHostingController<AllEnvironments<T>> {
       var onDeinit: (() -> Void)?
       
       override func viewDidLoad() {
@@ -126,5 +148,16 @@ private struct Popover<T: View>: UIViewControllerRepresentable {
       }
     }
   }
+}
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+private struct AllEnvironments<Content: View>: View {
+	var environments: EnvironmentValues
+	var content: Content
+	
+	var body: some View {
+		content
+			.environment(\.self, environments)
+	}
 }
 #endif

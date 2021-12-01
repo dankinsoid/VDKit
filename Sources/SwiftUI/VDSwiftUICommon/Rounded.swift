@@ -8,14 +8,14 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension View {
 	public func rounded(relativeCornerRadius: Double = 0.5) -> some View {
 		modifier(RoundedModifier(k: relativeCornerRadius))
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 private struct RoundedModifier: ViewModifier {
 	var k: Double = 0.5
 	@State private var size: CGSize = .zero

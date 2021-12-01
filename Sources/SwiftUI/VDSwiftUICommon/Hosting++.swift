@@ -9,7 +9,7 @@
 import SwiftUI
 import Combine
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension UIHostingController {
 	public convenience init(@ViewBuilder _ builder: () -> Content) {
 		self.init(rootView: builder())
