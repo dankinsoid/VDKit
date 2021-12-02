@@ -186,7 +186,7 @@ extension EnvironmentValues {
 		set { self[FieldInsetsKey.self] = newValue }
 	}
 	
-	public var fieldResignOnCommit: Bool {
+	public var fieldHideKeyboardOnCommit: Bool {
 		get { self[FieldResignOnCommitKey.self] }
 		set { self[FieldResignOnCommitKey.self] = newValue }
 	}
@@ -266,8 +266,8 @@ extension View {
 		environment(\.fieldEdgeInsets, EdgeInsets(edgeInset, edges))
 	}
 	
-	public func field(resignOnCommit: Bool) -> some View {
-		environment(\.fieldResignOnCommit, resignOnCommit)
+	public func field(hideKeyboardOnCommit: Bool) -> some View {
+		environment(\.fieldHideKeyboardOnCommit, hideKeyboardOnCommit)
 	}
 }
 #endif
