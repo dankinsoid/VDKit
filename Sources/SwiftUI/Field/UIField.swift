@@ -16,6 +16,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	public var onEditingChange: (Bool) -> Void = { _ in }
 	public var onChange: (String) -> Void = { _ in }
 	public var onChangeSelection: (Range<Int>) -> Void = { _ in }
+	public var resignOnCommit = true
 	var isUpdating = false
 	
 	private var hostingInput: UIHostingController<Input>? {
@@ -95,7 +96,12 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 	
 	open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		onCommit()
+		defer {
+			onCommit()
+			if resignOnCommit {
+				resignFirstResponder()
+			}
+		}
 		return true
 	}
 	

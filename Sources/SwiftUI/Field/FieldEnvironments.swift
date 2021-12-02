@@ -95,6 +95,11 @@ private enum FieldInsetsKey: EnvironmentKey {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+private enum FieldResignOnCommitKey: EnvironmentKey {
+	static var defaultValue: Bool { true }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension EnvironmentValues {
 	public var fieldTextColor: Color {
 		get { self[FieldTextColorKey.self] }
@@ -180,6 +185,11 @@ extension EnvironmentValues {
 		get { self[FieldInsetsKey.self] }
 		set { self[FieldInsetsKey.self] = newValue }
 	}
+	
+	public var fieldResignOnCommit: Bool {
+		get { self[FieldResignOnCommitKey.self] }
+		set { self[FieldResignOnCommitKey.self] = newValue }
+	}
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -254,6 +264,10 @@ extension View {
 	
 	public func field(edgeInset: CGFloat, at edges: Edge.Set) -> some View {
 		environment(\.fieldEdgeInsets, EdgeInsets(edgeInset, edges))
+	}
+	
+	public func field(resignOnCommit: Bool) -> some View {
+		environment(\.fieldResignOnCommit, resignOnCommit)
 	}
 }
 #endif
