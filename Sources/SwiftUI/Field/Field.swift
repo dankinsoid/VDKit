@@ -51,7 +51,7 @@ public struct Field<Input: View>: UIViewRepresentable {
 		uiView.smartDashesType = context.environment.fieldSmartDashes
 		uiView.spellCheckingType = context.environment.fieldSpellChecking
 		uiView.edgeInsets = context.environment.fieldEdgeInsets.ui
-		uiView.resignOnCommit = context.environment.hideKeyboardOnCommit
+		uiView.resignOnCommit = context.environment.fieldHideKeyboardOnCommit
 		uiView.textAlignment = context.environment.multilineTextAlignment.ns
 		uiView.setInput(view: inputView)
 		
