@@ -111,10 +111,15 @@ public struct StatePublisher<P: Publisher, Output>: DynamicProperty, Publisher w
 	private let defaultValue: P.Output
 	
 	public var projectedValue: P {
-		if object.model == nil {
-			object.model = create()
+		get {
+			if object.model == nil {
+				object.model = create()
+			}
+			return object.model
 		}
-		return object.model
+		set {
+			object.model = newValue
+		}
 	}
 	
 	public init(wrappedValue: P.Output, _ publisher: @escaping @autoclosure () -> P) {
