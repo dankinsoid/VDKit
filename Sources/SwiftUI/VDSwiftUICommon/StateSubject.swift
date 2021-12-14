@@ -117,7 +117,7 @@ public struct StatePublisher<P: Publisher, Output>: DynamicProperty, Publisher w
 			}
 			return object.model
 		}
-		set {
+		nonmutating set {
 			object.model = newValue
 		}
 	}
