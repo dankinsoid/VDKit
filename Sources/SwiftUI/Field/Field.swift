@@ -35,7 +35,8 @@ public struct Field<Input: View>: UIViewRepresentable {
 	
 	public func updateUIView(_ uiView: UIField<Input>, context: Context) {
 		guard !uiView.isUpdating else { return }
-		let prevType = uiView.keyboardType
+		let prevKeyboard = uiView.keyboardType
+		let prevContent = uiView.textContentType
 		uiView.canChange = false
 		uiView.font = context.environment.font?.uiFont
 		uiView.textColor = context.environment.fieldTextColor.ui
@@ -82,7 +83,7 @@ public struct Field<Input: View>: UIViewRepresentable {
 		if let isEditing = self.isEditing?.wrappedValue, uiView.isEditing != isEditing {
 			_ = isEditing ? uiView.becomeFirstResponder() : uiView.resignFirstResponder()
 		}
-		if uiView.keyboardType != prevType {
+		if uiView.keyboardType != prevKeyboard || uiView.textContentType != prevContent {
 			uiView.reloadInputViews()
 		}
 		uiView.canChange = true
