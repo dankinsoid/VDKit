@@ -18,7 +18,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	public var onChangeSelection: (Range<Int>) -> Void = { _ in }
 	public var resignOnCommit = true
 	var isUpdating = false
-	var changeSelection = true
+	var canChange = true
 	
 	private var hostingInput: UIHostingController<Input>? {
 		didSet {
@@ -59,6 +59,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 	
 	open func textFieldDidBeginEditing(_ textField: UITextField) {
+		guard canChange else { return }
 		isUpdating = true
 		onEditingChange(true)
 		isUpdating = false
@@ -69,12 +70,14 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 	
 	open func textFieldDidEndEditing(_ textField: UITextField) {
+		guard canChange else { return }
 		isUpdating = true
 		onEditingChange(false)
 		isUpdating = false
 	}
 	
 	open func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
+		guard canChange else { return }
 		isUpdating = true
 		onEditingChange(false)
 		isUpdating = false
@@ -83,11 +86,12 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	open func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		let newText = ((text ?? "") as NSString).replacingCharacters(in: range, with: string)
 		onChange(newText)
+//		textFieldDidChangeSelection(textField)
 		return false
 	}
 	
 	open func textFieldDidChangeSelection(_ textField: UITextField) {
-		guard changeSelection else { return }
+		guard canChange else { return }
 		isUpdating = true
 		onChangeSelection(selectedRange)
 		isUpdating = false
@@ -138,6 +142,14 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 		guard let selected = selected ?? selectedTextRange else {
 			text = string
 			return
+		}
+		let prev = selectedTextRange
+		defer {
+			if prev != selectedTextRange {
+				DispatchQueue.main.async {
+					self.textFieldDidChangeSelection(self)
+				}
+			}
 		}
 		guard text != string else {
 			selectedTextRange = selected
