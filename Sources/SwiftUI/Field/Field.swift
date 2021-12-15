@@ -35,6 +35,7 @@ public struct Field<Input: View>: UIViewRepresentable {
 	
 	public func updateUIView(_ uiView: UIField<Input>, context: Context) {
 		guard !uiView.isUpdating else { return }
+		uiView.changeSelection = false
 		uiView.font = context.environment.font?.uiFont
 		uiView.textColor = context.environment.fieldTextColor.ui
 		uiView.setTextAndCursor(text, selected: selection.flatMap { uiView.textRange(from: $0.wrappedValue) })
@@ -80,6 +81,7 @@ public struct Field<Input: View>: UIViewRepresentable {
 		if let isEditing = self.isEditing?.wrappedValue, uiView.isEditing != isEditing {
 			_ = isEditing ? uiView.becomeFirstResponder() : uiView.resignFirstResponder()
 		}
+		uiView.changeSelection = true
 	}
 }
 

@@ -18,6 +18,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	public var onChangeSelection: (Range<Int>) -> Void = { _ in }
 	public var resignOnCommit = true
 	var isUpdating = false
+	var changeSelection = true
 	
 	private var hostingInput: UIHostingController<Input>? {
 		didSet {
@@ -86,11 +87,10 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 	
 	open func textFieldDidChangeSelection(_ textField: UITextField) {
-		DispatchQueue.main.async {[self] in
-			isUpdating = true
-			onChangeSelection(selectedRange)
-			isUpdating = false
-		}
+		guard changeSelection else { return }
+		isUpdating = true
+		onChangeSelection(selectedRange)
+		isUpdating = false
 	}
 	
 	open func textFieldShouldClear(_ textField: UITextField) -> Bool {
