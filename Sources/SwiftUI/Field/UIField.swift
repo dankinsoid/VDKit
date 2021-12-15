@@ -86,9 +86,11 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	}
 	
 	open func textFieldDidChangeSelection(_ textField: UITextField) {
-		isUpdating = true
-		onChangeSelection(selectedRange)
-		isUpdating = false
+		DispatchQueue.main.async {[self] in
+			isUpdating = true
+			onChangeSelection(selectedRange)
+			isUpdating = false
+		}
 	}
 	
 	open func textFieldShouldClear(_ textField: UITextField) -> Bool {
