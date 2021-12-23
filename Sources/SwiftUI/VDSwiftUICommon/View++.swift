@@ -35,18 +35,6 @@ extension View {
 	public func width(_ width: CGFloat) -> some View {
 		frame(width: width)
 	}
-	
-	public func log(_ values: Any...) -> Self {
-		#if DEBUG
-		if values.isEmpty {
-			print()
-		} else {
-			values.dropLast().forEach { print($0, separator: "", terminator: " ") }
-			print(values.last!)
-		}
-		#endif
-		return self
-	}
 }
 
 #if canImport(UIKit)

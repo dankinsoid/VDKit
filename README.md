@@ -168,7 +168,7 @@ import PackageDescription
 let package = Package(
   name: "SomeProject",
   dependencies: [
-    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.154.0")
+    .package(url: "https://github.com/dankinsoid/VDKit.git", from: "1.155.0")
   ],
   targets: [
     .target(name: "SomeProject", dependencies: ["VDKit"])
