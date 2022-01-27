@@ -218,7 +218,7 @@ public struct DateFormat: MutableCollection, RandomAccessCollection, Expressible
 			elements.append(element)
 		}
 		
-		public mutating func appendInterpolation(_ component: Element, style: DateFormat.Element.Style) {
+		public mutating func appendInterpolation(_ component: Calendar.Component, style: DateFormat.Element.Style) {
 			elements.append(.component(component, style: style))
 		}
 	}
