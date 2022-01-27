@@ -139,7 +139,7 @@ extension RangeReplaceableCollection  {
 	}
 }
 
-extension Array where Element: Equatable {
+extension Collection where Element: Equatable {
 	
 	public func removeEqual() -> [Element] {
 		var result: [Element] = []
@@ -153,7 +153,7 @@ extension Array where Element: Equatable {
 	}
 }
 
-extension Array {
+extension Collection {
 	
 	public func removeEqual<H: Equatable>(by keyPath: KeyPath<Element, H>) -> [Element] {
 		var result: [Element] = []
@@ -165,10 +165,10 @@ extension Array {
 		}
 		return result
 	}
-	
+
 	public func join(with other: [Element], every step: Int, offset: Int) -> [Element] {
-		guard !other.isEmpty else { return self }
-		var result = self
+		guard !other.isEmpty else { return Array(self) }
+		var result = Array(self)
 		var index = offset
 		for element in other {
 			index = Swift.max(0, Swift.min(index + step, count))
