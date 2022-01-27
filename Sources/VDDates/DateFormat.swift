@@ -148,7 +148,11 @@ public struct DateFormat: MutableCollection, RandomAccessCollection, Expressible
 					case .spellOut: return "QQQQ"
 					}
 				case .weekOfMonth: return "W"
-				case .weekOfYear: return "w"
+				case .weekOfYear:
+					switch style {
+					case .short, .narrow: return "w"
+					default: return "ww"
+					}
 				case .yearForWeekOfYear:
 					switch style {
 					case .short, .narrow: return "YY"
@@ -253,48 +257,96 @@ extension DateFormat {
 }
 
 extension DateFormat.Element {
-	public static var a: DateFormat.Element { .custom("a") }
+	///AM/PM
+	public static var am_pm: DateFormat.Element { .custom("a") }
+	///era: AD
 	public static var G: DateFormat.Element { .init(.era, style: .short) }
+	///era: AD
 	public static var GGG: DateFormat.Element { .init(.era, style: .abbreviated) }
+	///era: Anno Domini
 	public static var GGGG: DateFormat.Element { .init(.era, style: .spellOut) }
+	///year: 22
 	public static var yy: DateFormat.Element { .init(.year, style: .short) }
+	///year: 2022, recomended
 	public static var y: DateFormat.Element { .init(.year, style: .abbreviated) }
+	///year: 2022
 	public static var year: DateFormat.Element { .y }
+	///year: 2022
 	public static var yyyy: DateFormat.Element { .init(.year, style: .full) }
+	///month: 1
 	public static var M: DateFormat.Element { .init(.month, style: .short) }
+	///month: 01
 	public static var MM: DateFormat.Element { .init(.month, style: .full) }
+	///month: Jan
 	public static var MMM: DateFormat.Element { .init(.month, style: .abbreviated) }
+	///month: January
 	public static var MMMM: DateFormat.Element { .init(.month, style: .spellOut) }
+	///month: January
 	public static var month: DateFormat.Element { .MMMM }
+	///month: J
 	public static var MMMMM: DateFormat.Element { .init(.month, style: .narrow) }
+	///day: 1
 	public static var d: DateFormat.Element { .init(.day, style: .short) }
+	///day: 1
 	public static var day: DateFormat.Element { .d }
+	///day: 01
 	public static var dd: DateFormat.Element { .init(.day, style: .full) }
+	///12 hour format: 1
 	public static var h: DateFormat.Element { .init(.hour, style: .short) }
+	///12 hour format: 01
 	public static var hh: DateFormat.Element { .init(.hour, style: .full) }
+	///24 hour format: 1
 	public static var H: DateFormat.Element { .init(.hour, style: .abbreviated) }
+	///24 hour format: 01
 	public static var HH: DateFormat.Element { .init(.hour, style: .spellOut) }
+	///minute: 1
 	public static var m: DateFormat.Element { .init(.minute, style: .short) }
+	///minute: 01
 	public static var mm: DateFormat.Element { .init(.minute, style: .full) }
+	///second: 1
 	public static var s: DateFormat.Element { .init(.second, style: .short) }
+	///second: 01
 	public static var ss: DateFormat.Element { .init(.second, style: .full) }
+	///weekday: Thu
 	public static var E: DateFormat.Element { .init(.weekday, style: .short) }
+	///weekday: Thursday
 	public static var EEEE: DateFormat.Element { .init(.weekday, style: .full) }
+	///weekday: Thursday
+	public static var weekday: DateFormat.Element { .EEEE }
+	///weekday: T
 	public static var EEEEE: DateFormat.Element { .init(.weekday, style: .narrow) }
+	///quarter: 1
 	public static var Q: DateFormat.Element { .init(.quarter, style: .short) }
+	///quarter: Q1
 	public static var QQQ: DateFormat.Element { .init(.quarter, style: .full) }
+	///quarter: 1st quarter
 	public static var QQQQ: DateFormat.Element { .init(.quarter, style: .spellOut) }
+	///week of month: 5
 	public static var W: DateFormat.Element { .init(.weekOfMonth, style: .short) }
+	///week of year: 5
 	public static var w: DateFormat.Element { .init(.weekOfYear, style: .short) }
+	///week of year: 05
+	public static var ww: DateFormat.Element { .init(.weekOfYear, style: .full) }
+	///year for week of year: 22
 	public static var YY: DateFormat.Element { .init(.yearForWeekOfYear, style: .short) }
+	///year for week of year: 2022
 	public static var Y: DateFormat.Element { .init(.yearForWeekOfYear, style: .abbreviated) }
+	///year for week of year: 2022
 	public static var YYYY: DateFormat.Element { .init(.yearForWeekOfYear, style: .full) }
+	///miliseconds: 000
 	public static var SSS: DateFormat.Element { .init(.nanosecond, style: .short) }
+	///miliseconds: 0000
 	public static var SSSS: DateFormat.Element { .init(.nanosecond, style: .full) }
+	///time zone: +0300
 	public static var Z: DateFormat.Element { .init(.timeZone, style: .short) }
+	///time zone: GMT+03:00
 	public static var zzzz: DateFormat.Element { .init(.timeZone, style: .full) }
+	///time zone: +03:00
 	public static var ZZZZZ: DateFormat.Element { .init(.timeZone, style: .abbreviated) }
+	///time zone: GMT+3
 	public static var zzz: DateFormat.Element { .init(.timeZone, style: .narrow) }
+	///time zone: GMT+3
+	public static var timeZone: DateFormat.Element { .zzz }
 }
 
 @available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
