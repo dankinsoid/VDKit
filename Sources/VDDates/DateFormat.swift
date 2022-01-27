@@ -215,7 +215,9 @@ public struct DateFormat: MutableCollection, RandomAccessCollection, Expressible
 		}
 		
 		public mutating func appendLiteral(_ literal: String) {
-			elements.append(Element(literal))
+			if !literal.isEmpty {
+				elements.append(Element(literal))
+			}
 		}
 		
 		public mutating func appendInterpolation(_ element: Element) {
