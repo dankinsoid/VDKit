@@ -217,6 +217,10 @@ public struct DateFormat: MutableCollection, RandomAccessCollection, Expressible
 		public mutating func appendInterpolation(_ element: Element) {
 			elements.append(element)
 		}
+		
+		public mutating func appendInterpolation(_ component: Element, style: DateFormat.Element.Style) {
+			elements.append(.component(component, style: style))
+		}
 	}
 	
 	public static func ==(_ lhs: DateFormat, _ rhs: DateFormat) -> Bool {
