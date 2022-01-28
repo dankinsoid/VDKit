@@ -118,8 +118,8 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
+		findSelection()
 		if #available(iOS 15.0, *) {} else {
-			findSelection()
 			clipsToBounds = false
 			allSubviews().forEach {
 				$0.clipsToBounds = false
