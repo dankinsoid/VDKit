@@ -177,14 +177,14 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		label.textColor = textColor
 		label.placeholderColor = placeholderColor
 		label.placeholder = items.first
-		if !items[row].isEmpty, let common = items[row].lowercased().range(of: _text?.lowercased() ?? "") {
+		if !items[row].isEmpty, let common = items[row].lowercased().intRange(of: _text?.lowercased() ?? "") {
 			let text = NSMutableAttributedString(string: items[row])
 			var ranges: [NSRange] = []
-			if common.lowerBound > items[row].startIndex {
-				ranges.append(NSRange(items[row].startIndex..<common.lowerBound, in: items[row]))
+			if common.lowerBound > 0 {
+				ranges.append(NSRange(location: 0, length: common.lowerBound + 1))
 			}
-			if common.upperBound < items[row].endIndex {
-				ranges.append(NSRange(common.upperBound..<items[row].endIndex, in: items[row]))
+			if common.upperBound < items[row].count {
+				ranges.append(NSRange(location: common.upperBound, length: items[row].count - common.upperBound))
 			}
 			ranges.forEach {
 				text.addAttributes([.foregroundColor: placeholderColor], range: $0)
