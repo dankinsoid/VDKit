@@ -68,7 +68,7 @@ let package = Package(
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
 		.target(name: "VDLayout", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),
 		
-		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "VDLayout", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "VDLayout", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
 		
 //		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
 	]
