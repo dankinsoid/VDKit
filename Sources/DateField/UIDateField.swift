@@ -11,14 +11,14 @@ import UIKit
 import VDDates
 import VDUIKit
 
-open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
+open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	
 	public var spacing: CGFloat {
 		get { stack.spacing }
 		set { stack.spacing = newValue }
 	}
 	
-	private let caret = UIView()
+//	private let caret = UIView()
 	
 	public var edgeInsets: UIEdgeInsets {
 		get {
@@ -44,12 +44,11 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 			set(format: newValue, style: _style)
 		}
 	}
-	open var font: UIFont = .systemFont(ofSize: 14) {
+	open var font: UIFont = .systemFont(ofSize: 16) {
 		didSet {
 			if oldValue != font {
 				configureViews()
 				invalidateIntrinsicContentSize()
-				setCaretFrame()
 			}
 		}
 	}
@@ -62,7 +61,10 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 	}
 	open override var tintColor: UIColor! {
 		didSet {
-			caret.backgroundColor = tintColor
+//			caret.backgroundColor = tintColor
+			if isFirstResponder, oldValue != tintColor {
+				updateTextColors()
+			}
 		}
 	}
 	private var _format: DateFormat = "\(.day) \(.month) \(.year)"
@@ -81,8 +83,7 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 		}
 	}
 	open var onEditingChange: (Bool) -> Void = { _ in }
-	open var onChangeComponents: ([Calendar.Component: Int]) -> Void = { _ in }
-	open var onChangeDate: (Date?) -> Void = { _ in }
+	open var onChange: (Date?, [Calendar.Component: Int]) -> Void = { _, _ in }
 	
 	open var dateComponents: [Calendar.Component: Int] {
 		get {
@@ -107,6 +108,14 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 		}
 		set {
 			set(date: newValue)
+		}
+	}
+	public var text: String {
+		views.compactMap({ $0.text }).joined()
+	}
+	public var isEmpty: Bool {
+		!format.indices.contains {
+			view($0).text != empty($0)
 		}
 	}
 	private var _date: Date?
@@ -188,7 +197,6 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 		clipsToBounds = true
 		configureStack()
 		configureRecongnizer()
-		configureCaret()
 	}
 	
 	open func set(format: DateFormat, style: [Calendar.Component: ComponentStyle] = [:]) {
@@ -319,33 +327,41 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 	private func onTouchUpInside(location: CGPoint) {
 		if !isFirstResponder {
 			becomeFirstResponder()
-		} else if let i = views.firstIndex(where: {
+		}
+		
+		if !isEmpty, var i = views.firstIndex(where: {
 			let rect = $0.convert($0.bounds, to: self)
 			return CGRect(x: rect.minX, y: 0, width: rect.width, height: frame.height).contains(location)
 		}) {
+			while i > 0, format(i).string != nil {
+				i -= 1
+			}
+			while i <= _format.count - 1, format(i).string != nil {
+				i += 1
+			}
 			set(index: i)
 		}
 	}
 	
-	private func configureCaret() {
-		caret.isHidden = true
-		caret.translatesAutoresizingMaskIntoConstraints = false
-		addSubview(caret)
-	}
-	
-	private func setCaretFrame() {
-		guard !views.isEmpty, !caret.isHidden else { return }
-		layoutIfNeeded()
-		caret.frame.size.height = ("|" as NSString).size(withAttributes: [.font: font]).height
-		caret.frame.size.width = 2
-		caret.layer.cornerRadius = 1
-		let currentView = view(_currentIndex)
-		let textFrame = currentView.convert(currentView.textFrame, to: self)
-		let text = (currentView.text == empty(_currentIndex) ? "" : currentView.text) ?? ""
-		let textWidth = (text as NSString).size(withAttributes: [.font: font]).width
-		caret.frame.origin.y = (frame.height - caret.frame.height) / 2
-		caret.frame.origin.x = textFrame.minX + textWidth
-	}
+//	private func configureCaret() {
+//		caret.isHidden = true
+//		caret.translatesAutoresizingMaskIntoConstraints = false
+//		addSubview(caret)
+//	}
+//
+//	private func setCaretFrame() {
+//		guard !views.isEmpty, !caret.isHidden else { return }
+//		layoutIfNeeded()
+//		caret.frame.size.height = ("|" as NSString).size(withAttributes: [.font: font]).height
+//		caret.frame.size.width = 2
+//		caret.layer.cornerRadius = 1
+//		let currentView = view(_currentIndex)
+//		let textFrame = currentView.convert(currentView.textFrame, to: self)
+//		let text = (currentView.text == empty(_currentIndex) ? "" : currentView.text) ?? ""
+//		let textWidth = (text as NSString).size(withAttributes: [.font: font]).width
+//		caret.frame.origin.y = (frame.height - caret.frame.height) / 2
+//		caret.frame.origin.x = textFrame.minX + textWidth
+//	}
 	
 	private func createView(for element: DateFormat.Element, i: Int) -> Textable {
 		switch element {
@@ -360,17 +376,18 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 					self?.label("", placeholder: self?.empty(i)) ?? CustomLabel()
 				}
 				picker.font = font
-				picker.items = [empty(i)] + array.map {
+				let emptyString = empty(i)
+				picker.items = [emptyString] + array.map {
 					text(for: component, format: element.format, value: $0)
+				}
+				picker.menuItems = [emptyString] + array.map {
+					text(for: component, format: DateFormat.Element.component(component, style: .spellOut).format, value: $0)
 				}
 				picker.onSelect = {[weak self] string in
 					guard let self = self else { return }
 					self.increaseCurrent(from: i)
 					self.updateTextColors()
 					self.notify()
-					if !self.isEditing, !self.isFilled {
-						self.becomeFirstResponder()
-					}
 				}
 				picker.widthAnchor.constraint(equalToConstant: picker.pickerView(picker, widthForComponent: 0)).isActive = true
 				return picker
@@ -416,7 +433,8 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 			superResignResponder()
 			superBecomeResponder()
 		}
-		setCaretFrame()
+//		setCaretFrame()
+		updateTextColors()
 	}
 	
 	private func format(_ i: Int) -> DateFormat.Element {
@@ -428,13 +446,18 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 	}
 	
 	private func updateTextColors() {
-		let constants = format.enumerated().filter({ $0.element.string != nil })
-		for (offset, _) in constants {
-			if offset == 0 || isFilled(at: offset - 1, full: false) {
-				view(offset).textColor = textColor
+		let constants = format.enumerated()
+		for (offset, element) in constants {
+			let isHighlighted = isFirstResponder && offset == _currentIndex
+			let color = isHighlighted ? tintColor : textColor
+			let plcColor = isHighlighted ? color?.withAlphaComponent(0.5) : placeholderColor
+			let view = view(offset)
+			if view.text != empty(offset), element.string == nil || offset == 0 || isFilled(at: offset - 1, full: false) {
+				view.textColor = color
 			} else {
-				view(offset).textColor = placeholderColor
+				view.textColor = plcColor
 			}
+			view.placeholderColor = plcColor ?? .clear
 		}
 	}
 	
@@ -506,15 +529,13 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 	}
 	
 	private func notify() {
-		onChangeComponents(dateComponents)
 		if isFilled {
 			_date = Date(components: DateComponents(rawValue: dateComponents))
-			onChangeDate(_date)
 		} else {
 			_date = nil
-			onChangeDate(nil)
 		}
-		setCaretFrame()
+		onChange(_date, dateComponents)
+//		setCaretFrame()
 	}
 
 	@discardableResult
@@ -538,21 +559,15 @@ open class UIDateField: UIView, UIKeyInput, UITextInputTraits {
 	@discardableResult
 	private func superResignResponder() -> Bool {
 		let result = super.resignFirstResponder()
-		caret.isHidden = true
+		updateTextColors()
 		return result
 	}
 	
 	@discardableResult
 	private func superBecomeResponder() -> Bool {
 		let result = super.becomeFirstResponder()
-		caret.isHidden = false
-		setCaretFrame()
+		updateTextColors()
 		return result
-	}
-	
-	override open func layoutSubviews() {
-		super.layoutSubviews()
-		setCaretFrame()
 	}
 	
 	public struct ComponentStyle: Equatable {

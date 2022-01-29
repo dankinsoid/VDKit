@@ -42,16 +42,16 @@ public struct DateField: UIViewRepresentable {
 		if context.coordinator.needUpdateIsEditing, let isEditing = isEditing?.wrappedValue {
 			uiView.isEditing = isEditing
 		}
-		uiView.font = font?.uiFont ?? .systemFont(ofSize: 14)
+		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.edgeInsets = insets.ui
 		uiView.textColor = textColor?.ui ?? .label
 		uiView.placeholderColor = placeholderColor?.ui ?? .label.withAlphaComponent(0.5)
 		uiView.tintColor = Color.accentColor.ui
 		
-		uiView.onChangeDate = {[date] in
-			guard $0 != date.wrappedValue else { return }
+		uiView.onChange = {[date] value, _ in
+			guard value != date.wrappedValue else { return }
 			context.coordinator.needUpdateDate = false
-			date.wrappedValue = $0
+			date.wrappedValue = value
 			context.coordinator.needUpdateDate = true
 		}
 		uiView.onEditingChange = {[isEditing] in

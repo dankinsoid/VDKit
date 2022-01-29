@@ -15,18 +15,21 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	var items: [String] = [] {
 		didSet {
-			reloadAllComponents()
+			reload()
 		}
 	}
+	var menuItems: [String] = []
 	
 	var createLabel: () -> CustomLabel = CustomLabel.init {
 		didSet {
-			reloadAllComponents()
+			reload()
 		}
 	}
 	var textColor: UIColor! = ._label {
 		didSet {
-			reloadAllComponents()
+			if oldValue != textColor {
+				update()
+			}
 		}
 	}
 	var fullText: String? { items[safe: selectedRow(inComponent: 0)] }
@@ -48,13 +51,19 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	private var _text: String?
 	var font: UIFont = .systemFont(ofSize: 12) {
 		didSet {
-			reloadAllComponents()
-			invalidateIntrinsicContentSize()
+			if oldValue != font {
+				update()
+				invalidateIntrinsicContentSize()
+			}
 		}
 	}
 	var onSelect: (String) -> Void = { _ in }
 	var placeholderColor: UIColor = UIColor._label.withAlphaComponent(0.5) {
-		didSet { reloadAllComponents() }
+		didSet {
+			if placeholderColor != oldValue {
+				update()
+			}
+		}
 	}
 	
 	override var intrinsicContentSize: CGSize {
@@ -66,7 +75,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	private func selectOrReload(_ i: Int, animated: Bool) {
 		if selectedRow(inComponent: 0) == i {
-			reloadComponent(0)
+			reload()
 		}
 		selectRow(i, inComponent: 0, animated: animated)
 	}
@@ -92,7 +101,9 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	}
 	
 	func reload() {
-//		let selected = selectr
+		let selected = selectedRow(inComponent: 0)
+		reloadComponent(0)
+		selectRow(selected, inComponent: 0, animated: false)
 	}
 	
 	override init(frame: CGRect) {
@@ -156,7 +167,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		_text = items[row]
-		selectOrReload(row, animated: false)
+		update()
 		onSelect(items[row])
 	}
 	
@@ -174,6 +185,19 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
 		let label = (view as? CustomLabel) ?? createLabel()
+		update(label: label, row: row)
+		return label
+	}
+	
+	func update() {
+		items.indices.compactMap { i in
+			(view(forRow: i, forComponent: 0) as? CustomLabel).map { (i, $0) }
+		}.forEach { args in
+			update(label: args.1, row: args.0)
+		}
+	}
+	
+	private func update(label: CustomLabel, row: Int) {
 		label.textColor = textColor
 		label.placeholderColor = placeholderColor
 		label.placeholder = items.first
@@ -193,7 +217,6 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		} else {
 			label.text = items[row]
 		}
-		return label
 	}
 }
 
@@ -201,9 +224,9 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 extension CustomPicker: UIContextMenuInteractionDelegate {
 	
 	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-		guard !items.isEmpty else { return nil }
+		guard !items.isEmpty, menuItems.count == items.count else { return nil }
 		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {[weak self] elements in
-			let actions = self?.items.enumerated().map { args in
+			let actions = self?.menuItems.enumerated().map { args in
 				UIAction(title: args.element) { _ in
 					self?.selectOrReload(args.offset, animated: true)
 					self?.pickerView(self!, didSelectRow: args.offset, inComponent: 0)
