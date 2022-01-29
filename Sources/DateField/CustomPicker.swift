@@ -38,7 +38,8 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 			_text
 		}
 		set {
-			set(text: newValue, animated: false)
+			let isBackspaced = (newValue ?? "").count < (_text ?? "").count && _text?.hasPrefix(newValue ?? "") == true
+			set(text: newValue, isBackspaced: isBackspaced, animated: false)
 		}
 	}
 	var textFrame: CGRect {
@@ -80,8 +81,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		selectRow(i, inComponent: 0, animated: animated)
 	}
 	
-	func set(text: String?, animated: Bool) {
-		let isBackspaced = (text ?? "").count < (_text ?? "").count && _text?.hasPrefix(text ?? "") == true
+	func set(text: String?, isBackspaced: Bool, animated: Bool) {
 		guard !isBackspaced else {
 			_text = items.first
 			selectOrReload(0, animated: animated)

@@ -119,6 +119,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		}
 	}
 	private var _date: Date?
+	private var needReset = true
 	
 	open var keyboardType: UIKeyboardType {
 		get {
@@ -210,9 +211,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		format.enumerated().forEach {
 			if let comp = $0.element.component {
 				if let value = components[comp] {
-					view($0.offset).set(text: text(for: comp, format: $0.element.format, value: value), animated: animated)
+					view($0.offset).set(text: text(for: comp, format: $0.element.format, value: value), isBackspaced: false, animated: animated)
 				} else if !merge {
-					view($0.offset).set(text: empty($0.offset), animated: animated)
+					view($0.offset).set(text: empty($0.offset), isBackspaced: false, animated: animated)
 				}
 			}
 		}
@@ -244,20 +245,21 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	
 	open func insertText(_ text: String) {
 		let maxLength = self.format(_currentIndex).maxLenght
-		changeText { current in
-			if let maxLength = maxLength, current.count >= maxLength {
-				current = String(text.prefix(maxLength))
+		changeText(isBackspaced: false) { current in
+			if self.needReset {
+				current = String(text.prefix(maxLength ?? text.count))
 			} else {
 				current += text
 			}
 		}
+		needReset = false
 		if isFilled(at: _currentIndex, full: true) {
 			increaseCurrent()
 		}
 	}
 	
 	open func deleteBackward() {
-		changeText {[self] current in
+		changeText(isBackspaced: true) {[self] current in
 			guard !current.isEmpty else {
 				if _currentIndex > 0 {
 					decreaseCurrent()
@@ -265,11 +267,12 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 				}
 				return
 			}
+			needReset = false
 			current.removeLast()
 		}
 	}
 	
-	private func changeText(_ action: @escaping (inout String) -> Void) {
+	private func changeText(isBackspaced: Bool, _ action: @escaping (inout String) -> Void) {
 		let empty = self.empty(_currentIndex)
 		let _action: (inout String) -> Void = {
 			var value = $0 == empty ? "" : $0
@@ -279,7 +282,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		let view = self.view(_currentIndex)
 		var current = view.text ?? ""
 		_action(&current)
-		view.text = current
+		view.set(text: current, isBackspaced: isBackspaced, animated: false)
 		updateTextColors()
 		notify()
 	}
@@ -427,6 +430,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 			return
 		}
 		guard _currentIndex != i else { return }
+		needReset = true
 		let oldKeyboard = keyboardType
 		_currentIndex = i
 		if keyboardType != oldKeyboard {
@@ -560,6 +564,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private func superResignResponder() -> Bool {
 		let result = super.resignFirstResponder()
 		updateTextColors()
+		needReset = true
 		return result
 	}
 	

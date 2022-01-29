@@ -15,7 +15,7 @@ protocol Textable: UIView {
 	var textFrame: CGRect { get }
 	var fullText: String? { get }
 	var placeholderColor: UIColor { get set }
-	func set(text: String?, animated: Bool)
+	func set(text: String?, isBackspaced: Bool, animated: Bool)
 }
 
 class CustomLabel: UILabel, Textable {
@@ -71,7 +71,7 @@ class CustomLabel: UILabel, Textable {
 		}
 	}
 	
-	func set(text: String?, animated: Bool) {
+	func set(text: String?, isBackspaced: Bool, animated: Bool) {
 		self.text = text
 	}
 }
