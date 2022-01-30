@@ -52,21 +52,26 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 			}
 		}
 	}
-	open var placeholderColor: UIColor? = UIColor._label.withAlphaComponent(0.5) {
-		didSet {
-			if oldValue != placeholderColor {
-				views.forEach(setPlaceholderColor)
+	open var placeholderColor: UIColor {
+		get { _placeholderColor }
+		set {
+			guard newValue != _placeholderColor else { return }
+			_placeholderColor = newValue
+			views.forEach {
+				$0.placeholderColor = newValue
 			}
 		}
 	}
+	private var _placeholderColor: UIColor = ._label.withAlphaComponent(0.5)
+	
 	open override var tintColor: UIColor! {
 		didSet {
-//			caret.backgroundColor = tintColor
 			if isFirstResponder, oldValue != tintColor {
 				updateTextColors()
 			}
 		}
 	}
+	
 	private var _format: DateFormat = "\(.day) \(.month) \(.year)"
 	open var style: [Calendar.Component: ComponentStyle] {
 		get { _style }
@@ -158,14 +163,17 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private var views: [Textable] = []
 	open override var canBecomeFirstResponder: Bool { true }
 	
-	open var textColor: UIColor = ._label {
-		didSet {
-			guard textColor != oldValue else { return }
+	open var textColor: UIColor {
+		get { _textColor }
+		set {
+			guard _textColor != newValue else { return }
+			_textColor = newValue
 			views.forEach {
-				$0.textColor = textColor
+				$0.textColor = newValue
 			}
 		}
 	}
+	private var _textColor: UIColor = ._label
 	
 	open override var intrinsicContentSize: CGSize {
 		CGSize(
@@ -272,6 +280,16 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		}
 	}
 	
+	open func setColors(text: UIColor, placeholder: UIColor, tint: UIColor) {
+		guard text != _textColor || placeholder != _placeholderColor || tintColor != tint else {
+			return
+		}
+		_textColor = text
+		_placeholderColor = placeholder
+		super.tintColor = tint
+		updateTextColors()
+	}
+	
 	private func changeText(isBackspaced: Bool, _ action: @escaping (inout String) -> Void) {
 		let empty = self.empty(_currentIndex)
 		let _action: (inout String) -> Void = {
@@ -372,8 +390,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 			if let array = component.allCases {
 				let picker = CustomPicker()
 				picker.translatesAutoresizingMaskIntoConstraints = false
-				picker.textColor = textColor
-				setPlaceholderColor(on: picker)
+				picker.set(textColor: _textColor, placeholderColor: _placeholderColor)
 				picker.contentPriority.horizontal.both = .defaultLow
 				picker.createLabel = {[weak self] in
 					self?.label("", placeholder: self?.empty(i)) ?? CustomLabel()
@@ -388,7 +405,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 				}
 				picker.onSelect = {[weak self] string in
 					guard let self = self else { return }
-					self.increaseCurrent(from: i)
+					self.set(index: i)
 					self.updateTextColors()
 					self.notify()
 				}
@@ -454,14 +471,13 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		for (offset, element) in constants {
 			let isHighlighted = isFirstResponder && offset == _currentIndex
 			let color = isHighlighted ? tintColor : textColor
-			let plcColor = isHighlighted ? color?.withAlphaComponent(0.5) : placeholderColor
+			let plcColor = (isHighlighted ? color?.withAlphaComponent(0.5) : placeholderColor) ?? .clear
 			let view = view(offset)
 			if view.text != empty(offset), element.string == nil || offset == 0 || isFilled(at: offset - 1, full: false) {
-				view.textColor = color
+				view.set(textColor: color, placeholderColor: plcColor)
 			} else {
-				view.textColor = plcColor
+				view.set(textColor: plcColor, placeholderColor: plcColor)
 			}
-			view.placeholderColor = plcColor ?? .clear
 		}
 	}
 	
@@ -499,13 +515,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		label.font = font
 		label.lineBreakMode = .byClipping
 		label.contentPriority.horizontal.both = .required
-		setPlaceholderColor(on: label)
+		label.placeholderColor = placeholderColor
 		label.placeholder = placeholder
 		return label
-	}
-	
-	private func setPlaceholderColor(on picker: Textable) {
-		picker.placeholderColor = placeholderColor ?? textColor
 	}
 	
 	private func value(for i: Int, full: Bool) -> Int? {
@@ -544,8 +556,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 
 	@discardableResult
 	override open func becomeFirstResponder() -> Bool {
+		let isResponder = isFirstResponder
 		let result = superBecomeResponder()
-		if result {
+		if result, !isResponder {
 			onEditingChange(true)
 		}
 		return result
@@ -553,8 +566,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	
 	@discardableResult
 	override open func resignFirstResponder() -> Bool {
+		let isResponder = isFirstResponder
 		let result = superResignResponder()
-		if result {
+		if result, isResponder {
 			onEditingChange(false)
 		}
 		return result

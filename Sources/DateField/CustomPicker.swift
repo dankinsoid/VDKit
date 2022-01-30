@@ -25,13 +25,17 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 			reload()
 		}
 	}
-	var textColor: UIColor! = ._label {
-		didSet {
-			if oldValue != textColor {
+	var textColor: UIColor! {
+		get { _textColor }
+		set {
+			if newValue != _textColor {
+				_textColor = newValue
 				update()
 			}
 		}
 	}
+	private var _textColor: UIColor = UIColor._label
+	
 	var fullText: String? { items[safe: selectedRow(inComponent: 0)] }
 	var text: String? {
 		get {
@@ -59,12 +63,24 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		}
 	}
 	var onSelect: (String) -> Void = { _ in }
-	var placeholderColor: UIColor = UIColor._label.withAlphaComponent(0.5) {
-		didSet {
-			if placeholderColor != oldValue {
+	var placeholderColor: UIColor {
+		get { _placeholderColor }
+		set {
+			if _placeholderColor != newValue {
+				_placeholderColor = newValue
 				update()
 			}
 		}
+	}
+	private var _placeholderColor: UIColor = UIColor._label.withAlphaComponent(0.5)
+	
+	func set(textColor: UIColor!, placeholderColor: UIColor) {
+		guard textColor != _textColor, placeholderColor != _placeholderColor else {
+			return
+		}
+		_placeholderColor = placeholderColor
+		_textColor = textColor
+		update()
 	}
 	
 	override var intrinsicContentSize: CGSize {
@@ -201,11 +217,11 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		label.textColor = textColor
 		label.placeholderColor = placeholderColor
 		label.placeholder = items.first
-		if !items[row].isEmpty, let common = items[row].lowercased().intRange(of: _text?.lowercased() ?? "") {
+		if !items[row].isEmpty, let text = _text, let common = items[row].lowercased().intRange(of: text.lowercased()) {
 			let text = NSMutableAttributedString(string: items[row])
 			var ranges: [NSRange] = []
 			if common.lowerBound > 0 {
-				ranges.append(NSRange(location: 0, length: common.lowerBound + 1))
+				ranges.append(NSRange(location: 0, length: common.lowerBound))
 			}
 			if common.upperBound < items[row].count {
 				ranges.append(NSRange(location: common.upperBound, length: items[row].count - common.upperBound))

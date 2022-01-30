@@ -36,29 +36,31 @@ public struct DateField: UIViewRepresentable {
 	
 	public func updateUIView(_ uiView: UIDateField, context: Context) {
 		uiView.set(format: format, style: style)
-		if context.coordinator.needUpdateDate, date.wrappedValue != uiView.date {
+		if date.wrappedValue != uiView.date {
+			context.coordinator.needUpdateDate = false
 			uiView.set(date: date.wrappedValue, animated: context.transaction.animation != nil)
+			context.coordinator.needUpdateDate = true
 		}
-		if context.coordinator.needUpdateIsEditing, let isEditing = isEditing?.wrappedValue {
+		if let isEditing = isEditing?.wrappedValue {
+			context.coordinator.needUpdateIsEditing = false
 			uiView.isEditing = isEditing
+			context.coordinator.needUpdateIsEditing = true
 		}
 		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.edgeInsets = insets.ui
-		uiView.textColor = textColor?.ui ?? .label
-		uiView.placeholderColor = placeholderColor?.ui ?? .label.withAlphaComponent(0.5)
-		uiView.tintColor = Color.accentColor.ui
+		uiView.setColors(
+			text: textColor?.ui ?? .label,
+			placeholder: placeholderColor?.ui ?? .label.withAlphaComponent(0.5),
+			tint: Color.accentColor.ui
+		)
 		
 		uiView.onChange = {[date] value, _ in
-			guard value != date.wrappedValue else { return }
-			context.coordinator.needUpdateDate = false
+			guard context.coordinator.needUpdateDate, value != date.wrappedValue else { return }
 			date.wrappedValue = value
-			context.coordinator.needUpdateDate = true
 		}
 		uiView.onEditingChange = {[isEditing] in
-			guard $0 != isEditing?.wrappedValue else { return }
-			context.coordinator.needUpdateIsEditing = false
+			guard context.coordinator.needUpdateIsEditing, $0 != isEditing?.wrappedValue else { return }
 			isEditing?.wrappedValue = $0
-			context.coordinator.needUpdateIsEditing = true
 		}
 	}
 	

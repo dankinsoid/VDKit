@@ -16,6 +16,7 @@ protocol Textable: UIView {
 	var fullText: String? { get }
 	var placeholderColor: UIColor { get set }
 	func set(text: String?, isBackspaced: Bool, animated: Bool)
+	func set(textColor: UIColor!, placeholderColor: UIColor)
 }
 
 class CustomLabel: UILabel, Textable {
@@ -73,6 +74,11 @@ class CustomLabel: UILabel, Textable {
 	
 	func set(text: String?, isBackspaced: Bool, animated: Bool) {
 		self.text = text
+	}
+	
+	func set(textColor: UIColor!, placeholderColor: UIColor) {
+		self.textColor = textColor
+		self.placeholderColor = placeholderColor
 	}
 }
 #endif
