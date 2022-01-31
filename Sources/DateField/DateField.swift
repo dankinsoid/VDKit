@@ -59,7 +59,7 @@ public struct DateField: UIViewRepresentable {
 			date.wrappedValue = value
 		}
 		uiView.onEditingChange = {[isEditing] in
-			guard context.coordinator.needUpdateIsEditing, $0 != isEditing?.wrappedValue else { return }
+			guard context.coordinator.needUpdateIsEditing, $0 != isEditing?.wrappedValue, isEditing != nil else { return }
 			isEditing?.wrappedValue = $0
 		}
 	}
