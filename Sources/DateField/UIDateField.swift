@@ -568,7 +568,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		let isResponder = isFirstResponder
 		let result = superBecomeResponder()
 		if result, !isResponder {
-			onEditingChange(true)
+			DispatchQueue.main.async {
+				self.onEditingChange(true)
+			}
 		}
 		return result
 	}
@@ -578,7 +580,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		let isResponder = isFirstResponder
 		let result = superResignResponder()
 		if result, isResponder {
-			onEditingChange(false)
+			DispatchQueue.main.async {
+				self.onEditingChange(false)
+			}
 		}
 		return result
 	}
