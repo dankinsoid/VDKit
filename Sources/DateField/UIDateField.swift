@@ -196,7 +196,6 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		self._style = style
 		super.init(frame: .zero)
 		afterInit()
-		configureViews()
 	}
 	
 	public required init?(coder: NSCoder) {
@@ -210,6 +209,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		clipsToBounds = true
 		configureStack()
 		configureRecongnizer()
+		configureViews()
 	}
 	
 	open func set(format: DateFormat, style: [Calendar.Component: ComponentStyle] = [:]) {
