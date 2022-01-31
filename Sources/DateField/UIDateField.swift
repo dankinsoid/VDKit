@@ -460,7 +460,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		_currentIndex = i
 		if isFirstResponder, keyboardType != oldKeyboard {
 			superResignResponder()
-			superBecomeResponder()
+			superBecomeResponder(setIndex: false)
 		}
 //		setCaretFrame()
 		updateTextColors()
@@ -592,11 +592,13 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	
 	@discardableResult
-	private func superBecomeResponder() -> Bool {
+	private func superBecomeResponder(setIndex: Bool = true) -> Bool {
 		let result = super.becomeFirstResponder()
-		let i = views.enumerated().first(where: { $0.element.text == empty($0.offset) })?.offset ?? 0
-		if !set(index: i) {
-			updateTextColors()
+		if setIndex {
+			let i = views.enumerated().first(where: { $0.element.text == empty($0.offset) })?.offset ?? 0
+			if !set(index: i) {
+				updateTextColors()
+			}
 		}
 		return result
 	}
