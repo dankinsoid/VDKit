@@ -35,6 +35,9 @@ public struct DateField: UIViewRepresentable {
 	}
 	
 	public func updateUIView(_ uiView: UIDateField, context: Context) {
+		guard context.coordinator.needUpdateDate, context.coordinator.needUpdateIsEditing else {
+			return
+		}
 		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.set(format: format, style: style)
 		if date.wrappedValue != uiView.date {
@@ -55,11 +58,11 @@ public struct DateField: UIViewRepresentable {
 		)
 		
 		uiView.onChange = {[date] value, _ in
-			guard context.coordinator.needUpdateDate, value != date.wrappedValue else { return }
+			guard value != date.wrappedValue else { return }
 			date.wrappedValue = value
 		}
 		uiView.onEditingChange = {[isEditing] in
-			guard context.coordinator.needUpdateIsEditing, $0 != isEditing?.wrappedValue, isEditing != nil else { return }
+			guard $0 != isEditing?.wrappedValue, isEditing != nil else { return }
 			isEditing?.wrappedValue = $0
 		}
 	}
