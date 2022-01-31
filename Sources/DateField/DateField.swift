@@ -56,16 +56,16 @@ public struct DateField: UIViewRepresentable {
 		
 		uiView.onChange = {[date] value, _ in
 			guard value != date.wrappedValue else { return }
+			uiView.needUpdate = false
 			DispatchQueue.main.async {
-				uiView.needUpdate = false
 				date.wrappedValue = value
 				uiView.needUpdate = true
 			}
 		}
 		uiView.onEditingChange = {[isEditing] value in
 			guard value != isEditing?.wrappedValue, isEditing != nil else { return }
+			uiView.needUpdate = false
 			DispatchQueue.main.async {
-				uiView.needUpdate = false
 				isEditing?.wrappedValue = value
 				uiView.needUpdate = true
 			}
