@@ -35,6 +35,7 @@ public struct DateField: UIViewRepresentable {
 	}
 	
 	public func updateUIView(_ uiView: UIDateField, context: Context) {
+		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.set(format: format, style: style)
 		if date.wrappedValue != uiView.date {
 			context.coordinator.needUpdateDate = false
@@ -46,7 +47,6 @@ public struct DateField: UIViewRepresentable {
 			uiView.isEditing = isEditing
 			context.coordinator.needUpdateIsEditing = true
 		}
-		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.edgeInsets = insets.ui
 		uiView.setColors(
 			text: textColor?.ui ?? .label,

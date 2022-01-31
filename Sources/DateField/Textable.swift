@@ -12,6 +12,7 @@ import UIKit
 protocol Textable: UIView {
 	var textColor: UIColor! { get set }
 	var text: String? { get set }
+	var font: UIFont! { get set }
 	var textFrame: CGRect { get }
 	var fullText: String? { get }
 	var placeholderColor: UIColor { get set }

@@ -47,8 +47,11 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	open var font: UIFont = .systemFont(ofSize: 16) {
 		didSet {
 			if oldValue != font {
-				configureViews()
+				views.forEach {
+					$0.font = newValue
+				}
 				invalidateIntrinsicContentSize()
+				setNeedsLayout()
 			}
 		}
 	}

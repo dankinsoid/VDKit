@@ -36,6 +36,17 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	}
 	private var _textColor: UIColor = UIColor._label
 	
+	var font: UIFont! {
+		get { _font }
+		set {
+			if newValue != _font {
+				_font = newValue
+				update()
+			}
+		}
+	}
+	private var _font: UIFont = .systemFont(ofSize: 16)
+	
 	var fullText: String? { items[safe: selectedRow(inComponent: 0)] }
 	var text: String? {
 		get {
