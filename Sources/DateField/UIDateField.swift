@@ -164,6 +164,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private weak var stackTrailing: NSLayoutConstraint?
 	private weak var stackTop: NSLayoutConstraint?
 	private var views: [Textable] = []
+	private var wasConfigured = false
 	open override var canBecomeFirstResponder: Bool { true }
 	
 	open var textColor: UIColor {
@@ -212,7 +213,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	
 	open func set(format: DateFormat, style: [Calendar.Component: ComponentStyle] = [:]) {
-		guard format != _format || style != _style else { return }
+		guard !wasConfigured || format != _format || style != _style else { return }
 		self._format = format
 		self._style = style
 		configureViews()
@@ -309,6 +310,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	
 	private func configureViews() {
+		wasConfigured = true
 		stack.arrangedSubviews.forEach {
 			stack.removeArrangedSubview($0)
 			$0.removeFromSuperview()
@@ -455,7 +457,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		needReset = true
 		let oldKeyboard = keyboardType
 		_currentIndex = i
-		if keyboardType != oldKeyboard {
+		if isFirstResponder, keyboardType != oldKeyboard {
 			superResignResponder()
 			superBecomeResponder()
 		}

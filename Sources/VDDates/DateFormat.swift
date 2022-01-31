@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DateFormat: MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation, Equatable, Hashable, Codable {
+public struct DateFormat: MutableCollection, RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringInterpolation, Equatable, Hashable, Codable, CustomStringConvertible {
 	public typealias FormatInput = Date
 	public typealias FormatOutput = String
 	
@@ -17,6 +17,10 @@ public struct DateFormat: MutableCollection, RandomAccessCollection, Expressible
 	
 	public var format: String {
 		elements.map({ $0.format }).joined()
+	}
+	
+	public var description: String {
+		format
 	}
 	
 	public var parseStrategy: Strategy {
