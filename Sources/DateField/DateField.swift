@@ -41,10 +41,14 @@ public struct DateField: UIViewRepresentable {
 		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.set(format: format, style: style)
 		if date.wrappedValue != uiView.date {
+			uiView.needUpdate = false
 			uiView.set(date: date.wrappedValue, animated: context.transaction.animation != nil)
+			uiView.needUpdate = true
 		}
 		if let isEditing = isEditing?.wrappedValue, isEditing != uiView.isEditing {
+			uiView.needUpdate = false
 			uiView.isEditing = isEditing
+			uiView.needUpdate = true
 		}
 		uiView.edgeInsets = insets.ui
 		uiView.setColors(
