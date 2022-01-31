@@ -405,8 +405,9 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 				}
 				picker.onSelect = {[weak self] string in
 					guard let self = self else { return }
-					self.set(index: i)
-					self.updateTextColors()
+					if !self.set(index: i) {
+						self.updateTextColors()
+					}
 					self.notify()
 				}
 				picker.widthAnchor.constraint(equalToConstant: picker.pickerView(picker, widthForComponent: 0)).isActive = true
@@ -439,14 +440,15 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		set(index: i)
 	}
 	
-	private func set(index: Int) {
+	@discardableResult
+	private func set(index: Int) -> Bool {
 		let i = max(0, min(index, format.count - 1))
 		if !format.isEmpty, index >= format.count, isFilled {
 			resignFirstResponder()
 			_currentIndex = i
-			return
+			return false
 		}
-		guard _currentIndex != i else { return }
+		guard _currentIndex != i else { return false }
 		needReset = true
 		let oldKeyboard = keyboardType
 		_currentIndex = i
@@ -456,6 +458,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		}
 //		setCaretFrame()
 		updateTextColors()
+		return true
 	}
 	
 	private func format(_ i: Int) -> DateFormat.Element {
@@ -473,7 +476,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 			let color = isHighlighted ? tintColor : textColor
 			let plcColor = (isHighlighted ? color?.withAlphaComponent(0.5) : placeholderColor) ?? .clear
 			let view = view(offset)
-			if view.text != empty(offset), element.string == nil || offset == 0 || isFilled(at: offset - 1, full: false) {
+			if element.string == nil || offset == 0 || isFilled(at: offset - 1, full: false) {
 				view.set(textColor: color, placeholderColor: plcColor)
 			} else {
 				view.set(textColor: plcColor, placeholderColor: plcColor)
@@ -586,9 +589,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private func superBecomeResponder() -> Bool {
 		let result = super.becomeFirstResponder()
 		let i = views.enumerated().first(where: { $0.element.text == empty($0.offset) })?.offset ?? 0
-		if _currentIndex != i {
-			set(index: i)
-		} else {
+		if !set(index: i) {
 			updateTextColors()
 		}
 		return result
