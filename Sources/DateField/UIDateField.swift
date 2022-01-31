@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import VDDates
 import VDUIKit
+import SwiftUI
 
 open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	
@@ -128,6 +129,8 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	private var _date: Date?
 	private var needReset = true
+	private var startTapLocation: CGPoint?
+	private var startTapDate: Date?
 	
 	open var keyboardType: UIKeyboardType {
 		get {
@@ -337,14 +340,23 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	
 	private func configureRecongnizer() {
-		let recognizer = UITapGestureRecognizer(target: self, action: #selector(recognized))
+		let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(recognized))
+		recognizer.minimumPressDuration = 0
 		recognizer.delegate = self
 		addGestureRecognizer(recognizer)
 	}
 	
-	@objc func recognized(_ recognizer: UITapGestureRecognizer) {
+	@objc func recognized(_ recognizer: UILongPressGestureRecognizer) {
 		switch recognizer.state {
+		case .began:
+			startTapLocation = recognizer.location(in: window)
+			startTapDate = Date()
 		case .ended:
+			guard let start = startTapLocation, let from = startTapDate else { return }
+			let global = recognizer.location(in: window)
+			guard Date().timeIntervalSince(from) < 0.18, max(abs(global.x - start.x), abs(global.y - start.y)) < 5 else {
+				return
+			}
 			onTouchUpInside(location: recognizer.location(in: self))
 		default:
 			break
