@@ -211,6 +211,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		}.forEach { args in
 			update(label: args.1, row: args.0)
 		}
+		setNeedsDisplay()
 	}
 	
 	private func update(label: CustomLabel, row: Int) {
@@ -233,6 +234,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		} else {
 			label.text = items[row]
 		}
+		label.setNeedsDisplay()
 	}
 }
 

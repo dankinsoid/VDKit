@@ -41,7 +41,7 @@ public struct DateField: UIViewRepresentable {
 			uiView.set(date: date.wrappedValue, animated: context.transaction.animation != nil)
 			context.coordinator.needUpdateDate = true
 		}
-		if let isEditing = isEditing?.wrappedValue {
+		if let isEditing = isEditing?.wrappedValue, isEditing != uiView.isEditing {
 			context.coordinator.needUpdateIsEditing = false
 			uiView.isEditing = isEditing
 			context.coordinator.needUpdateIsEditing = true

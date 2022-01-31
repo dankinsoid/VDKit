@@ -585,7 +585,12 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	@discardableResult
 	private func superBecomeResponder() -> Bool {
 		let result = super.becomeFirstResponder()
-		updateTextColors()
+		let i = views.enumerated().first(where: { $0.element.text == empty($0.offset) })?.offset ?? 0
+		if _currentIndex != i {
+			set(index: i)
+		} else {
+			updateTextColors()
+		}
 		return result
 	}
 	
