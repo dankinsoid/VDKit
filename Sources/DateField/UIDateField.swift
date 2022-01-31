@@ -165,6 +165,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private weak var stackTop: NSLayoutConstraint?
 	private var views: [Textable] = []
 	private var wasConfigured = false
+	var needUpdate = true
 	open override var canBecomeFirstResponder: Bool { true }
 	
 	open var textColor: UIColor {

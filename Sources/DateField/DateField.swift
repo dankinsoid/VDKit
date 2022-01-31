@@ -35,7 +35,7 @@ public struct DateField: UIViewRepresentable {
 	}
 	
 	public func updateUIView(_ uiView: UIDateField, context: Context) {
-		guard context.coordinator.needUpdate else {
+		guard uiView.needUpdate else {
 			return
 		}
 		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
@@ -55,24 +55,16 @@ public struct DateField: UIViewRepresentable {
 		
 		uiView.onChange = {[date] value, _ in
 			guard value != date.wrappedValue else { return }
-			context.coordinator.needUpdate = false
+			uiView.needUpdate = false
 			date.wrappedValue = value
-			context.coordinator.needUpdate = true
+			uiView.needUpdate = true
 		}
 		uiView.onEditingChange = {[isEditing] in
 			guard $0 != isEditing?.wrappedValue, isEditing != nil else { return }
-			context.coordinator.needUpdate = false
+			uiView.needUpdate = false
 			isEditing?.wrappedValue = $0
-			context.coordinator.needUpdate = true
+			uiView.needUpdate = true
 		}
-	}
-	
-	public func makeCoordinator() -> Coordinator {
-		Coordinator()
-	}
-	
-	public final class Coordinator {
-		var needUpdate = true
 	}
 }
 
