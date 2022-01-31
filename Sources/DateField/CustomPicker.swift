@@ -41,6 +41,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 		set {
 			if newValue != _font {
 				_font = newValue
+				invalidateIntrinsicContentSize()
 				update()
 			}
 		}
@@ -65,14 +66,6 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	}
 	
 	private var _text: String?
-	var font: UIFont = .systemFont(ofSize: 12) {
-		didSet {
-			if oldValue != font {
-				update()
-				invalidateIntrinsicContentSize()
-			}
-		}
-	}
 	var onSelect: (String) -> Void = { _ in }
 	var placeholderColor: UIColor {
 		get { _placeholderColor }
@@ -97,7 +90,7 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	override var intrinsicContentSize: CGSize {
 		CGSize(
 			width: UIView.noIntrinsicMetric,
-			height: ("|" as NSString).size(withAttributes: [.font: font]).height * 3.75
+			height: ("|" as NSString).size(withAttributes: [.font: font ?? .systemFont(ofSize: 16)]).height * 3.75
 		)
 	}
 	
@@ -200,13 +193,13 @@ final class CustomPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSo
 	
 	func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
 		items.map {
-			($0 as NSString).size(withAttributes: [.font: font]).width + font.pointSize / 8
+			($0 as NSString).size(withAttributes: [.font: font ?? .systemFont(ofSize: 16)]).width + font.pointSize / 8
 		}.max() ?? 40
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
 		items.map {
-			($0 as NSString).size(withAttributes: [.font: font]).height
+			($0 as NSString).size(withAttributes: [.font: font ?? .systemFont(ofSize: 16)]).height
 		}.max() ?? 40
 	}
 	

@@ -48,7 +48,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 		didSet {
 			if oldValue != font {
 				views.forEach {
-					$0.font = newValue
+					$0.font = font
 				}
 				invalidateIntrinsicContentSize()
 				setNeedsLayout()
