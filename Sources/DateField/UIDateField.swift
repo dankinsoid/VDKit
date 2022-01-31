@@ -355,7 +355,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 			becomeFirstResponder()
 		}
 		
-		if !isEmpty, var i = views.firstIndex(where: {
+		if var i = views.firstIndex(where: {
 			let rect = $0.convert($0.bounds, to: self)
 			return CGRect(x: rect.minX, y: 0, width: rect.width, height: frame.height).contains(location)
 		}) {
