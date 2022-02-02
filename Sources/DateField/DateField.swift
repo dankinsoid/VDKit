@@ -39,6 +39,7 @@ public struct DateField: UIViewRepresentable {
 			return
 		}
 		uiView.needUpdate = false
+		uiView.minElementWidth = context.environment.dateFieldMinElementWidth
 		uiView.font = font?.uiFont ?? .systemFont(ofSize: 16)
 		uiView.set(format: format, style: style)
 		if date.wrappedValue != uiView.date {
@@ -87,6 +88,9 @@ extension View {
 	public func dateField(insets: EdgeInsets) -> some View {
 		environment(\.dateFieldInsets, insets)
 	}
+	public func dateField(minElementWidth: CGFloat) -> some View {
+		environment(\.dateFieldMinElementWidth, minElementWidth)
+	}
 }
 
 @available(iOS 13.0, *)
@@ -114,6 +118,11 @@ extension EnvironmentValues {
 	public var dateFieldStyle: [Calendar.Component: UIDateField.ComponentStyle] {
 		get { self[\.dateFieldStyle] ?? [:] }
 		set { self[\.dateFieldStyle] = newValue }
+	}
+	
+	public var dateFieldMinElementWidth: CGFloat {
+		get { self[\.dateFieldMinElementWidth] ?? 0 }
+		set { self[\.dateFieldMinElementWidth] = newValue }
 	}
 }
 

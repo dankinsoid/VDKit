@@ -47,7 +47,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	open var font: UIFont = .systemFont(ofSize: 16) {
 		didSet {
-			if oldValue != font {
+			if oldValue != font, wasConfigured {
 				views.forEach {
 					$0.font = font
 				}
@@ -93,6 +93,13 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	}
 	open var onEditingChange: (Bool) -> Void = { _ in }
 	open var onChange: (Date?, [Calendar.Component: Int]) -> Void = { _, _ in }
+	open var minElementWidth: CGFloat = 0 {
+		didSet {
+			if oldValue != minElementWidth, wasConfigured {
+				configureViews()
+			}
+		}
+	}
 	
 	open var dateComponents: [Calendar.Component: Int] {
 		get {
@@ -366,6 +373,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private func onTouchUpInside(location: CGPoint) {
 		if !isFirstResponder {
 			becomeFirstResponder()
+			return
 		}
 		
 		if var i = views.firstIndex(where: {
@@ -428,7 +436,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 					}
 					self.notify()
 				}
-				picker.widthAnchor.constraint(equalToConstant: picker.pickerView(picker, widthForComponent: 0)).isActive = true
+				picker.widthAnchor.constraint(equalToConstant: max(minElementWidth, picker.pickerView(picker, widthForComponent: 0))).isActive = true
 				return picker
 			} else {
 				let empty = empty(i)
