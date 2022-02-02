@@ -615,7 +615,7 @@ open class UIDateField: UIControl, UIKeyInput, UITextInputTraits {
 	private func superBecomeResponder(setIndex: Bool = true) -> Bool {
 		let result = super.becomeFirstResponder()
 		if setIndex {
-			let i = views.enumerated().first(where: { $0.element.text == empty($0.offset) })?.offset ?? 0
+			let i = views.enumerated().first(where: { $0.element.text == nil || $0.element.text == empty($0.offset) })?.offset ?? 0
 			if !set(index: i) {
 				updateTextColors()
 			}
