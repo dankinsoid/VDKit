@@ -86,8 +86,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	open func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		let newText = ((text ?? "") as NSString).replacingCharacters(in: range, with: string)
 		onChange(newText)
-//		textFieldDidChangeSelection(textField)
-		return false
+		return range.length == 0
 	}
 	
 	open func textFieldDidChangeSelection(_ textField: UITextField) {
