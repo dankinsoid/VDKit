@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -19,7 +19,7 @@ let package = Package(
 		.library(name: "VDDates", targets: ["VDDates"]),
 		.library(name: "WrappedDefaults", targets: ["WrappedDefaults"]),
 		.library(name: "UIKitIntegration", targets: ["UIKitIntegration"]),
-		.library(name: "VDLayout", targets: ["VDLayout"]),
+		.library(name: "UIKitComposable", targets: ["UIKitComposable"]),
 		.library(name: "VDSwiftUICommon", targets: ["VDSwiftUICommon"]),
 		.library(name: "BindGeometry", targets: ["BindGeometry"]),
 		.library(name: "DragNDrop", targets: ["DragNDrop"]),
@@ -66,9 +66,9 @@ let package = Package(
 		.target(name: "UIKitIntegration", dependencies: ["VDChain"]),
 		
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
-		.target(name: "VDLayout", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),
+		.target(name: "UIKitComposable", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),
 		
-		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "VDLayout", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "UIKitComposable", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
 		
 //		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
 	]
