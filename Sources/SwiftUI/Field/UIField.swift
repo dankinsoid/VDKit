@@ -14,7 +14,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	public var onCommit: () -> Void = {}
 	public var onDelete: () -> Void = {}
 	public var onEditingChange: (Bool) -> Void = { _ in }
-	public var onChange: (String) -> Void = { _ in }
+	public var onChange: (String) -> String = { $0 }
 	public var onChangeSelection: (Range<Int>) -> Void = { _ in }
 	public var resignOnCommit = true
 	var isUpdating = false
@@ -85,7 +85,7 @@ open class UIField<Input: View>: UITextField, UITextFieldDelegate {
 	
 	open func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		let newText = ((text ?? "") as NSString).replacingCharacters(in: range, with: string)
-		onChange(newText)
+		setTextAndCursor(onChange(newText))
 		return false
 	}
 	

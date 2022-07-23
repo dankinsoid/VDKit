@@ -65,7 +65,8 @@ public struct Field<Input: View>: UIViewRepresentable {
 			context.environment.fieldOnChangeEditing(value)
 		}
 		uiView.onChange = { value in
-			if value != text { text = value }
+				if value != text { text = value }
+        return text
 		}
 		uiView.onChangeSelection = { value in
 			if value != selection?.wrappedValue { selection?.wrappedValue = value }
