@@ -74,7 +74,7 @@ extension Collection {
 		compactMapDictionary(transform, uniquingKeysWith: { _, second in second })
 	}
     
-    func grouped(by isEqual: (Element, Element) -> Bool) -> [[Element]] {
+    public func grouped(by isEqual: (Element, Element) -> Bool) -> [[Element]] {
         var groups: [[Element]] = []
         for element in self {
             if let i = groups.firstIndex(where: { isEqual($0[0], element) }) {
@@ -86,13 +86,13 @@ extension Collection {
         return groups
     }
     
-    func grouped<T>(by keyPath: KeyPath<Element, T>, _ isEqual: (T, T) -> Bool) -> [[Element]] {
+    public func grouped<T>(by keyPath: KeyPath<Element, T>, _ isEqual: (T, T) -> Bool) -> [[Element]] {
         grouped {
             isEqual($0[keyPath: keyPath], $1[keyPath: keyPath])
         }
     }
     
-    func grouped<T: Equatable>(by keyPath: KeyPath<Element, T>) -> [[Element]] {
+    public func grouped<T: Equatable>(by keyPath: KeyPath<Element, T>) -> [[Element]] {
         grouped(by: keyPath, ==)
     }
 }
