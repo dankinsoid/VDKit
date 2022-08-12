@@ -16,14 +16,15 @@ import VDUIKit
 public struct DateField: UIViewRepresentable {
 	public var date: Binding<Date?>
 	public var isEditing: Binding<Bool>?
-	@Environment(\.dateFieldFormat) private var format: DateFormat
+    private let onCreate: ((UIDateField) -> Void)?
+    @Environment(\.dateFieldFormat) private var format: DateFormat
 	@Environment(\.dateFieldStyle) private var style: [Calendar.Component: UIDateField.ComponentStyle]
 	@Environment(\.dateFieldInsets) private var insets: EdgeInsets
 	@Environment(\.dateFieldTextColor) private var textColor: Color?
 	@Environment(\.dateFieldPlaceholderColor) private var placeholderColor: Color?
 	@Environment(\.font) private var font: Font?
 	
-	public init(_ date: Binding<Date?>, isEditing: Binding<Bool>? = nil) {
+    public init(_ date: Binding<Date?>, isEditing: Binding<Bool>? = nil, onCreate: ((UIDateField) -> Void)? = nil) {
 		self.date = date
 		self.isEditing = isEditing
 	}
@@ -31,6 +32,9 @@ public struct DateField: UIViewRepresentable {
 	public func makeUIView(context: Context) -> UIDateField {
 		let result = UIDateField()
 		result.contentPriority.vertical.hugging = .defaultLow
+        DispatchQueue.main.async {
+            onCreate?(result)
+        }
 		return result
 	}
 	
