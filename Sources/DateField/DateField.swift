@@ -27,7 +27,8 @@ public struct DateField: UIViewRepresentable {
     public init(_ date: Binding<Date?>, isEditing: Binding<Bool>? = nil, onCreate: ((UIDateField) -> Void)? = nil) {
 		self.date = date
 		self.isEditing = isEditing
-	}
+        self.onCreate = onCreate
+    }
 	
 	public func makeUIView(context: Context) -> UIDateField {
 		let result = UIDateField()
