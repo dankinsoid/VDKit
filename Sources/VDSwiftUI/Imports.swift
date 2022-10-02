@@ -5,7 +5,6 @@
 //  Created by Данил Войдилов on 30.10.2021.
 //
 
-@_exported import UIKitIntegration
 @_exported import VDSwiftUICommon
 @_exported import BindGeometry
 @_exported import DragNDrop

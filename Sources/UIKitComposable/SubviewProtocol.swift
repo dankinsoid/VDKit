@@ -9,7 +9,6 @@
 #if canImport(UIKit)
 import UIKit
 import VDKitRuntime
-import VDChain
 
 public protocol SubviewProtocol {
 	func createViewToAdd() -> UIView
@@ -35,13 +34,6 @@ extension UIView {
 	
 	fileprivate var vc: UIViewController? {
 		(next as? UIViewController) ?? (next as? UIView)?.vc
-	}
-}
-
-extension Chain: SubviewProtocol where Value: SubviewProtocol {
-	
-	public func createViewToAdd() -> UIView {
-		apply().createViewToAdd()
 	}
 }
 

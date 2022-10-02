@@ -7,12 +7,10 @@
 
 @_exported import VDKitRuntime
 @_exported import VDBuilders
-@_exported import VDChain
 @_exported import UIKitEnvironment
 @_exported import VDCommon
 @_exported import VDDates
 @_exported import WrappedDefaults
-@_exported import UIKitIntegration
 @_exported import UIKitComposable
 @_exported import VDSwiftUICommon
 @_exported import BindGeometry

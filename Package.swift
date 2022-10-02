@@ -13,12 +13,10 @@ let package = Package(
 		.library(name: "VDSwiftUI", targets: ["VDSwiftUI"]),
 		
 		.library(name: "VDBuilders", targets: ["VDBuilders"]),
-		.library(name: "VDChain", targets: ["VDChain"]),
 		.library(name: "UIKitEnvironment", targets: ["UIKitEnvironment"]),
 		.library(name: "VDCommon", targets: ["VDCommon"]),
 		.library(name: "VDDates", targets: ["VDDates"]),
 		.library(name: "WrappedDefaults", targets: ["WrappedDefaults"]),
-		.library(name: "UIKitIntegration", targets: ["UIKitIntegration"]),
 		.library(name: "UIKitComposable", targets: ["UIKitComposable"]),
 		.library(name: "VDSwiftUICommon", targets: ["VDSwiftUICommon"]),
 		.library(name: "BindGeometry", targets: ["BindGeometry"]),
@@ -36,13 +34,13 @@ let package = Package(
 		.library(name: "VDCoreGraphics", targets: ["VDCoreGraphics"]),
 		.library(name: "VDKitRuntime", targets: ["VDKitRuntime"])
 	],
-	dependencies: [],
+	dependencies: [
+    ],
 	targets: [
 		.target(name: "VDKitRuntimeObjc", dependencies: []),
 		.target(name: "VDKitRuntime", dependencies: ["VDKitRuntimeObjc"]),
 		
-		.target(name: "VDChain", dependencies: ["VDOptional"]),
-		.target(name: "UIKitEnvironment", dependencies: ["VDKitRuntime", "VDChain"]),
+		.target(name: "UIKitEnvironment", dependencies: ["VDKitRuntime"]),
 		.target(name: "VDBuilders", dependencies: []),
 		.target(name: "VDCommon", dependencies: ["VDBuilders"]),
 		.target(name: "VDDates", dependencies: []),
@@ -61,14 +59,12 @@ let package = Package(
 		.target(name: "DateField", dependencies: ["VDSwiftUICommon", "VDDates", "VDCommon", "VDUIKit"], path: "Sources/DateField"),
 		.target(name: "Pages", dependencies: ["VDSwiftUICommon"], path: "Sources/SwiftUI/Pages"),
 		.target(name: "Scroll", dependencies: ["VDCommon", "VDSwiftUICommon", "VDCoreGraphics"], path: "Sources/SwiftUI/Scroll"),
-		.target(name: "VDSwiftUI", dependencies: ["UIKitIntegration", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
-		
-		.target(name: "UIKitIntegration", dependencies: ["VDChain"]),
+		.target(name: "VDSwiftUI", dependencies: ["VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
 		
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
-		.target(name: "UIKitComposable", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain"]),
+		.target(name: "UIKitComposable", dependencies: ["VDKitRuntime", "VDBuilders"]),
 		
-		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "VDChain", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitIntegration", "UIKitComposable", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitComposable", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
 		
 //		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
 	]
