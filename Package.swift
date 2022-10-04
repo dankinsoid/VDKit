@@ -17,7 +17,6 @@ let package = Package(
 		.library(name: "VDCommon", targets: ["VDCommon"]),
 		.library(name: "VDDates", targets: ["VDDates"]),
 		.library(name: "WrappedDefaults", targets: ["WrappedDefaults"]),
-		.library(name: "UIKitComposable", targets: ["UIKitComposable"]),
 		.library(name: "VDSwiftUICommon", targets: ["VDSwiftUICommon"]),
 		.library(name: "BindGeometry", targets: ["BindGeometry"]),
 		.library(name: "DragNDrop", targets: ["DragNDrop"]),
@@ -62,9 +61,8 @@ let package = Package(
 		.target(name: "VDSwiftUI", dependencies: ["VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder"]),
 		
 		.target(name: "VDUIKit", dependencies: ["VDBuilders", "VDCoreGraphics"]),
-		.target(name: "UIKitComposable", dependencies: ["VDKitRuntime", "VDBuilders"]),
 		
-		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "UIKitComposable", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
+		.target(name: "VDKit", dependencies: ["VDKitRuntime", "VDBuilders", "UIKitEnvironment", "VDCommon", "VDDates", "WrappedDefaults", "VDSwiftUICommon", "BindGeometry", "DragNDrop", "EnvironmentStateObject", "Field", "Pages", "Scroll", "VDUIKit", "VDOptional", "VDMirror", "LinesStack", "VDCoreGraphics", "LoadingPlaceholder", "DateField"]),
 		
 //		.testTarget(name: "VDKitTests", dependencies: ["VDKit"]),
 	]

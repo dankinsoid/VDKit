@@ -11,7 +11,6 @@
 @_exported import VDCommon
 @_exported import VDDates
 @_exported import WrappedDefaults
-@_exported import UIKitComposable
 @_exported import VDSwiftUICommon
 @_exported import BindGeometry
 @_exported import DragNDrop
